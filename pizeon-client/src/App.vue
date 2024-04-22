@@ -1,14 +1,18 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import Greet from "./components/Greet.vue";
+import { reactive } from "vue";
+
+const notice = reactive({
+  heading: "Join us",
+  body: "Don't ask",
+  date: new Date(),
+});
+import Notice from "./components/Notice.vue";
 </script>
 
 <template>
   <div class="container">
     <h1>Welcome to Tauri!</h1>
-
-    <Greet />
+    <Notice :data="notice"/>
   </div>
 </template>
 
