@@ -11,12 +11,15 @@ struct Notice {
 }
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn get_notice() -> Notice {
-    Notice {
-        heading: String::from("hi"),
-        body: String::from("join us"),
-        date: Utc::now().timestamp(),
-    }
+fn get_notice() -> (Notice, Vec<String>) {
+    (
+        Notice {
+            heading: String::from("hi"),
+            body: String::from("join us"),
+            date: Utc::now().timestamp(),
+        },
+        vec![String::from("fake sign")],
+    )
 }
 
 fn main() {
