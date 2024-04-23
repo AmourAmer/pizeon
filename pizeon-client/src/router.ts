@@ -1,15 +1,12 @@
 import { createMemoryHistory, createRouter } from "vue-router";
 
 import Menu from "./components/Menu.vue";
-import Meal from "./components/Meal.vue";
+import Meals from "./components/Meals.vue";
 import Kitchen from "./components/Kitchen.vue";
-import Fridge from "./components/Menu.vue";
-import Unwelcomed from "./components/Menu.vue";
-import Junk from "./components/Menu.vue";
 
 const routes = [
   { path: "/menu/:type", name: "menu", component: Menu, props: true },
-  { path: "/meal", component: Meal },
+  { path: "/meals", component: Meals },
   { path: "/kitchen", component: Kitchen },
 ];
 
