@@ -4,9 +4,6 @@ import Notice from "./components/Notice.vue";
 
 <template>
   <div class="container">
-    <h1>Welcome to Tauri!</h1>
     <Notice />
   </div>
 </template>
-
-
