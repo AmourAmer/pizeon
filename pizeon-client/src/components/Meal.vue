@@ -6,14 +6,24 @@ interface Notice {
   heading: string;
   body: string;
 }
+enum Repo {
+  Fresh = "Fresh",
+  Unwelcomed = "Unwelcomed",
+  Fridge = "Fridge",
+  Junk = "Junk",
+}
+type Signature = string;
 const props = defineProps({
   id: String,
 });
 
 const notice: Ref<Notice | undefined> = ref();
-const signs: Ref<string[]> = ref([]);
+const signs: Ref<Signature[]> = ref([]);
 async function get() {
-  const res: [Notice, string[]] = await invoke("get_notice");
+  const res: [Notice, Signature[]] = await invoke("get_notice", {
+    repo: Repo.Fresh,
+    id: props.id,
+  });
   notice.value = res[0];
   signs.value = res[1];
 }
