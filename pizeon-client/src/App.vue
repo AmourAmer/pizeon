@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Notice from "./components/Notice.vue";
+import Notice from "./components/Meal.vue";
 </script>
 
 <template>
