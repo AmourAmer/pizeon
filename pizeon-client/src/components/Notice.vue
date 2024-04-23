@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { invoke } from "@tauri-apps/api/tauri";
 import { ref } from "vue";
-const props = defineProps(['data'])
-
-const name = ref("");
-
+const notice = ref("");
+async function get() {
+  notice.value = await invoke("get_notice");
+}
+get();
 </script>
 
 <template>
   <div>
-    <h2 style="font-size: 72pt">{{ props.data.heading }}</h2>
-    <p>{{ props.data.body }}</p>
-    <s style="font-size: 36pt">{{ props.data.date.getMonth() }} - {{ props.data.date.getDate() }}</s>
+    <h1 @click="get">{{ notice.heading }}</h1>
   </div>
 </template>
