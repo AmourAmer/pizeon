@@ -11,6 +11,9 @@ dependencies:
   vue:
     specifier: ^3.3.4
     version: 3.4.23(typescript@5.4.5)
+  vue-router:
+    specifier: '4'
+    version: 4.3.2(vue@3.4.23)
 
 devDependencies:
   '@tauri-apps/cli':
@@ -424,6 +427,15 @@ packages:
     dev: true
     optional: true
 
+  /@tauri-apps/cli-linux-arm64-gnu@1.5.11:
+    resolution: {integrity: sha512-w+k1bNHCU/GbmXshtAhyTwqosThUDmCEFLU4Zkin1vl2fuAtQry2RN7thfcJFepblUGL/J7yh3Q/0+BCjtspKQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /@tauri-apps/cli-linux-arm64-musl@1.5.11:
     resolution: {integrity: sha512-PN6/dl+OfYQ/qrAy4HRAfksJ2AyWQYn2IA/2Wwpaa7SDRz2+hzwTQkvajuvy0sQ5L2WCG7ymFYRYMbpC6Hk9Pg==}
     engines: {node: '>= 10'}
@@ -486,6 +498,7 @@ packages:
       '@tauri-apps/cli-darwin-arm64': 1.5.11
       '@tauri-apps/cli-darwin-x64': 1.5.11
       '@tauri-apps/cli-linux-arm-gnueabihf': 1.5.11
+      '@tauri-apps/cli-linux-arm64-gnu': 1.5.11
       '@tauri-apps/cli-linux-arm64-musl': 1.5.11
       '@tauri-apps/cli-linux-x64-gnu': 1.5.11
       '@tauri-apps/cli-linux-x64-musl': 1.5.11
@@ -561,6 +574,10 @@ packages:
     dependencies:
       '@vue/compiler-dom': 3.4.23
       '@vue/shared': 3.4.23
+
+  /@vue/devtools-api@6.6.1:
+    resolution: {integrity: sha512-LgPscpE3Vs0x96PzSSB4IGVSZXZBZHpfxs+ZA1d+VEPwHdOXowy/Y2CsvCAIFrf+ssVU1pD1jidj505EpUnfbA==}
+    dev: false
 
   /@vue/language-core@1.8.27(typescript@5.4.5):
     resolution: {integrity: sha512-L8Kc27VdQserNaCUNiSFdDl9LWT24ly8Hpwf1ECy3aFb9m6bDhBGQYOujDm21N7EW3moKIOKEanQwe1q5BK+mA==}
@@ -808,6 +825,15 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
+
+  /vue-router@4.3.2(vue@3.4.23):
+    resolution: {integrity: sha512-hKQJ1vDAZ5LVkKEnHhmm1f9pMiWIBNGF5AwU67PdH7TyXCj/a4hTccuUuYCAMgJK6rO/NVYtQIEN3yL8CECa7Q==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': 6.6.1
+      vue: 3.4.23(typescript@5.4.5)
+    dev: false
 
   /vue-template-compiler@2.7.16:
     resolution: {integrity: sha512-AYbUWAJHLGGQM7+cNTELw+KsOG9nl2CnSv467WobS5Cv9uk3wFcnr1Etsz2sEIHEZvw1U+o9mRlEO6QbZvUPGQ==}

@@ -12,9 +12,6 @@ Shall be very glad to see anyone implements one, as this is indeed in need.
 TODO-list?
 Maybe you can self-send notice?
 
-Fridge, Junk, Unwelcomed, Menu?
-Seems they are the same. True.
-
 ## APPs
 
 ### mobile
