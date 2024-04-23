@@ -8,12 +8,9 @@ import Unwelcomed from "./components/Menu.vue";
 import Junk from "./components/Menu.vue";
 
 const routes = [
-  { path: "/menu", component: Menu },
+  { path: "/menu/:type", name: "menu", component: Menu },
   { path: "/meal", component: Meal },
   { path: "/kitchen", component: Kitchen },
-  { path: "/fridge", component: Fridge },
-  { path: "/unwelcomed", component: Unwelcomed },
-  { path: "/junk", component: Junk },
 ];
 
 const router = createRouter({
