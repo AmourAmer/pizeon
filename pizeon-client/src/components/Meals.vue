@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { Ref } from "vue";
+import { ref, Ref } from "vue";
 import { asyncComputed } from "@vueuse/core";
 import Meal from "./Meal.vue";
 
@@ -17,14 +17,22 @@ enum Repo {
 }
 type Signature = string;
 
+const ids = ref(["1", "2"]);
+async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
+  return Promise.all(
+    ids.map(
+      async (id) =>
+        await invoke("get_notice", {
+          repo: Repo.Fresh,
+          id: id,
+        }),
+    ),
+  );
+}
+
 const meals: Ref<[Notice, Signature[]][] | null> = asyncComputed(
-  async () => [
-    // FUCK! I can't rewrite it in function! Why?!
-    await invoke("get_notice", {
-      repo: Repo.Fresh,
-      id: "1",
-    }),
-  ],
+  // Should resolve one by one. Don't need to wait till all settle
+  async () => await getS(ids.value),
   null,
 );
 </script>
