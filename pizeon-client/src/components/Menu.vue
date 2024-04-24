@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { computed } from "vue";
-const props = defineProps({
-  type: String,
-});
+enum Repo {
+  Fresh = "Fresh",
+  Unwelcomed = "Unwelcomed",
+  Fridge = "Fridge",
+  Junk = "Junk",
+}
+const props = defineProps<{
+  type: Repo;
+}>();
 const msg = computed(() => {
   switch (props.type) {
-    case "menu":
+    case "Fresh":
       return "Where you browse all notices";
-    case "junk":
+    case "Junk":
       return "Your recently deleted notices";
-    case "unwelcomed":
+    case "Unwelcomed":
       return "Recently blocked notices";
-    case "fridge":
+    case "Fridge":
       return "Your favorite notices, cautiously preserved, forever💕";
     default:
       break;
