@@ -7,6 +7,11 @@ pub struct Notice {
     body: String,
     date: i64,
 }
+#[derive(Serialize)]
+pub struct Abstract {
+    heading: String,
+    date: i64,
+}
 #[derive(PartialEq, Serialize, Deserialize)]
 pub enum Repo {
     Fresh,
@@ -35,5 +40,20 @@ pub fn get_notice(repo: Repo, id: &str) -> (Notice, Vec<String>) {
             },
             vec![String::from("shitty sign"), String::from("more signs")],
         )
+    }
+}
+
+#[tauri::command]
+pub fn get_abstract(repo: Repo, id: &str) -> Abstract {
+    if id == "1" && repo == Repo::Fresh {
+        Abstract {
+            heading: String::from("hi"),
+            date: Utc::now().timestamp(),
+        }
+    } else {
+        Abstract {
+            heading: String::from("hell"),
+            date: (Utc::now() - Duration::days(1)).timestamp(),
+        }
     }
 }

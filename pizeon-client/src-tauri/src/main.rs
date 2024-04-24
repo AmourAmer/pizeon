@@ -2,13 +2,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod notices;
+use notices::get_abstract;
 use notices::get_notice;
 mod repos;
-use repos::get_repo;
+use repos::get_bill;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_notice, get_repo])
+        .invoke_handler(tauri::generate_handler![get_notice, get_bill, get_abstract])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

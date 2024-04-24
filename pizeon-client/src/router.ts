@@ -5,7 +5,7 @@ import Meals from "./components/Meals.vue";
 import Kitchen from "./components/Kitchen.vue";
 
 const routes = [
-  { path: "/repo/:type", name: "repo", component: Repo, props: true },
+  { path: "/repo/:type", name: "bill", component: Repo, props: true },
   { path: "/meals", component: Meals },
   { path: "/kitchen", component: Kitchen },
 ];
