@@ -35,8 +35,10 @@ const meals: Ref<[Notice, Signature[]][] | null> = asyncComputed(
     <Meal
       v-for="(meal, i) in meals?.reverse()"
       :key="i"
+      :id="ids[i]"
       :notice="meal[0]"
       :signs="meal[1]"
+      @close="ids.splice(i, 1)"
     />
   </div>
 </template>
