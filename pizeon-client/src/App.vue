@@ -3,18 +3,18 @@
 <template>
   <div class="container">
     <nav>
-      <RouterLink :to="{ name: 'menu', params: { type: 'Fresh' } }"
-        >Go to Menu</RouterLink
+      <RouterLink :to="{ name: 'repo', params: { type: 'Fresh' } }"
+        >Go to Repo</RouterLink
       >
       <RouterLink to="/meals">Go to Meals</RouterLink>
       <RouterLink to="/kitchen">Go to Kitchen</RouterLink>
-      <RouterLink :to="{ name: 'menu', params: { type: 'Fridge' } }"
+      <RouterLink :to="{ name: 'repo', params: { type: 'Fridge' } }"
         >Open the Fridge</RouterLink
       >
-      <RouterLink :to="{ name: 'menu', params: { type: 'Unwelcomed' } }"
+      <RouterLink :to="{ name: 'repo', params: { type: 'Unwelcomed' } }"
         >Check outdoors</RouterLink
       >
-      <RouterLink :to="{ name: 'menu', params: { type: 'Junk' } }"
+      <RouterLink :to="{ name: 'repo', params: { type: 'Junk' } }"
         >Examine trash can</RouterLink
       >
     </nav>

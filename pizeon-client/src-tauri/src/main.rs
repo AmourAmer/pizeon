@@ -4,11 +4,11 @@
 mod notices;
 use notices::get_notice;
 mod repos;
-use repos::get_ids;
+use repos::get_repo;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_notice, get_ids])
+        .invoke_handler(tauri::generate_handler![get_notice, get_repo])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
