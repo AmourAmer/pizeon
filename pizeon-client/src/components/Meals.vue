@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { ref, Ref } from "vue";
+import { Ref } from "vue";
 import { asyncComputed } from "@vueuse/core";
 import Meal from "./Meal.vue";
 
@@ -17,7 +17,7 @@ enum Repo {
 }
 type Signature = string;
 
-const ids = ref(["1", "2"]);
+const props = defineProps<{ ids: string[] }>();
 async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
   return Promise.all(
     ids.map(
@@ -32,7 +32,7 @@ async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
 
 const meals: Ref<[Notice, Signature[]][] | null> = asyncComputed(
   // Should resolve one by one. Don't need to wait till all settle
-  async () => await getS(ids.value),
+  async () => await getS(props.ids),
   null,
 );
 </script>

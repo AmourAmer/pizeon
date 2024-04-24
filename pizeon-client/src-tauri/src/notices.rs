@@ -10,6 +10,9 @@ pub struct Notice {
 #[derive(PartialEq, Serialize, Deserialize)]
 pub enum Repo {
     Fresh,
+    Unwelcomed,
+    Fridge,
+    Junk,
 }
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]

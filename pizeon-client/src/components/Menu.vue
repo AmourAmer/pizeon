@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { invoke } from "@tauri-apps/api/tauri";
+import { Ref } from "vue";
+import { asyncComputed } from "@vueuse/core";
+import Meals from "./Meals.vue";
 enum Repo {
   Fresh = "Fresh",
   Unwelcomed = "Unwelcomed",
@@ -9,22 +12,16 @@ enum Repo {
 const props = defineProps<{
   type: Repo;
 }>();
-const msg = computed(() => {
-  switch (props.type) {
-    case "Fresh":
-      return "Where you browse all notices";
-    case "Junk":
-      return "Your recently deleted notices";
-    case "Unwelcomed":
-      return "Recently blocked notices";
-    case "Fridge":
-      return "Your favorite notices, cautiously preserved, forever💕";
-    default:
-      break;
-  }
-});
+const ids: Ref<string[] | null> = asyncComputed(
+  async () =>
+    await invoke("get_ids", {
+      repo: props.type,
+    }),
+  null,
+);
 </script>
 
 <template>
-  <div>{{ msg }}</div>
+  {{ ids }}
+  <Meals :ids="ids || []" />
 </template>
