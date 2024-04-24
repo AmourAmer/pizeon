@@ -36,6 +36,8 @@ const abstracts: Ref<Abstract[] | null> = asyncComputed(
 
 <template>
   <div>
-    <p v-for="(abstract, i) in abstracts" :key="i">{{ abstract }}</p>
+    <p v-for="(abstract, i) in abstracts" :key="i">
+      {{ abstract }} --{{ bill[i] }}
+    </p>
   </div>
 </template>

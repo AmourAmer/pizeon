@@ -23,7 +23,6 @@ async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
     ids.map(
       async (id) =>
         await invoke("get_notice", {
-          repo: Repo.Fresh,
           id: id,
         }),
     ),

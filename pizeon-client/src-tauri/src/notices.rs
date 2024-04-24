@@ -21,8 +21,8 @@ pub enum Repo {
 }
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-pub fn get_notice(repo: Repo, id: &str) -> (Notice, Vec<String>) {
-    if id == "1" && repo == Repo::Fresh {
+pub fn get_notice(id: &str) -> (Notice, Vec<String>) {
+    if id == "1" {
         (
             Notice {
                 heading: String::from("hi"),
