@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
-import { asyncComputed } from "@vueuse/core";
+import { asyncComputed, useStorage } from "@vueuse/core";
 
 interface Abstract {
   heading: string;
@@ -15,6 +15,7 @@ enum Repo {
 }
 
 const props = defineProps<{ bill: string[] }>();
+const ids: Ref<string[]> = useStorage("mealIds", []);
 
 async function getS(bill: string[]): Promise<Abstract[]> {
   return Promise.all(
@@ -28,6 +29,11 @@ async function getS(bill: string[]): Promise<Abstract[]> {
   );
 }
 
+function addId(newId: string) {
+  ids.value = ids.value.filter((id) => id != newId);
+  ids.value.push(newId);
+}
+
 const abstracts: Ref<Abstract[] | null> = asyncComputed(
   async () => await getS(props.bill),
   null,
@@ -36,8 +42,8 @@ const abstracts: Ref<Abstract[] | null> = asyncComputed(
 
 <template>
   <div>
-    <p v-for="(abstract, i) in abstracts" :key="i">
+    <button v-for="(abstract, i) in abstracts" :key="i" @click="addId(bill[i])">
       {{ abstract }} --{{ bill[i] }}
-    </p>
+    </button>
   </div>
 </template>
