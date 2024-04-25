@@ -19,29 +19,36 @@ pub enum Repo {
     Fridge,
     Junk,
 }
+#[derive(Serialize)]
+pub struct Meal {
+    notice: Notice,
+    signs: Vec<String>,
+    repo: Repo,
+}
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-pub fn get_notice(id: &str) -> (Notice, Vec<String>, Repo) {
+pub fn get_notice(id: &str) -> Meal {
     if id == "1" {
-        (
-            Notice {
+        Meal {
+            notice: Notice {
                 heading: String::from("hi"),
                 body: String::from("join us"),
                 date: Utc::now().timestamp(),
             },
-            vec![String::from("fake sign")],
-            Repo::Fresh,
-        )
+            signs: vec![String::from("fake sign")],
+            repo: Repo::Fresh,
+        }
     } else {
-        (
-            Notice {
+        Meal {
+            notice: Notice {
                 heading: String::from("hell"),
                 body: String::from("Dark lord will consume you"),
                 date: (Utc::now() - Duration::days(1)).timestamp(),
             },
-            vec![String::from("shitty sign"), String::from("more signs")],
-            Repo::Junk,
-        )
+            signs: vec![String::from("shitty sign"), String::from("more signs")],
+            repo: Repo::Junk,
+        }
     }
 }
 

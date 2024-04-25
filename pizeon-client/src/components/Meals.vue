@@ -17,21 +17,25 @@ enum Repo {
   Junk = "Junk",
 }
 type Signature = string;
+interface Meal {
+  notice: Notice;
+  signs: Signature[];
+  repo: Repo;
+}
 
 const ids: Ref<string[]> = useStorage("mealIds", []);
-async function getNotice(id: string): Promise<[Notice, Signature[], Repo]> {
+async function getNotice(id: string): Promise<Meal> {
   return await invoke("get_notice", {
     id: id,
   });
 }
 
-// TODO use v-bind obj to simplify
-const meals: Ref<Ref<[Notice, Signature[], Repo] | null>[]> = ref(
+const meals: Ref<Ref<Meal | null>[]> = ref(
   ids.value.map((id) =>
     asyncComputed(
-      // Should resolve one by one. Don't need to wait till all settle. Or should use cachedValues
+      // Should use cachedValues
       async () => await getNotice(id),
-      ["1m", ["2"], "2"],
+      null,
     ),
   ),
 );
@@ -42,14 +46,8 @@ const meals: Ref<Ref<[Notice, Signature[], Repo] | null>[]> = ref(
     <button @click="ids = []">Clear All</button>
     <!-- TODO scroll to btm, or use css to upside down? -->
     <div v-for="(meal, i) in meals" :key="i">
-      {{ meal }}
-      <Meal
-        v-if="meal != null"
-        :notice="meal[0]"
-        :signs="meal[1]"
-        :repo="meal[2]"
-        @close="ids.splice(i, 1)"
-      />
+      MEAL: {{ meal }}
+      <Meal v-bind="meal" @close="ids.splice(i, 1)" />
     </div>
   </div>
 </template>
