@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
-import { asyncComputed } from "@vueuse/core";
+import { computedAsync } from "@vueuse/core";
 import Bill from "./Bill.vue";
 enum Repo {
   Fresh = "Fresh",
@@ -12,7 +12,7 @@ enum Repo {
 const props = defineProps<{
   type: Repo;
 }>();
-const bill: Ref<string[] | null> = asyncComputed(
+const bill: Ref<string[] | null> = computedAsync(
   async () =>
     await invoke("get_bill", {
       repo: props.type,

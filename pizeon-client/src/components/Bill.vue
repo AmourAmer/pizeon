@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
-import { asyncComputed, useStorage } from "@vueuse/core";
+import { computedAsync, useStorage } from "@vueuse/core";
 
 interface Abstract {
   heading: string;
@@ -34,7 +34,7 @@ function addId(newId: string) {
   ids.value.push(newId);
 }
 
-const abstracts: Ref<Abstract[] | null> = asyncComputed(
+const abstracts: Ref<Abstract[] | null> = computedAsync(
   async () => await getS(props.bill),
   null,
 );

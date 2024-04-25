@@ -1,7 +1,7 @@
 use chrono::{Duration, Utc};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Notice {
     heading: String,
     body: String,
@@ -19,7 +19,7 @@ pub enum Repo {
     Fridge,
     Junk,
 }
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Meal {
     notice: Notice,
     signs: Vec<String>,
@@ -28,9 +28,9 @@ pub struct Meal {
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-pub fn get_notice(id: &str) -> Meal {
+pub async fn get_notice(id: &str) -> Result<Meal, ()> {
     if id == "1" {
-        Meal {
+        Ok(Meal {
             notice: Notice {
                 heading: String::from("hi"),
                 body: String::from("join us"),
@@ -38,9 +38,11 @@ pub fn get_notice(id: &str) -> Meal {
             },
             signs: vec![String::from("fake sign")],
             repo: Repo::Fresh,
-        }
+        })
     } else {
-        Meal {
+        // Should use cachedValues
+        std::thread::sleep(std::time::Duration::from_millis(2383));
+        Ok(Meal {
             notice: Notice {
                 heading: String::from("hell"),
                 body: String::from("Dark lord will consume you"),
@@ -48,7 +50,7 @@ pub fn get_notice(id: &str) -> Meal {
             },
             signs: vec![String::from("shitty sign"), String::from("more signs")],
             repo: Repo::Junk,
-        }
+        })
     }
 }
 

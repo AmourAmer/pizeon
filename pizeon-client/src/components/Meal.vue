@@ -31,6 +31,7 @@ const day = computed(() => new Date(second.value).getDate());
   <div>
     <button @click="$emit('close')">Close me</button>
     <h1>{{ notice?.heading }}</h1>
+    <b>Repo: {{ repo }}</b>
     <p>{{ notice?.body }}</p>
     <p>{{ month }}/{{ day }}</p>
     <s v-for="(sign, i) in signs" :key="i">{{ sign }}, </s>...
