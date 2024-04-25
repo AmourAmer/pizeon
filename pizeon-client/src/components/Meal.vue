@@ -23,8 +23,7 @@ defineEmits<{
   (e: "close"): void;
 }>();
 
-const second = computed(() => (props.notice?.date || 0) * 1000);
-const { month, day } = time(second);
+const { month, day } = time(computed(() => props.notice?.date || 0));
 </script>
 
 <template>
