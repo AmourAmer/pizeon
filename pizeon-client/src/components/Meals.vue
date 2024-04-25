@@ -32,6 +32,7 @@ const meals: Ref<[Notice, Signature[]][] | []> = asyncComputed(
 
 <template>
   <div>
+    <button @click="ids = []">Clear All</button>
     <!-- TODO scroll to btm, or use css to upside down? -->
     <Meal
       v-for="(meal, i) in meals"
