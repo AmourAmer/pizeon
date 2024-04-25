@@ -2,9 +2,11 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
 import { computedAsync, useStorage } from "@vueuse/core";
+import Abstract from "./Abstract.vue";
 
 interface Abstract {
   heading: string;
+  body?: string;
   date: number;
 }
 enum Repo {
@@ -42,8 +44,11 @@ const abstracts: Ref<Abstract[] | null> = computedAsync(
 
 <template>
   <div>
-    <button v-for="(abstract, i) in abstracts" :key="i" @click="addId(bill[i])">
-      {{ abstract }} --{{ bill[i] }}
-    </button>
+    <Abstract
+      v-for="(abstract, i) in abstracts"
+      :key="i"
+      v-bind="abstract"
+      @click="addId(bill[i])"
+    />
   </div>
 </template>
