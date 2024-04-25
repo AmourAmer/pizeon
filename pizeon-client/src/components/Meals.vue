@@ -23,6 +23,16 @@ interface Meal {
   repo: Repo;
 }
 
+const mealTemplate: Meal = {
+  notice: {
+    date: 0,
+    heading: "Please wait",
+    body: "Fetching data",
+  },
+  signs: [],
+  repo: Repo.Unwelcomed,
+};
+
 const ids: Ref<string[]> = useStorage("mealIds", []);
 async function getNotice(id: string): Promise<Meal> {
   return await invoke("get_notice", {
@@ -30,12 +40,12 @@ async function getNotice(id: string): Promise<Meal> {
   });
 }
 
-const meals: Ref<Ref<Meal | null>[]> = ref(
+const meals: Ref<Ref<Meal>[]> = ref(
   ids.value.map((id) =>
     asyncComputed(
       // Should use cachedValues
       async () => await getNotice(id),
-      null,
+      mealTemplate,
     ),
   ),
 );
@@ -45,9 +55,13 @@ const meals: Ref<Ref<Meal | null>[]> = ref(
   <div>
     <button @click="ids = []">Clear All</button>
     <!-- TODO scroll to btm, or use css to upside down? -->
-    <div v-for="(meal, i) in meals" :key="i">
-      MEAL: {{ meal }}
-      <Meal v-bind="meal" @close="ids.splice(i, 1)" />
-    </div>
+    {{ ids }}
+    {{ meals }}
+    <Meal
+      v-for="(meal, i) in meals"
+      :key="i"
+      v-bind="meal.value"
+      @close="ids.splice(i, 1)"
+    />
   </div>
 </template>

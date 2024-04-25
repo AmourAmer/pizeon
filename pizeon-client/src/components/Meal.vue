@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRef, computed } from "vue";
+import { computed } from "vue";
 interface Notice {
   date: number;
   heading: string;
@@ -18,7 +18,6 @@ const props = defineProps<{
   signs: Signature[];
   repo: Repo;
 }>();
-const notice1 = toRef(props.notice);
 defineEmits<{
   (e: "close"): void;
 }>();
@@ -30,7 +29,6 @@ const day = computed(() => new Date(second.value).getDate());
 
 <template>
   <div>
-    Notice1: {{ notice1 }} Notice: {{ notice }} Sings: {{ signs }}
     <button @click="$emit('close')">Close me</button>
     <h1>{{ notice?.heading }}</h1>
     <p>{{ notice?.body }}</p>
