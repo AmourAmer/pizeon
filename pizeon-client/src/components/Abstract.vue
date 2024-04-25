@@ -6,15 +6,9 @@ interface Abstract {
   body?: string;
   date: number;
 }
-enum Repo {
-  Fresh = "Fresh",
-  Unwelcomed = "Unwelcomed",
-  Fridge = "Fridge",
-  Junk = "Junk",
-}
 const props = defineProps<Abstract>();
 defineEmits<{
-  (check: Event): void;
+  (e: "check"): void;
 }>();
 const { month, day } = time(ref(props.date));
 // TODO should use useSwipe to move them
@@ -25,6 +19,5 @@ const { month, day } = time(ref(props.date));
     <button @click="$emit('check')">
       {{ heading }} {{ body ? ": " + body : "" }} ~ {{ month }} / {{ day }}
     </button>
-    <button v-for="repo in Repo">TO {{ repo }}</button>
   </div>
 </template>

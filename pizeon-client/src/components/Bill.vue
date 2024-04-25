@@ -40,15 +40,21 @@ const abstracts: Ref<Abstract[] | null> = computedAsync(
   async () => await getS(props.bill),
   null,
 );
+
+async function move(id: string, repo: Repo) {
+  await invoke("move_notice", {
+    id,
+    repo,
+  });
+  // TODO force update abstracts
+}
 </script>
 
 <template>
-  <div>
-    <Abstract
-      v-for="(abstract, i) in abstracts"
-      :key="i"
-      v-bind="abstract"
-      @check="addId(bill[i])"
-    />
+  <div v-for="(abstract, i) in abstracts" :key="i">
+    <Abstract v-bind="abstract" @check="addId(bill[i])" />
+    <button v-for="repo in Repo" @click="move(bill[i], repo)">
+      TO {{ repo }}
+    </button>
   </div>
 </template>
