@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import time from "../utils/time";
 interface Notice {
   date: number;
   heading: string;
@@ -23,8 +24,7 @@ defineEmits<{
 }>();
 
 const second = computed(() => (props.notice?.date || 0) * 1000);
-const month = computed(() => new Date(second.value).getMonth() + 1);
-const day = computed(() => new Date(second.value).getDate());
+const { month, day } = time(second);
 </script>
 
 <template>
