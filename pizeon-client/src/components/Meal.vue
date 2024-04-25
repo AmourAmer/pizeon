@@ -6,13 +6,13 @@ interface Notice {
   body: string;
 }
 type Signature = string;
+
 const props = defineProps<{
-  id: string;
   notice: Notice;
   signs: Signature[];
 }>();
 defineEmits<{
-  (e: "close", id: string): void;
+  (e: "close"): void;
 }>();
 
 const second = computed(() => (props.notice?.date || 0) * 1000);
@@ -22,7 +22,7 @@ const day = computed(() => new Date(second.value).getDate());
 
 <template>
   <div>
-    <button @click="$emit('close', id)">Close me</button>
+    <button @click="$emit('close')">Close me</button>
     <h1>{{ notice?.heading }}</h1>
     <p>{{ notice?.body }}</p>
     <p>{{ month }}/{{ day }}</p>
