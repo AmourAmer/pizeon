@@ -23,21 +23,22 @@ async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
   );
 }
 
-const meals: Ref<[Notice, Signature[]][] | null> = asyncComputed(
+const meals: Ref<[Notice, Signature[]][] | []> = asyncComputed(
   // Should resolve one by one. Don't need to wait till all settle. Or should use cachedValues
   async () => await getS(ids.value),
-  null,
+  [],
 );
 </script>
 
 <template>
   <div>
+    <!-- TODO scroll to btm, or use css to upside down? -->
     <Meal
-      v-for="(meal, i) in meals?.toReversed()"
+      v-for="(meal, i) in meals"
       :key="i"
       :notice="meal[0]"
       :signs="meal[1]"
-      @close="ids.splice(meals?.length - 1 - i, 1)"
+      @close="ids.splice(i, 1)"
     />
   </div>
 </template>
