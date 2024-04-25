@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { Ref } from "vue";
+import { ref, Ref } from "vue";
 import { asyncComputed, useStorage } from "@vueuse/core";
 import Meal from "./Meal.vue";
 
@@ -19,21 +19,21 @@ enum Repo {
 type Signature = string;
 
 const ids: Ref<string[]> = useStorage("mealIds", []);
-async function getS(ids: string[]): Promise<[Notice, Signature[], Repo][]> {
-  return Promise.all(
-    ids.map(
-      async (id) =>
-        await invoke("get_notice", {
-          id: id,
-        }),
-    ),
-  );
+async function getNotice(id: string): Promise<[Notice, Signature[], Repo]> {
+  return await invoke("get_notice", {
+    id: id,
+  });
 }
 
-const meals: Ref<[Notice, Signature[], Repo][] | []> = asyncComputed(
-  // Should resolve one by one. Don't need to wait till all settle. Or should use cachedValues
-  async () => await getS(ids.value),
-  [],
+// TODO use v-bind obj to simplify
+const meals: Ref<Ref<[Notice, Signature[], Repo] | null>[]> = ref(
+  ids.value.map((id) =>
+    asyncComputed(
+      // Should resolve one by one. Don't need to wait till all settle. Or should use cachedValues
+      async () => await getNotice(id),
+      ["1m", ["2"], "2"],
+    ),
+  ),
 );
 </script>
 
@@ -41,13 +41,15 @@ const meals: Ref<[Notice, Signature[], Repo][] | []> = asyncComputed(
   <div>
     <button @click="ids = []">Clear All</button>
     <!-- TODO scroll to btm, or use css to upside down? -->
-    <Meal
-      v-for="(meal, i) in meals"
-      :repo="meal[2]"
-      :key="i"
-      :notice="meal[0]"
-      :signs="meal[1]"
-      @close="ids.splice(i, 1)"
-    />
+    <div v-for="(meal, i) in meals" :key="i">
+      {{ meal }}
+      <Meal
+        v-if="meal != null"
+        :notice="meal[0]"
+        :signs="meal[1]"
+        :repo="meal[2]"
+        @close="ids.splice(i, 1)"
+      />
+    </div>
   </div>
 </template>
