@@ -9,10 +9,17 @@ interface Notice {
   heading: string;
   body: string;
 }
+// TODO these types are used anywhere, I should refactor
+enum Repo {
+  Fresh = "Fresh",
+  Unwelcomed = "Unwelcomed",
+  Fridge = "Fridge",
+  Junk = "Junk",
+}
 type Signature = string;
 
 const ids: Ref<string[]> = useStorage("mealIds", []);
-async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
+async function getS(ids: string[]): Promise<[Notice, Signature[], Repo][]> {
   return Promise.all(
     ids.map(
       async (id) =>
@@ -23,7 +30,7 @@ async function getS(ids: string[]): Promise<[Notice, Signature[]][]> {
   );
 }
 
-const meals: Ref<[Notice, Signature[]][] | []> = asyncComputed(
+const meals: Ref<[Notice, Signature[], Repo][] | []> = asyncComputed(
   // Should resolve one by one. Don't need to wait till all settle. Or should use cachedValues
   async () => await getS(ids.value),
   [],
@@ -36,6 +43,7 @@ const meals: Ref<[Notice, Signature[]][] | []> = asyncComputed(
     <!-- TODO scroll to btm, or use css to upside down? -->
     <Meal
       v-for="(meal, i) in meals"
+      :repo="meal[2]"
       :key="i"
       :notice="meal[0]"
       :signs="meal[1]"

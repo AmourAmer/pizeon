@@ -6,10 +6,17 @@ interface Notice {
   body: string;
 }
 type Signature = string;
+enum Repo {
+  Fresh = "Fresh",
+  Unwelcomed = "Unwelcomed",
+  Fridge = "Fridge",
+  Junk = "Junk",
+}
 
 const props = defineProps<{
   notice: Notice;
   signs: Signature[];
+  repo: Repo;
 }>();
 defineEmits<{
   (e: "close"): void;

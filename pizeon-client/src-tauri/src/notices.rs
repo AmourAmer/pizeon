@@ -21,7 +21,7 @@ pub enum Repo {
 }
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-pub fn get_notice(id: &str) -> (Notice, Vec<String>) {
+pub fn get_notice(id: &str) -> (Notice, Vec<String>, Repo) {
     if id == "1" {
         (
             Notice {
@@ -30,6 +30,7 @@ pub fn get_notice(id: &str) -> (Notice, Vec<String>) {
                 date: Utc::now().timestamp(),
             },
             vec![String::from("fake sign")],
+            Repo::Fresh,
         )
     } else {
         (
@@ -39,6 +40,7 @@ pub fn get_notice(id: &str) -> (Notice, Vec<String>) {
                 date: (Utc::now() - Duration::days(1)).timestamp(),
             },
             vec![String::from("shitty sign"), String::from("more signs")],
+            Repo::Junk,
         )
     }
 }
