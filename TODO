@@ -4,7 +4,7 @@
   - calendar
 
 客户端后端:
-
+  - move to another repo(update frontend)
 
 客户端api:
 
@@ -16,3 +16,18 @@
 
 
 服务端后端:
+
+
+---
+
+Key stroke to select tab
+add to calendar
+publish and manage notices
+db
+filter
+web api
+account
+responses, pending msgs
+signature verify
+
+avatar?
