@@ -48,7 +48,7 @@ const abstracts: Ref<Abstract[] | null> = computedAsync(
       v-for="(abstract, i) in abstracts"
       :key="i"
       v-bind="abstract"
-      @click="addId(bill[i])"
+      @check="addId(bill[i])"
     />
   </div>
 </template>

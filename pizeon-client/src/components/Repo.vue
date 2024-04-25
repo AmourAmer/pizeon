@@ -12,15 +12,16 @@ enum Repo {
 const props = defineProps<{
   type: Repo;
 }>();
-const bill: Ref<string[] | null> = computedAsync(
+// TODO Maybe should make Repos a frontend thing? At least should update when data change
+const bill: Ref<string[]> = computedAsync(
   async () =>
     await invoke("get_bill", {
       repo: props.type,
     }),
-  null,
+  [],
 );
 </script>
 
 <template>
-  <Bill :bill="bill || []" />
+  <Bill :bill="bill" />
 </template>
