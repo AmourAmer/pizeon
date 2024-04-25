@@ -1,22 +1,29 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onKeyStroke } from "@vueuse/core";
+import router from "./router";
+
+const destinations = [
+  [{ name: "bill", params: { type: "Fresh" } }, "Fresh Ingredients"],
+  ["/meals", "Go to Meals"],
+  ["/kitchen", "Go to Kitchen"],
+  [{ name: "bill", params: { type: "Fridge" } }, "Open the Fridge"],
+  [{ name: "bill", params: { type: "Unwelcomed" } }, "Check outdoors"],
+  [{ name: "bill", params: { type: "Junk" } }, "Examine trash can"],
+];
+
+for (let i = 0; i < destinations.length; i++) {
+  onKeyStroke([(i + 1).toString()], () => {
+    router.push(destinations[i][0]);
+  });
+}
+</script>
 
 <template>
   <div class="container">
     <nav>
-      <RouterLink :to="{ name: 'bill', params: { type: 'Fresh' } }"
-        >Fresh Ingredients</RouterLink
-      >
-      <RouterLink to="/meals">Go to Meals</RouterLink>
-      <RouterLink to="/kitchen">Go to Kitchen</RouterLink>
-      <RouterLink :to="{ name: 'bill', params: { type: 'Fridge' } }"
-        >Open the Fridge</RouterLink
-      >
-      <RouterLink :to="{ name: 'bill', params: { type: 'Unwelcomed' } }"
-        >Check outdoors</RouterLink
-      >
-      <RouterLink :to="{ name: 'bill', params: { type: 'Junk' } }"
-        >Examine trash can</RouterLink
-      >
+      <RouterLink v-for="(dest, i) in destinations" :key="i" :to="dest[0]">
+        {{ dest[1] }}({{ i + 1 }})
+      </RouterLink>
     </nav>
     <router-view v-slot="{ Component }">
       <transition>
