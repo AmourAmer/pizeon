@@ -3,6 +3,7 @@ import { createMemoryHistory, createRouter } from "vue-router";
 import Repo from "./components/Repo.vue";
 import Meals from "./components/Meals.vue";
 import Kitchen from "./components/Kitchen.vue";
+import Office from "./components/Office.vue";
 
 const routes = [
   // TODO should redirect / to /meals, just dunno how to do that; or show a greeting page?
@@ -10,6 +11,7 @@ const routes = [
   { path: "/repo/:type", name: "bill", component: Repo, props: true },
   { path: "/meals", component: Meals },
   { path: "/kitchen", component: Kitchen },
+  { path: "/office", component: Office },
 ];
 
 const router = createRouter({

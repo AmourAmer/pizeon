@@ -9,6 +9,7 @@ const destinations = [
   [{ name: "bill", params: { type: "Fridge" } }, "Open the Fridge"],
   [{ name: "bill", params: { type: "Unwelcomed" } }, "Check outdoors"],
   [{ name: "bill", params: { type: "Junk" } }, "Examine trash can"],
+  ["/office", "Go to your Office"],
 ];
 
 for (let i = 0; i < destinations.length; i++) {
