@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { ref, Ref } from "vue";
+import { computed, Ref } from "vue";
 import { asyncComputed, useStorage } from "@vueuse/core";
 import Meal from "./Meal.vue";
 
@@ -40,7 +40,7 @@ async function getNotice(id: string): Promise<Meal> {
   });
 }
 
-const meals: Ref<Ref<Meal>[]> = ref(
+const meals: Ref<Ref<Meal>[]> = computed(() =>
   ids.value.map((id) =>
     asyncComputed(
       // Should use cachedValues
