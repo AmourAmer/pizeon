@@ -13,7 +13,13 @@ const destinations = [
 ];
 
 for (let i = 0; i < destinations.length; i++) {
-  onKeyStroke([(i + 1).toString()], () => {
+  onKeyStroke([(i + 1).toString()], (e) => {
+    if (
+      e.target &&
+      "tagName" in e.target &&
+      (e.target?.tagName === "INPUT" || e.target?.tagName === "TEXTAREA")
+    )
+      return;
     router.push(destinations[i][0]);
   });
 }
