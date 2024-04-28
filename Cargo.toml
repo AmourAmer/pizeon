@@ -2,7 +2,7 @@
 members = ["crates/*"]
 
 resolver = "2"
-exclude = ["ui/backend"]
+exclude = ["pizeon-bubble/src-tauri"]
 
 [workspace.package]
 version = "0.0.0"
