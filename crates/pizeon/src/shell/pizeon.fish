@@ -1,21 +1,21 @@
-set -gx ATUIN_SESSION (pizeon uuid)
-set --erase ATUIN_HISTORY_ID
+set -gx PIZEON_SESSION (pizeon uuid)
+set --erase PIZEON_HISTORY_ID
 
 function _pizeon_preexec --on-event fish_preexec
     if not test -n "$fish_private_mode"
-        set -g ATUIN_HISTORY_ID (pizeon history start -- "$argv[1]")
+        set -g PIZEON_HISTORY_ID (pizeon history start -- "$argv[1]")
     end
 end
 
 function _pizeon_postexec --on-event fish_postexec
     set -l s $status
 
-    if test -n "$ATUIN_HISTORY_ID"
-        ATUIN_LOG=error pizeon history end --exit $s -- $ATUIN_HISTORY_ID &>/dev/null &
+    if test -n "$PIZEON_HISTORY_ID"
+        PIZEON_LOG=error pizeon history end --exit $s -- $PIZEON_HISTORY_ID &>/dev/null &
         disown
     end
 
-    set --erase ATUIN_HISTORY_ID
+    set --erase PIZEON_HISTORY_ID
 end
 
 function _pizeon_search
@@ -35,17 +35,17 @@ function _pizeon_search
     # In fish 3.4 and above we can use `"$(some command)"` to keep multiple lines separate;
     # but to support fish 3.3 we need to use `(some command | string collect)`.
     # https://fishshell.com/docs/current/relnotes.html#id24 (fish 3.4 "Notable improvements and fixes")
-    set -l ATUIN_H (ATUIN_SHELL_FISH=t ATUIN_LOG=error ATUIN_QUERY=(commandline -b) pizeon search --keymap-mode=$keymap_mode $argv -i 3>&1 1>&2 2>&3 | string collect)
+    set -l PIZEON_H (PIZEON_SHELL_FISH=t PIZEON_LOG=error PIZEON_QUERY=(commandline -b) pizeon search --keymap-mode=$keymap_mode $argv -i 3>&1 1>&2 2>&3 | string collect)
 
-    if test -n "$ATUIN_H"
-        if string match --quiet '__pizeon_accept__:*' "$ATUIN_H"
-          set -l ATUIN_HIST (string replace "__pizeon_accept__:" "" -- "$ATUIN_H" | string collect)
-          commandline -r "$ATUIN_HIST"
+    if test -n "$PIZEON_H"
+        if string match --quiet '__pizeon_accept__:*' "$PIZEON_H"
+          set -l PIZEON_HIST (string replace "__pizeon_accept__:" "" -- "$PIZEON_H" | string collect)
+          commandline -r "$PIZEON_HIST"
           commandline -f repaint
           commandline -f execute
           return
         else
-          commandline -r "$ATUIN_H"
+          commandline -r "$PIZEON_H"
         end
     end
 

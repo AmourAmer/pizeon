@@ -1,6 +1,6 @@
 [package]
 name = "pizeon-dotfiles"
-description = "The dotfiles crate for Atuin"
+description = "The dotfiles crate for Pizeon"
 edition = "2021"
 version = "0.2.0"                            # intentionally not the same as the rest
 

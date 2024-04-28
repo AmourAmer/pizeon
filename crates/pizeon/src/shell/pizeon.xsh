@@ -5,29 +5,29 @@ from prompt_toolkit.filters import Condition
 from prompt_toolkit.keys import Keys
 
 
-$ATUIN_SESSION=$(pizeon uuid).rstrip('\n')
+$PIZEON_SESSION=$(pizeon uuid).rstrip('\n')
 
 @events.on_precommand
 def _pizeon_precommand(cmd: str):
     cmd = cmd.rstrip("\n")
-    $ATUIN_HISTORY_ID = $(pizeon history start -- @(cmd)).rstrip("\n")
+    $PIZEON_HISTORY_ID = $(pizeon history start -- @(cmd)).rstrip("\n")
 
 
 @events.on_postcommand
 def _pizeon_postcommand(cmd: str, rtn: int, out, ts):
-    if "ATUIN_HISTORY_ID" not in ${...}:
+    if "PIZEON_HISTORY_ID" not in ${...}:
         return
 
     duration = ts[1] - ts[0]
     # Duration is float representing seconds, but pizeon expects integer of nanoseconds
     nanos = round(duration * 10 ** 9)
-    with ${...}.swap(ATUIN_LOG="error"):
+    with ${...}.swap(PIZEON_LOG="error"):
         # This causes the entire .xonshrc to be re-executed, which is incredibly slow
         # This happens when using a subshell and using output redirection at the same time
         # For more details, see https://github.com/xonsh/xonsh/issues/5224
-        # (pizeon history end --exit @(rtn) -- $ATUIN_HISTORY_ID &) > /dev/null 2>&1
-        pizeon history end --exit @(rtn) --duration @(nanos) -- $ATUIN_HISTORY_ID > /dev/null 2>&1
-    del $ATUIN_HISTORY_ID
+        # (pizeon history end --exit @(rtn) -- $PIZEON_HISTORY_ID &) > /dev/null 2>&1
+        pizeon history end --exit @(rtn) --duration @(nanos) -- $PIZEON_HISTORY_ID > /dev/null 2>&1
+    del $PIZEON_HISTORY_ID
 
 
 def _search(event, extra_args: list[str]):
@@ -35,8 +35,8 @@ def _search(event, extra_args: list[str]):
     cmd = ["pizeon", "search", "--interactive", *extra_args]
     # We need to explicitly pass in xonsh env, in case user has set XDG_HOME or something else that matters
     env = ${...}.detype()
-    env["ATUIN_SHELL_XONSH"] = "t"
-    env["ATUIN_QUERY"] = buffer.text
+    env["PIZEON_SHELL_XONSH"] = "t"
+    env["PIZEON_QUERY"] = buffer.text
 
     p = subprocess.run(cmd, stderr=subprocess.PIPE, encoding="utf-8", env=env)
     result = p.stderr.rstrip("\n")
@@ -56,12 +56,12 @@ def _search(event, extra_args: list[str]):
 
 @events.on_ptk_create
 def _custom_keybindings(bindings, **kw):
-    if _ATUIN_BIND_CTRL_R:
+    if _PIZEON_BIND_CTRL_R:
         @bindings.add(Keys.ControlR)
         def r_search(event):
             _search(event, extra_args=[])
 
-    if _ATUIN_BIND_UP_ARROW:
+    if _PIZEON_BIND_UP_ARROW:
         @Condition
         def should_search():
             buffer = get_app().current_buffer

@@ -1,18 +1,18 @@
-#![warn(clippy::pedantic, clippy::nursery)]
-#![allow(clippy::use_self, clippy::missing_const_for_fn)] // not 100% reliable
-
+// #![warn(clippy::pedantic, clippy::nursery)]
+// #![allow(clippy::use_self, clippy::missing_const_for_fn)] // not 100% reliable
+//
 use clap::Parser;
 use eyre::Result;
 
-use command::AtuinCmd;
+use command::PizeonCmd;
 
 mod command;
-
-#[cfg(feature = "sync")]
-mod sync;
-
+//
+// #[cfg(feature = "sync")]
+// mod sync;
+//
 const VERSION: &str = env!("CARGO_PKG_VERSION");
-const SHA: &str = env!("GIT_HASH");
+// const SHA: &str = env!("GIT_HASH");
 
 static HELP_TEMPLATE: &str = "\
 {before-help}{name} {version}
@@ -24,24 +24,24 @@ static HELP_TEMPLATE: &str = "\
 
 {all-args}{after-help}";
 
-/// Magical shell history
+/// Free notifier
 #[derive(Parser)]
 #[command(
-    author = "Ellie Huxtable <e@elm.sh>",
+    author = "TODO TODO@TODO",
     version = VERSION,
     help_template(HELP_TEMPLATE),
 )]
-struct Atuin {
+struct Pizeon {
     #[command(subcommand)]
-    pizeon: AtuinCmd,
+    pizeon: PizeonCmd,
 }
 
-impl Atuin {
+impl Pizeon {
     fn run(self) -> Result<()> {
         self.pizeon.run()
     }
 }
 
 fn main() -> Result<()> {
-    Atuin::parse().run()
+    Pizeon::parse().run()
 }

@@ -3,39 +3,39 @@ use eyre::Result;
 
 #[cfg(not(windows))]
 use rustix::{fs::Mode, process::umask};
-
-#[cfg(feature = "client")]
-mod client;
-
-#[cfg(feature = "server")]
-mod server;
-
-mod contributors;
-
-mod gen_completions;
-
+//
+// #[cfg(feature = "client")]
+// mod client;
+//
+// #[cfg(feature = "server")]
+// mod server;
+//
+// mod contributors;
+//
+// mod gen_completions;
+//
 #[derive(Subcommand)]
 #[command(infer_subcommands = true)]
-pub enum AtuinCmd {
-    #[cfg(feature = "client")]
-    #[command(flatten)]
-    Client(client::Cmd),
-
-    /// Start an pizeon server
-    #[cfg(feature = "server")]
-    #[command(subcommand)]
-    Server(server::Cmd),
-
-    /// Generate a UUID
-    Uuid,
-
-    Contributors,
-
-    /// Generate shell completions
-    GenCompletions(gen_completions::Cmd),
+pub enum PizeonCmd {
+    // #[cfg(feature = "client")]
+    // #[command(flatten)]
+    // Client(client::Cmd),
+    //
+    // /// Start an pizeon server
+    // #[cfg(feature = "server")]
+    // #[command(subcommand)]
+    // Server(server::Cmd),
+    //
+    // /// Generate a UUID
+    // Uuid,
+    //
+    // Contributors,
+    //
+    // /// Generate shell completions
+    // GenCompletions(gen_completions::Cmd),
 }
 
-impl AtuinCmd {
+impl PizeonCmd {
     pub fn run(self) -> Result<()> {
         #[cfg(not(windows))]
         {
@@ -45,21 +45,22 @@ impl AtuinCmd {
             umask(mode);
         }
 
-        match self {
-            #[cfg(feature = "client")]
-            Self::Client(client) => client.run(),
-
-            #[cfg(feature = "server")]
-            Self::Server(server) => server.run(),
-            Self::Contributors => {
-                contributors::run();
-                Ok(())
-            }
-            Self::Uuid => {
-                println!("{}", pizeon_common::utils::uuid_v7().as_simple());
-                Ok(())
-            }
-            Self::GenCompletions(gen_completions) => gen_completions.run(),
-        }
+        // match self {
+        //     #[cfg(feature = "client")]
+        //     Self::Client(client) => client.run(),
+        //
+        //     #[cfg(feature = "server")]
+        //     Self::Server(server) => server.run(),
+        //     Self::Contributors => {
+        //         contributors::run();
+        //         Ok(())
+        //     }
+        //     Self::Uuid => {
+        //         println!("{}", pizeon_common::utils::uuid_v7().as_simple());
+        //         Ok(())
+        //     }
+        //     Self::GenCompletions(gen_completions) => gen_completions.run(),
+        // }
+        Ok(()) // TODO remove this
     }
 }

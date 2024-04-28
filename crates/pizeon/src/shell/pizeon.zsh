@@ -11,11 +11,11 @@ autoload -U add-zsh-hook
 
 zmodload zsh/datetime 2>/dev/null
 
-# If zsh-autosuggestions is installed, configure it to use Atuin's search. If
+# If zsh-autosuggestions is installed, configure it to use Pizeon's search. If
 # you'd like to override this, then add your config after the $(pizeon init zsh)
 # in your .zshrc
 _zsh_autosuggest_strategy_pizeon() {
-    suggestion=$(ATUIN_QUERY="$1" pizeon search --cmd-only --limit 1 --search-mode prefix)
+    suggestion=$(PIZEON_QUERY="$1" pizeon search --cmd-only --limit 1 --search-mode prefix)
 }
 
 if [ -n "${ZSH_AUTOSUGGEST_STRATEGY:-}" ]; then
@@ -24,28 +24,28 @@ else
     ZSH_AUTOSUGGEST_STRATEGY=("pizeon")
 fi
 
-export ATUIN_SESSION=$(pizeon uuid)
-ATUIN_HISTORY_ID=""
+export PIZEON_SESSION=$(pizeon uuid)
+PIZEON_HISTORY_ID=""
 
 _pizeon_preexec() {
     local id
     id=$(pizeon history start -- "$1")
-    export ATUIN_HISTORY_ID="$id"
+    export PIZEON_HISTORY_ID="$id"
     __pizeon_preexec_time=${EPOCHREALTIME-}
 }
 
 _pizeon_precmd() {
     local EXIT="$?" __pizeon_precmd_time=${EPOCHREALTIME-}
 
-    [[ -z "${ATUIN_HISTORY_ID:-}" ]] && return
+    [[ -z "${PIZEON_HISTORY_ID:-}" ]] && return
 
     local duration=""
     if [[ -n $__pizeon_preexec_time && -n $__pizeon_precmd_time ]]; then
         printf -v duration %.0f $(((__pizeon_precmd_time - __pizeon_preexec_time) * 1000000000))
     fi
 
-    (ATUIN_LOG=error pizeon history end --exit $EXIT ${duration:+--duration=$duration} -- $ATUIN_HISTORY_ID &) >/dev/null 2>&1
-    export ATUIN_HISTORY_ID=""
+    (PIZEON_LOG=error pizeon history end --exit $EXIT ${duration:+--duration=$duration} -- $PIZEON_HISTORY_ID &) >/dev/null 2>&1
+    export PIZEON_HISTORY_ID=""
 }
 
 _pizeon_search() {
@@ -56,7 +56,7 @@ _pizeon_search() {
     # TODO: not this
     local output
     # shellcheck disable=SC2048
-    output=$(ATUIN_SHELL_ZSH=t ATUIN_LOG=error ATUIN_QUERY=$BUFFER pizeon search $* -i 3>&1 1>&2 2>&3)
+    output=$(PIZEON_SHELL_ZSH=t PIZEON_LOG=error PIZEON_QUERY=$BUFFER pizeon search $* -i 3>&1 1>&2 2>&3)
 
     zle reset-prompt
 

@@ -1,8 +1,8 @@
 [package]
 name = "pizeon"
 edition = "2021"
-description = "pizeon - magical shell history"
-readme = "./README.md"
+description = "pizeon - free notifier"
+# readme = "./README.md"
 
 rust-version = { workspace = true }
 version = { workspace = true }
@@ -16,12 +16,12 @@ pkg-url = "{ repo }/releases/download/v{ version }/{ name }-v{ version  }-{ targ
 bin-dir = "{ name }-v{ version }-{ target }/{ bin }{ binary-ext }"
 pkg-fmt = "tgz"
 
-[package.metadata.deb]
-maintainer = "Ellie Huxtable <ellie@elliehuxtable.com>"
-copyright = "2021, Ellie Huxtable <ellie@elliehuxtable.com>"
-license-file = ["LICENSE"]
-depends = "$auto"
-section = "utility"
+# [package.metadata.deb]
+# maintainer = "Ellie Huxtable <ellie@elliehuxtable.com>"
+# copyright = "2021, Ellie Huxtable <ellie@elliehuxtable.com>"
+# license-file = ["LICENSE"]
+# depends = "$auto"
+# section = "utility"
 
 [package.metadata.rpm]
 package = "pizeon"

@@ -44,7 +44,7 @@
 ## possible values: global, host, session, directory
 # filter_mode = "global"
 
-## With workspace filtering enabled, Atuin will filter for commands executed
+## With workspace filtering enabled, Pizeon will filter for commands executed
 ## in any directory within a git repository tree (default: false)
 # workspaces = false
 
@@ -122,7 +122,7 @@
 ## by more than the first few lines.
 # max_preview_height = 4
 
-## Configure whether or not to show the help row, which includes the current Atuin
+## Configure whether or not to show the help row, which includes the current Pizeon
 ## version (and whether an update is available), a keymap hint, and the total
 ## amount of commands in your history.
 # show_help = true
@@ -138,15 +138,15 @@
 ## 5. Stripe live/test keys
 # secrets_filter = true
 
-## Defaults to true. If enabled, upon hitting enter Atuin will immediately execute the command. Press tab to return to the shell and edit.
+## Defaults to true. If enabled, upon hitting enter Pizeon will immediately execute the command. Press tab to return to the shell and edit.
 # This applies for new installs. Old installs will keep the old behaviour unless configured otherwise.
 enter_accept = true
 
 ## Defaults to "emacs".  This specifies the keymap on the startup of `pizeon
-## search`.  If this is set to "auto", the startup keymap mode in the Atuin
+## search`.  If this is set to "auto", the startup keymap mode in the Pizeon
 ## search is automatically selected based on the shell's keymap where the
 ## keybinding is defined.  If this is set to "emacs", "vim-insert", or
-## "vim-normal", the startup keymap mode in the Atuin search is forced to be
+## "vim-normal", the startup keymap mode in the Pizeon search is forced to be
 ## the specified one.
 # keymap_mode = "auto"
 
@@ -161,7 +161,7 @@ enter_accept = true
 ## Timeout (in seconds) for acquiring a local database connection (sqlite)
 # local_timeout = 5
 
-## Set this to true and Atuin will minimize motion in the UI - timers will not update live, etc.
+## Set this to true and Pizeon will minimize motion in the UI - timers will not update live, etc.
 ## Alternatively, set env NO_MOTION=true
 # prefers_reduced_motion = false
 

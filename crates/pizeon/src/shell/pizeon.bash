@@ -12,21 +12,21 @@ else # (include guard) beginning of main content
 #------------------------------------------------------------------------------
 __pizeon_initialized=true
 
-ATUIN_SESSION=$(pizeon uuid)
-ATUIN_STTY=$(stty -g)
-export ATUIN_SESSION
-ATUIN_HISTORY_ID=""
+PIZEON_SESSION=$(pizeon uuid)
+PIZEON_STTY=$(stty -g)
+export PIZEON_SESSION
+PIZEON_HISTORY_ID=""
 
-export ATUIN_PREEXEC_BACKEND=$SHLVL:none
+export PIZEON_PREEXEC_BACKEND=$SHLVL:none
 __pizeon_update_preexec_backend() {
     if [[ ${BLE_ATTACHED-} ]]; then
-        ATUIN_PREEXEC_BACKEND=$SHLVL:blesh-${BLE_VERSION-}
+        PIZEON_PREEXEC_BACKEND=$SHLVL:blesh-${BLE_VERSION-}
     elif [[ ${bash_preexec_imported-} ]]; then
-        ATUIN_PREEXEC_BACKEND=$SHLVL:bash-preexec
+        PIZEON_PREEXEC_BACKEND=$SHLVL:bash-preexec
     elif [[ ${__bp_imported-} ]]; then
-        ATUIN_PREEXEC_BACKEND="$SHLVL:bash-preexec (old)"
+        PIZEON_PREEXEC_BACKEND="$SHLVL:bash-preexec (old)"
     else
-        ATUIN_PREEXEC_BACKEND=$SHLVL:unknown
+        PIZEON_PREEXEC_BACKEND=$SHLVL:unknown
     fi
 }
 
@@ -36,33 +36,33 @@ __pizeon_preexec() {
         # In older versions of bash-preexec, the preexec hook may be called
         # even for the commands run by keybindings.  There is no general and
         # robust way to detect the command for keybindings, but at least we
-        # want to exclude Atuin's keybindings.  When the preexec hook is called
+        # want to exclude Pizeon's keybindings.  When the preexec hook is called
         # for a keybinding, the preexec hook for the user command will not
-        # fire, so we instead set a fake ATUIN_HISTORY_ID here to notify
+        # fire, so we instead set a fake PIZEON_HISTORY_ID here to notify
         # __pizeon_precmd of this failure.
         if [[ $BASH_COMMAND == '__pizeon_history'* && $BASH_COMMAND != "$1" ]]; then
-            ATUIN_HISTORY_ID=__bash_preexec_failure__
+            PIZEON_HISTORY_ID=__bash_preexec_failure__
             return 0
         fi
     fi
 
-    # Note: We update ATUIN_PREEXEC_BACKEND on every preexec because blesh's
+    # Note: We update PIZEON_PREEXEC_BACKEND on every preexec because blesh's
     # attaching state can dynamically change.
     __pizeon_update_preexec_backend
 
     local id
     id=$(pizeon history start -- "$1")
-    export ATUIN_HISTORY_ID=$id
+    export PIZEON_HISTORY_ID=$id
     __pizeon_preexec_time=${EPOCHREALTIME-}
 }
 
 __pizeon_precmd() {
     local EXIT=$? __pizeon_precmd_time=${EPOCHREALTIME-}
 
-    [[ ! $ATUIN_HISTORY_ID ]] && return
+    [[ ! $PIZEON_HISTORY_ID ]] && return
 
     # If the previous preexec hook failed, we manually call __pizeon_preexec
-    if [[ $ATUIN_HISTORY_ID == __bash_preexec_failure__ ]]; then
+    if [[ $PIZEON_HISTORY_ID == __bash_preexec_failure__ ]]; then
         # This is the command extraction code taken from bash-preexec
         local previous_command
         previous_command=$(
@@ -77,7 +77,7 @@ __pizeon_precmd() {
     if [[ ${BLE_ATTACHED-} && ${_ble_exec_time_ata-} ]]; then
         # With ble.sh, we utilize the shell variable `_ble_exec_time_ata`
         # recorded by ble.sh.  It is more accurate than the measurements by
-        # Atuin, which includes the spawn cost of Atuin.  ble.sh uses the
+        # Pizeon, which includes the spawn cost of Pizeon.  ble.sh uses the
         # special shell variable `EPOCHREALTIME` in bash >= 5.0 with the
         # microsecond resolution, or the builtin `time` in bash < 5.0 with the
         # millisecond resolution.
@@ -100,8 +100,8 @@ __pizeon_precmd() {
         fi
     fi
 
-    (ATUIN_LOG=error pizeon history end --exit "$EXIT" ${duration:+"--duration=$duration"} -- "$ATUIN_HISTORY_ID" &) >/dev/null 2>&1
-    export ATUIN_HISTORY_ID=""
+    (PIZEON_LOG=error pizeon history end --exit "$EXIT" ${duration:+"--duration=$duration"} -- "$PIZEON_HISTORY_ID" &) >/dev/null 2>&1
+    export PIZEON_HISTORY_ID=""
 }
 
 __pizeon_set_ret_value() {
@@ -193,7 +193,7 @@ __pizeon_accept_line() {
         # with
         local __pizeon_stty_backup
         __pizeon_stty_backup=$(stty -g)
-        stty "$ATUIN_STTY"
+        stty "$PIZEON_STTY"
 
         # Execute the command.  Note: We need to record $? and $_ after the
         # user command within the same call of "eval" because $_ is otherwise
@@ -220,7 +220,7 @@ __pizeon_accept_line() {
 
 __pizeon_history() {
     # Default action of the up key: When this function is called with the first
-    # argument `--shell-up-key-binding`, we perform Atuin's history search only
+    # argument `--shell-up-key-binding`, we perform Pizeon's history search only
     # when the up key is supposed to cause the history movement in the original
     # binding.  We do this only for ble.sh because the up key always invokes
     # the history movement in the plain Bash.
@@ -246,7 +246,7 @@ __pizeon_history() {
         local READLINE_LINE="" READLINE_POINT=0
 
     local __pizeon_output
-    __pizeon_output=$(ATUIN_SHELL_BASH=t ATUIN_LOG=error ATUIN_QUERY="$READLINE_LINE" pizeon search "$@" -i 3>&1 1>&2 2>&3)
+    __pizeon_output=$(PIZEON_SHELL_BASH=t PIZEON_LOG=error PIZEON_QUERY="$READLINE_LINE" pizeon search "$@" -i 3>&1 1>&2 2>&3)
 
     # We do nothing when the search is canceled.
     [[ $__pizeon_output ]] || return 0
@@ -284,7 +284,7 @@ if [[ ${BLE_VERSION-} ]] && ((_ble_version >= 400)); then
     #
     function ble/complete/auto-complete/source:pizeon-history {
         local suggestion
-        suggestion=$(ATUIN_QUERY="$_ble_edit_str" pizeon search --cmd-only --limit 1 --search-mode prefix)
+        suggestion=$(PIZEON_QUERY="$_ble_edit_str" pizeon search --cmd-only --limit 1 --search-mode prefix)
         [[ $suggestion == "$_ble_edit_str"?* ]] || return 1
         ble/complete/auto-complete/enter h 0 "${suggestion:${#_ble_edit_str}}" '' "$suggestion"
     }
