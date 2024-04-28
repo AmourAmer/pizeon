@@ -1,5 +1,5 @@
 // #![forbid(unsafe_code)]
-// 
+//
 // /// Defines a new UUID type wrapper
 // macro_rules! new_uuid {
 //     ($name:ident) => {
@@ -17,7 +17,7 @@
 //         )]
 //         #[serde(transparent)]
 //         pub struct $name(pub Uuid);
-// 
+//
 //         impl<DB: sqlx::Database> sqlx::Type<DB> for $name
 //         where
 //             Uuid: sqlx::Type<DB>,
@@ -26,7 +26,7 @@
 //                 Uuid::type_info()
 //             }
 //         }
-// 
+//
 //         impl<'r, DB: sqlx::Database> sqlx::Decode<'r, DB> for $name
 //         where
 //             Uuid: sqlx::Decode<'r, DB>,
@@ -37,7 +37,7 @@
 //                 Uuid::decode(value).map(Self)
 //             }
 //         }
-// 
+//
 //         impl<'q, DB: sqlx::Database> sqlx::Encode<'q, DB> for $name
 //         where
 //             Uuid: sqlx::Encode<'q, DB>,
@@ -51,8 +51,8 @@
 //         }
 //     };
 // }
-// 
+//
 // pub mod api;
 // pub mod record;
 // pub mod shell;
-// pub mod utils;
+pub mod utils;

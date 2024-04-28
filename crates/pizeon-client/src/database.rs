@@ -6,7 +6,7 @@ use std::{
     time::Duration,
 };
 
-// use async_trait::async_trait;
+use async_trait::async_trait;
 // use pizeon_common::utils;
 use fs_err as fs;
 // use itertools::Itertools;
@@ -71,8 +71,8 @@ use sqlx::{
 //         host_id: host_id.0.as_simple().to_string(),
 //     }
 // }
-//
-// #[async_trait]
+
+#[async_trait]
 pub trait Database: Send + Sync + 'static {
     // async fn save(&self, h: &History) -> Result<()>;
     // async fn save_bulk(&self, h: &[History]) -> Result<()>;
@@ -215,543 +215,543 @@ impl Sqlite {
     //             .into()
     //     }
 }
-//
-// #[async_trait]
-// impl Database for Sqlite {
-//     async fn save(&self, h: &History) -> Result<()> {
-//         debug!("saving history to sqlite");
-//         let mut tx = self.pool.begin().await?;
-//         Self::save_raw(&mut tx, h).await?;
-//         tx.commit().await?;
-//
-//         Ok(())
-//     }
-//
-//     async fn save_bulk(&self, h: &[History]) -> Result<()> {
-//         debug!("saving history to sqlite");
-//
-//         let mut tx = self.pool.begin().await?;
-//
-//         for i in h {
-//             Self::save_raw(&mut tx, i).await?;
-//         }
-//
-//         tx.commit().await?;
-//
-//         Ok(())
-//     }
-//
-//     async fn load(&self, id: &str) -> Result<Option<History>> {
-//         debug!("loading history item {}", id);
-//
-//         let res = sqlx::query("select * from history where id = ?1")
-//             .bind(id)
-//             .map(Self::query_history)
-//             .fetch_optional(&self.pool)
-//             .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn update(&self, h: &History) -> Result<()> {
-//         debug!("updating sqlite history");
-//
-//         sqlx::query(
-//             "update history
-//                 set timestamp = ?2, duration = ?3, exit = ?4, command = ?5, cwd = ?6, session = ?7, hostname = ?8, deleted_at = ?9
-//                 where id = ?1",
-//         )
-//         .bind(h.id.0.as_str())
-//         .bind(h.timestamp.unix_timestamp_nanos() as i64)
-//         .bind(h.duration)
-//         .bind(h.exit)
-//         .bind(h.command.as_str())
-//         .bind(h.cwd.as_str())
-//         .bind(h.session.as_str())
-//         .bind(h.hostname.as_str())
-//         .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
-//         .execute(&self.pool)
-//         .await?;
-//
-//         Ok(())
-//     }
-//
-//     // make a unique list, that only shows the *newest* version of things
-//     async fn list(
-//         &self,
-//         filters: &[FilterMode],
-//         context: &Context,
-//         max: Option<usize>,
-//         unique: bool,
-//         include_deleted: bool,
-//     ) -> Result<Vec<History>> {
-//         debug!("listing history");
-//
-//         let mut query = SqlBuilder::select_from(SqlName::new("history").alias("h").baquoted());
-//         query.field("*").order_desc("timestamp");
-//         if !include_deleted {
-//             query.and_where_is_null("deleted_at");
-//         }
-//
-//         let git_root = if let Some(git_root) = context.git_root.clone() {
-//             git_root.to_str().unwrap_or("/").to_string()
-//         } else {
-//             context.cwd.clone()
-//         };
-//
-//         for filter in filters {
-//             match filter {
-//                 FilterMode::Global => &mut query,
-//                 FilterMode::Host => query.and_where_eq("hostname", quote(&context.hostname)),
-//                 FilterMode::Session => query.and_where_eq("session", quote(&context.session)),
-//                 FilterMode::Directory => query.and_where_eq("cwd", quote(&context.cwd)),
-//                 FilterMode::Workspace => query.and_where_like_left("cwd", &git_root),
-//             };
-//         }
-//
-//         if unique {
-//             query.group_by("command").having("max(timestamp)");
-//         }
-//
-//         if let Some(max) = max {
-//             query.limit(max);
-//         }
-//
-//         let query = query.sql().expect("bug in list query. please report");
-//
-//         let res = sqlx::query(&query)
-//             .map(Self::query_history)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn range(&self, from: OffsetDateTime, to: OffsetDateTime) -> Result<Vec<History>> {
-//         debug!("listing history from {:?} to {:?}", from, to);
-//
-//         let res = sqlx::query(
-//             "select * from history where timestamp >= ?1 and timestamp <= ?2 order by timestamp asc",
-//         )
-//         .bind(from.unix_timestamp_nanos() as i64)
-//         .bind(to.unix_timestamp_nanos() as i64)
-//             .map(Self::query_history)
-//         .fetch_all(&self.pool)
-//         .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn last(&self) -> Result<Option<History>> {
-//         let res = sqlx::query(
-//             "select * from history where duration >= 0 order by timestamp desc limit 1",
-//         )
-//         .map(Self::query_history)
-//         .fetch_optional(&self.pool)
-//         .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn before(&self, timestamp: OffsetDateTime, count: i64) -> Result<Vec<History>> {
-//         let res = sqlx::query(
-//             "select * from history where timestamp < ?1 order by timestamp desc limit ?2",
-//         )
-//         .bind(timestamp.unix_timestamp_nanos() as i64)
-//         .bind(count)
-//         .map(Self::query_history)
-//         .fetch_all(&self.pool)
-//         .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn deleted(&self) -> Result<Vec<History>> {
-//         let res = sqlx::query("select * from history where deleted_at is not null")
-//             .map(Self::query_history)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn history_count(&self, include_deleted: bool) -> Result<i64> {
-//         let query = if include_deleted {
-//             "select count(1) from history"
-//         } else {
-//             "select count(1) from history where deleted_at is null"
-//         };
-//
-//         let res: (i64,) = sqlx::query_as(query).fetch_one(&self.pool).await?;
-//         Ok(res.0)
-//     }
-//
-//     async fn search(
-//         &self,
-//         search_mode: SearchMode,
-//         filter: FilterMode,
-//         context: &Context,
-//         query: &str,
-//         filter_options: OptFilters,
-//     ) -> Result<Vec<History>> {
-//         let mut sql = SqlBuilder::select_from("history");
-//
-//         sql.group_by("command").having("max(timestamp)");
-//
-//         if let Some(limit) = filter_options.limit {
-//             sql.limit(limit);
-//         }
-//
-//         if let Some(offset) = filter_options.offset {
-//             sql.offset(offset);
-//         }
-//
-//         if filter_options.reverse {
-//             sql.order_asc("timestamp");
-//         } else {
-//             sql.order_desc("timestamp");
-//         }
-//
-//         let git_root = if let Some(git_root) = context.git_root.clone() {
-//             git_root.to_str().unwrap_or("/").to_string()
-//         } else {
-//             context.cwd.clone()
-//         };
-//
-//         match filter {
-//             FilterMode::Global => &mut sql,
-//             FilterMode::Host => {
-//                 sql.and_where_eq("lower(hostname)", quote(context.hostname.to_lowercase()))
-//             }
-//             FilterMode::Session => sql.and_where_eq("session", quote(&context.session)),
-//             FilterMode::Directory => sql.and_where_eq("cwd", quote(&context.cwd)),
-//             FilterMode::Workspace => sql.and_where_like_left("cwd", git_root),
-//         };
-//
-//         let orig_query = query;
-//
-//         let mut regexes = Vec::new();
-//         match search_mode {
-//             SearchMode::Prefix => sql.and_where_like_left("command", query.replace('*', "%")),
-//             _ => {
-//                 let mut is_or = false;
-//                 let mut regex = None;
-//                 for part in query.split_inclusive(' ') {
-//                     let query_part: Cow<str> = match (&mut regex, part.starts_with("r/")) {
-//                         (None, false) => {
-//                             if part.trim_end().is_empty() {
-//                                 continue;
-//                             }
-//                             Cow::Owned(part.trim_end().replace('*', "%")) // allow wildcard char
-//                         }
-//                         (None, true) => {
-//                             if part[2..].trim_end().ends_with('/') {
-//                                 let end_pos = part.trim_end().len() - 1;
-//                                 regexes.push(String::from(&part[2..end_pos]));
-//                             } else {
-//                                 regex = Some(String::from(&part[2..]));
-//                             }
-//                             continue;
-//                         }
-//                         (Some(r), _) => {
-//                             if part.trim_end().ends_with('/') {
-//                                 let end_pos = part.trim_end().len() - 1;
-//                                 r.push_str(&part.trim_end()[..end_pos]);
-//                                 regexes.push(regex.take().unwrap());
-//                             } else {
-//                                 r.push_str(part);
-//                             }
-//                             continue;
-//                         }
-//                     };
-//
-//                     // TODO smart case mode could be made configurable like in fzf
-//                     let (is_glob, glob) = if query_part.contains(char::is_uppercase) {
-//                         (true, "*")
-//                     } else {
-//                         (false, "%")
-//                     };
-//
-//                     let (is_inverse, query_part) = match query_part.strip_prefix('!') {
-//                         Some(stripped) => (true, Cow::Borrowed(stripped)),
-//                         None => (false, query_part),
-//                     };
-//
-//                     #[allow(clippy::if_same_then_else)]
-//                     let param = if query_part == "|" {
-//                         if !is_or {
-//                             is_or = true;
-//                             continue;
-//                         } else {
-//                             format!("{glob}|{glob}")
-//                         }
-//                     } else if let Some(term) = query_part.strip_prefix('^') {
-//                         format!("{term}{glob}")
-//                     } else if let Some(term) = query_part.strip_suffix('$') {
-//                         format!("{glob}{term}")
-//                     } else if let Some(term) = query_part.strip_prefix('\'') {
-//                         format!("{glob}{term}{glob}")
-//                     } else if is_inverse {
-//                         format!("{glob}{query_part}{glob}")
-//                     } else if search_mode == SearchMode::FullText {
-//                         format!("{glob}{query_part}{glob}")
-//                     } else {
-//                         query_part.split("").join(glob)
-//                     };
-//
-//                     sql.fuzzy_condition("command", param, is_inverse, is_glob, is_or);
-//                     is_or = false;
-//                 }
-//                 if let Some(r) = regex {
-//                     regexes.push(r);
-//                 }
-//
-//                 &mut sql
-//             }
-//         };
-//
-//         for regex in regexes {
-//             sql.and_where("command regexp ?".bind(&regex));
-//         }
-//
-//         filter_options
-//             .exit
-//             .map(|exit| sql.and_where_eq("exit", exit));
-//
-//         filter_options
-//             .exclude_exit
-//             .map(|exclude_exit| sql.and_where_ne("exit", exclude_exit));
-//
-//         filter_options
-//             .cwd
-//             .map(|cwd| sql.and_where_eq("cwd", quote(cwd)));
-//
-//         filter_options
-//             .exclude_cwd
-//             .map(|exclude_cwd| sql.and_where_ne("cwd", quote(exclude_cwd)));
-//
-//         filter_options.before.map(|before| {
-//             interim::parse_date_string(
-//                 before.as_str(),
-//                 OffsetDateTime::now_utc(),
-//                 interim::Dialect::Uk,
-//             )
-//             .map(|before| {
-//                 sql.and_where_lt("timestamp", quote(before.unix_timestamp_nanos() as i64))
-//             })
-//         });
-//
-//         filter_options.after.map(|after| {
-//             interim::parse_date_string(
-//                 after.as_str(),
-//                 OffsetDateTime::now_utc(),
-//                 interim::Dialect::Uk,
-//             )
-//             .map(|after| sql.and_where_gt("timestamp", quote(after.unix_timestamp_nanos() as i64)))
-//         });
-//
-//         sql.and_where_is_null("deleted_at");
-//
-//         let query = sql.sql().expect("bug in search query. please report");
-//
-//         let res = sqlx::query(&query)
-//             .map(Self::query_history)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         Ok(ordering::reorder_fuzzy(search_mode, orig_query, res))
-//     }
-//
-//     async fn query_history(&self, query: &str) -> Result<Vec<History>> {
-//         let res = sqlx::query(query)
-//             .map(Self::query_history)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         Ok(res)
-//     }
-//
-//     async fn all_with_count(&self) -> Result<Vec<(History, i32)>> {
-//         debug!("listing history");
-//
-//         let mut query = SqlBuilder::select_from(SqlName::new("history").alias("h").baquoted());
-//
-//         query
-//             .fields(&[
-//                 "id",
-//                 "max(timestamp) as timestamp",
-//                 "max(duration) as duration",
-//                 "exit",
-//                 "command",
-//                 "deleted_at",
-//                 "group_concat(cwd, ':') as cwd",
-//                 "group_concat(session) as session",
-//                 "group_concat(hostname, ',') as hostname",
-//                 "count(*) as count",
-//             ])
-//             .group_by("command")
-//             .group_by("exit")
-//             .and_where("deleted_at is null")
-//             .order_desc("timestamp");
-//
-//         let query = query.sql().expect("bug in list query. please report");
-//
-//         let res = sqlx::query(&query)
-//             .map(|row: SqliteRow| {
-//                 let count: i32 = row.get("count");
-//                 (Self::query_history(row), count)
-//             })
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         Ok(res)
-//     }
-//
-//     // deleted_at doesn't mean the actual time that the user deleted it,
-//     // but the time that the system marks it as deleted
-//     async fn delete(&self, mut h: History) -> Result<()> {
-//         let now = OffsetDateTime::now_utc();
-//         h.command = rand::thread_rng()
-//             .sample_iter(&Alphanumeric)
-//             .take(32)
-//             .map(char::from)
-//             .collect(); // overwrite with random string
-//         h.deleted_at = Some(now); // delete it
-//
-//         self.update(&h).await?; // save it
-//
-//         Ok(())
-//     }
-//
-//     async fn delete_rows(&self, ids: &[HistoryId]) -> Result<()> {
-//         let mut tx = self.pool.begin().await?;
-//
-//         for id in ids {
-//             Self::delete_row_raw(&mut tx, id.clone()).await?;
-//         }
-//
-//         tx.commit().await?;
-//
-//         Ok(())
-//     }
-//
-//     async fn stats(&self, h: &History) -> Result<HistoryStats> {
-//         // We select the previous in the session by time
-//         let mut prev = SqlBuilder::select_from("history");
-//         prev.field("*")
-//             .and_where("timestamp < ?1")
-//             .and_where("session = ?2")
-//             .order_by("timestamp", true)
-//             .limit(1);
-//
-//         let mut next = SqlBuilder::select_from("history");
-//         next.field("*")
-//             .and_where("timestamp > ?1")
-//             .and_where("session = ?2")
-//             .order_by("timestamp", false)
-//             .limit(1);
-//
-//         let mut total = SqlBuilder::select_from("history");
-//         total.field("count(1)").and_where("command = ?1");
-//
-//         let mut average = SqlBuilder::select_from("history");
-//         average.field("avg(duration)").and_where("command = ?1");
-//
-//         let mut exits = SqlBuilder::select_from("history");
-//         exits
-//             .fields(&["exit", "count(1) as count"])
-//             .and_where("command = ?1")
-//             .group_by("exit");
-//
-//         // rewrite the following with sqlbuilder
-//         let mut day_of_week = SqlBuilder::select_from("history");
-//         day_of_week
-//             .fields(&[
-//                 "strftime('%w', ROUND(timestamp / 1000000000), 'unixepoch') AS day_of_week",
-//                 "count(1) as count",
-//             ])
-//             .and_where("command = ?1")
-//             .group_by("day_of_week");
-//
-//         // Intentionally format the string with 01 hardcoded. We want the average runtime for the
-//         // _entire month_, but will later parse it as a datetime for sorting
-//         // Sqlite has no datetime so we cannot do it there, and otherwise sorting will just be a
-//         // string sort, which won't be correct.
-//         let mut duration_over_time = SqlBuilder::select_from("history");
-//         duration_over_time
-//             .fields(&[
-//                 "strftime('01-%m-%Y', ROUND(timestamp / 1000000000), 'unixepoch') AS month_year",
-//                 "avg(duration) as duration",
-//             ])
-//             .and_where("command = ?1")
-//             .group_by("month_year")
-//             .having("duration > 0");
-//
-//         let prev = prev.sql().expect("issue in stats previous query");
-//         let next = next.sql().expect("issue in stats next query");
-//         let total = total.sql().expect("issue in stats average query");
-//         let average = average.sql().expect("issue in stats previous query");
-//         let exits = exits.sql().expect("issue in stats exits query");
-//         let day_of_week = day_of_week.sql().expect("issue in stats day of week query");
-//         let duration_over_time = duration_over_time
-//             .sql()
-//             .expect("issue in stats duration over time query");
-//
-//         let prev = sqlx::query(&prev)
-//             .bind(h.timestamp.unix_timestamp_nanos() as i64)
-//             .bind(&h.session)
-//             .map(Self::query_history)
-//             .fetch_optional(&self.pool)
-//             .await?;
-//
-//         let next = sqlx::query(&next)
-//             .bind(h.timestamp.unix_timestamp_nanos() as i64)
-//             .bind(&h.session)
-//             .map(Self::query_history)
-//             .fetch_optional(&self.pool)
-//             .await?;
-//
-//         let total: (i64,) = sqlx::query_as(&total)
-//             .bind(&h.command)
-//             .fetch_one(&self.pool)
-//             .await?;
-//
-//         let average: (f64,) = sqlx::query_as(&average)
-//             .bind(&h.command)
-//             .fetch_one(&self.pool)
-//             .await?;
-//
-//         let exits: Vec<(i64, i64)> = sqlx::query_as(&exits)
-//             .bind(&h.command)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         let day_of_week: Vec<(String, i64)> = sqlx::query_as(&day_of_week)
-//             .bind(&h.command)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         let duration_over_time: Vec<(String, f64)> = sqlx::query_as(&duration_over_time)
-//             .bind(&h.command)
-//             .fetch_all(&self.pool)
-//             .await?;
-//
-//         let duration_over_time = duration_over_time
-//             .iter()
-//             .map(|f| (f.0.clone(), f.1.round() as i64))
-//             .collect();
-//
-//         Ok(HistoryStats {
-//             next,
-//             previous: prev,
-//             total: total.0 as u64,
-//             average_duration: average.0 as u64,
-//             exits,
-//             day_of_week,
-//             duration_over_time,
-//         })
-//     }
-// }
+
+#[async_trait]
+impl Database for Sqlite {
+    // async fn save(&self, h: &History) -> Result<()> {
+    //     debug!("saving history to sqlite");
+    //     let mut tx = self.pool.begin().await?;
+    //     Self::save_raw(&mut tx, h).await?;
+    //     tx.commit().await?;
+    //
+    //     Ok(())
+    // }
+    //
+    // async fn save_bulk(&self, h: &[History]) -> Result<()> {
+    //     debug!("saving history to sqlite");
+    //
+    //     let mut tx = self.pool.begin().await?;
+    //
+    //     for i in h {
+    //         Self::save_raw(&mut tx, i).await?;
+    //     }
+    //
+    //     tx.commit().await?;
+    //
+    //     Ok(())
+    // }
+    //
+    // async fn load(&self, id: &str) -> Result<Option<History>> {
+    //     debug!("loading history item {}", id);
+    //
+    //     let res = sqlx::query("select * from history where id = ?1")
+    //         .bind(id)
+    //         .map(Self::query_history)
+    //         .fetch_optional(&self.pool)
+    //         .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn update(&self, h: &History) -> Result<()> {
+    //     debug!("updating sqlite history");
+    //
+    //     sqlx::query(
+    //         "update history
+    //             set timestamp = ?2, duration = ?3, exit = ?4, command = ?5, cwd = ?6, session = ?7, hostname = ?8, deleted_at = ?9
+    //             where id = ?1",
+    //     )
+    //     .bind(h.id.0.as_str())
+    //     .bind(h.timestamp.unix_timestamp_nanos() as i64)
+    //     .bind(h.duration)
+    //     .bind(h.exit)
+    //     .bind(h.command.as_str())
+    //     .bind(h.cwd.as_str())
+    //     .bind(h.session.as_str())
+    //     .bind(h.hostname.as_str())
+    //     .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
+    //     .execute(&self.pool)
+    //     .await?;
+    //
+    //     Ok(())
+    // }
+    //
+    // // make a unique list, that only shows the *newest* version of things
+    // async fn list(
+    //     &self,
+    //     filters: &[FilterMode],
+    //     context: &Context,
+    //     max: Option<usize>,
+    //     unique: bool,
+    //     include_deleted: bool,
+    // ) -> Result<Vec<History>> {
+    //     debug!("listing history");
+    //
+    //     let mut query = SqlBuilder::select_from(SqlName::new("history").alias("h").baquoted());
+    //     query.field("*").order_desc("timestamp");
+    //     if !include_deleted {
+    //         query.and_where_is_null("deleted_at");
+    //     }
+    //
+    //     let git_root = if let Some(git_root) = context.git_root.clone() {
+    //         git_root.to_str().unwrap_or("/").to_string()
+    //     } else {
+    //         context.cwd.clone()
+    //     };
+    //
+    //     for filter in filters {
+    //         match filter {
+    //             FilterMode::Global => &mut query,
+    //             FilterMode::Host => query.and_where_eq("hostname", quote(&context.hostname)),
+    //             FilterMode::Session => query.and_where_eq("session", quote(&context.session)),
+    //             FilterMode::Directory => query.and_where_eq("cwd", quote(&context.cwd)),
+    //             FilterMode::Workspace => query.and_where_like_left("cwd", &git_root),
+    //         };
+    //     }
+    //
+    //     if unique {
+    //         query.group_by("command").having("max(timestamp)");
+    //     }
+    //
+    //     if let Some(max) = max {
+    //         query.limit(max);
+    //     }
+    //
+    //     let query = query.sql().expect("bug in list query. please report");
+    //
+    //     let res = sqlx::query(&query)
+    //         .map(Self::query_history)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn range(&self, from: OffsetDateTime, to: OffsetDateTime) -> Result<Vec<History>> {
+    //     debug!("listing history from {:?} to {:?}", from, to);
+    //
+    //     let res = sqlx::query(
+    //         "select * from history where timestamp >= ?1 and timestamp <= ?2 order by timestamp asc",
+    //     )
+    //     .bind(from.unix_timestamp_nanos() as i64)
+    //     .bind(to.unix_timestamp_nanos() as i64)
+    //         .map(Self::query_history)
+    //     .fetch_all(&self.pool)
+    //     .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn last(&self) -> Result<Option<History>> {
+    //     let res = sqlx::query(
+    //         "select * from history where duration >= 0 order by timestamp desc limit 1",
+    //     )
+    //     .map(Self::query_history)
+    //     .fetch_optional(&self.pool)
+    //     .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn before(&self, timestamp: OffsetDateTime, count: i64) -> Result<Vec<History>> {
+    //     let res = sqlx::query(
+    //         "select * from history where timestamp < ?1 order by timestamp desc limit ?2",
+    //     )
+    //     .bind(timestamp.unix_timestamp_nanos() as i64)
+    //     .bind(count)
+    //     .map(Self::query_history)
+    //     .fetch_all(&self.pool)
+    //     .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn deleted(&self) -> Result<Vec<History>> {
+    //     let res = sqlx::query("select * from history where deleted_at is not null")
+    //         .map(Self::query_history)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn history_count(&self, include_deleted: bool) -> Result<i64> {
+    //     let query = if include_deleted {
+    //         "select count(1) from history"
+    //     } else {
+    //         "select count(1) from history where deleted_at is null"
+    //     };
+    //
+    //     let res: (i64,) = sqlx::query_as(query).fetch_one(&self.pool).await?;
+    //     Ok(res.0)
+    // }
+    //
+    // async fn search(
+    //     &self,
+    //     search_mode: SearchMode,
+    //     filter: FilterMode,
+    //     context: &Context,
+    //     query: &str,
+    //     filter_options: OptFilters,
+    // ) -> Result<Vec<History>> {
+    //     let mut sql = SqlBuilder::select_from("history");
+    //
+    //     sql.group_by("command").having("max(timestamp)");
+    //
+    //     if let Some(limit) = filter_options.limit {
+    //         sql.limit(limit);
+    //     }
+    //
+    //     if let Some(offset) = filter_options.offset {
+    //         sql.offset(offset);
+    //     }
+    //
+    //     if filter_options.reverse {
+    //         sql.order_asc("timestamp");
+    //     } else {
+    //         sql.order_desc("timestamp");
+    //     }
+    //
+    //     let git_root = if let Some(git_root) = context.git_root.clone() {
+    //         git_root.to_str().unwrap_or("/").to_string()
+    //     } else {
+    //         context.cwd.clone()
+    //     };
+    //
+    //     match filter {
+    //         FilterMode::Global => &mut sql,
+    //         FilterMode::Host => {
+    //             sql.and_where_eq("lower(hostname)", quote(context.hostname.to_lowercase()))
+    //         }
+    //         FilterMode::Session => sql.and_where_eq("session", quote(&context.session)),
+    //         FilterMode::Directory => sql.and_where_eq("cwd", quote(&context.cwd)),
+    //         FilterMode::Workspace => sql.and_where_like_left("cwd", git_root),
+    //     };
+    //
+    //     let orig_query = query;
+    //
+    //     let mut regexes = Vec::new();
+    //     match search_mode {
+    //         SearchMode::Prefix => sql.and_where_like_left("command", query.replace('*', "%")),
+    //         _ => {
+    //             let mut is_or = false;
+    //             let mut regex = None;
+    //             for part in query.split_inclusive(' ') {
+    //                 let query_part: Cow<str> = match (&mut regex, part.starts_with("r/")) {
+    //                     (None, false) => {
+    //                         if part.trim_end().is_empty() {
+    //                             continue;
+    //                         }
+    //                         Cow::Owned(part.trim_end().replace('*', "%")) // allow wildcard char
+    //                     }
+    //                     (None, true) => {
+    //                         if part[2..].trim_end().ends_with('/') {
+    //                             let end_pos = part.trim_end().len() - 1;
+    //                             regexes.push(String::from(&part[2..end_pos]));
+    //                         } else {
+    //                             regex = Some(String::from(&part[2..]));
+    //                         }
+    //                         continue;
+    //                     }
+    //                     (Some(r), _) => {
+    //                         if part.trim_end().ends_with('/') {
+    //                             let end_pos = part.trim_end().len() - 1;
+    //                             r.push_str(&part.trim_end()[..end_pos]);
+    //                             regexes.push(regex.take().unwrap());
+    //                         } else {
+    //                             r.push_str(part);
+    //                         }
+    //                         continue;
+    //                     }
+    //                 };
+    //
+    //                 // TODO smart case mode could be made configurable like in fzf
+    //                 let (is_glob, glob) = if query_part.contains(char::is_uppercase) {
+    //                     (true, "*")
+    //                 } else {
+    //                     (false, "%")
+    //                 };
+    //
+    //                 let (is_inverse, query_part) = match query_part.strip_prefix('!') {
+    //                     Some(stripped) => (true, Cow::Borrowed(stripped)),
+    //                     None => (false, query_part),
+    //                 };
+    //
+    //                 #[allow(clippy::if_same_then_else)]
+    //                 let param = if query_part == "|" {
+    //                     if !is_or {
+    //                         is_or = true;
+    //                         continue;
+    //                     } else {
+    //                         format!("{glob}|{glob}")
+    //                     }
+    //                 } else if let Some(term) = query_part.strip_prefix('^') {
+    //                     format!("{term}{glob}")
+    //                 } else if let Some(term) = query_part.strip_suffix('$') {
+    //                     format!("{glob}{term}")
+    //                 } else if let Some(term) = query_part.strip_prefix('\'') {
+    //                     format!("{glob}{term}{glob}")
+    //                 } else if is_inverse {
+    //                     format!("{glob}{query_part}{glob}")
+    //                 } else if search_mode == SearchMode::FullText {
+    //                     format!("{glob}{query_part}{glob}")
+    //                 } else {
+    //                     query_part.split("").join(glob)
+    //                 };
+    //
+    //                 sql.fuzzy_condition("command", param, is_inverse, is_glob, is_or);
+    //                 is_or = false;
+    //             }
+    //             if let Some(r) = regex {
+    //                 regexes.push(r);
+    //             }
+    //
+    //             &mut sql
+    //         }
+    //     };
+    //
+    //     for regex in regexes {
+    //         sql.and_where("command regexp ?".bind(&regex));
+    //     }
+    //
+    //     filter_options
+    //         .exit
+    //         .map(|exit| sql.and_where_eq("exit", exit));
+    //
+    //     filter_options
+    //         .exclude_exit
+    //         .map(|exclude_exit| sql.and_where_ne("exit", exclude_exit));
+    //
+    //     filter_options
+    //         .cwd
+    //         .map(|cwd| sql.and_where_eq("cwd", quote(cwd)));
+    //
+    //     filter_options
+    //         .exclude_cwd
+    //         .map(|exclude_cwd| sql.and_where_ne("cwd", quote(exclude_cwd)));
+    //
+    //     filter_options.before.map(|before| {
+    //         interim::parse_date_string(
+    //             before.as_str(),
+    //             OffsetDateTime::now_utc(),
+    //             interim::Dialect::Uk,
+    //         )
+    //         .map(|before| {
+    //             sql.and_where_lt("timestamp", quote(before.unix_timestamp_nanos() as i64))
+    //         })
+    //     });
+    //
+    //     filter_options.after.map(|after| {
+    //         interim::parse_date_string(
+    //             after.as_str(),
+    //             OffsetDateTime::now_utc(),
+    //             interim::Dialect::Uk,
+    //         )
+    //         .map(|after| sql.and_where_gt("timestamp", quote(after.unix_timestamp_nanos() as i64)))
+    //     });
+    //
+    //     sql.and_where_is_null("deleted_at");
+    //
+    //     let query = sql.sql().expect("bug in search query. please report");
+    //
+    //     let res = sqlx::query(&query)
+    //         .map(Self::query_history)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     Ok(ordering::reorder_fuzzy(search_mode, orig_query, res))
+    // }
+    //
+    // async fn query_history(&self, query: &str) -> Result<Vec<History>> {
+    //     let res = sqlx::query(query)
+    //         .map(Self::query_history)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // async fn all_with_count(&self) -> Result<Vec<(History, i32)>> {
+    //     debug!("listing history");
+    //
+    //     let mut query = SqlBuilder::select_from(SqlName::new("history").alias("h").baquoted());
+    //
+    //     query
+    //         .fields(&[
+    //             "id",
+    //             "max(timestamp) as timestamp",
+    //             "max(duration) as duration",
+    //             "exit",
+    //             "command",
+    //             "deleted_at",
+    //             "group_concat(cwd, ':') as cwd",
+    //             "group_concat(session) as session",
+    //             "group_concat(hostname, ',') as hostname",
+    //             "count(*) as count",
+    //         ])
+    //         .group_by("command")
+    //         .group_by("exit")
+    //         .and_where("deleted_at is null")
+    //         .order_desc("timestamp");
+    //
+    //     let query = query.sql().expect("bug in list query. please report");
+    //
+    //     let res = sqlx::query(&query)
+    //         .map(|row: SqliteRow| {
+    //             let count: i32 = row.get("count");
+    //             (Self::query_history(row), count)
+    //         })
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     Ok(res)
+    // }
+    //
+    // // deleted_at doesn't mean the actual time that the user deleted it,
+    // // but the time that the system marks it as deleted
+    // async fn delete(&self, mut h: History) -> Result<()> {
+    //     let now = OffsetDateTime::now_utc();
+    //     h.command = rand::thread_rng()
+    //         .sample_iter(&Alphanumeric)
+    //         .take(32)
+    //         .map(char::from)
+    //         .collect(); // overwrite with random string
+    //     h.deleted_at = Some(now); // delete it
+    //
+    //     self.update(&h).await?; // save it
+    //
+    //     Ok(())
+    // }
+    //
+    // async fn delete_rows(&self, ids: &[HistoryId]) -> Result<()> {
+    //     let mut tx = self.pool.begin().await?;
+    //
+    //     for id in ids {
+    //         Self::delete_row_raw(&mut tx, id.clone()).await?;
+    //     }
+    //
+    //     tx.commit().await?;
+    //
+    //     Ok(())
+    // }
+    //
+    // async fn stats(&self, h: &History) -> Result<HistoryStats> {
+    //     // We select the previous in the session by time
+    //     let mut prev = SqlBuilder::select_from("history");
+    //     prev.field("*")
+    //         .and_where("timestamp < ?1")
+    //         .and_where("session = ?2")
+    //         .order_by("timestamp", true)
+    //         .limit(1);
+    //
+    //     let mut next = SqlBuilder::select_from("history");
+    //     next.field("*")
+    //         .and_where("timestamp > ?1")
+    //         .and_where("session = ?2")
+    //         .order_by("timestamp", false)
+    //         .limit(1);
+    //
+    //     let mut total = SqlBuilder::select_from("history");
+    //     total.field("count(1)").and_where("command = ?1");
+    //
+    //     let mut average = SqlBuilder::select_from("history");
+    //     average.field("avg(duration)").and_where("command = ?1");
+    //
+    //     let mut exits = SqlBuilder::select_from("history");
+    //     exits
+    //         .fields(&["exit", "count(1) as count"])
+    //         .and_where("command = ?1")
+    //         .group_by("exit");
+    //
+    //     // rewrite the following with sqlbuilder
+    //     let mut day_of_week = SqlBuilder::select_from("history");
+    //     day_of_week
+    //         .fields(&[
+    //             "strftime('%w', ROUND(timestamp / 1000000000), 'unixepoch') AS day_of_week",
+    //             "count(1) as count",
+    //         ])
+    //         .and_where("command = ?1")
+    //         .group_by("day_of_week");
+    //
+    //     // Intentionally format the string with 01 hardcoded. We want the average runtime for the
+    //     // _entire month_, but will later parse it as a datetime for sorting
+    //     // Sqlite has no datetime so we cannot do it there, and otherwise sorting will just be a
+    //     // string sort, which won't be correct.
+    //     let mut duration_over_time = SqlBuilder::select_from("history");
+    //     duration_over_time
+    //         .fields(&[
+    //             "strftime('01-%m-%Y', ROUND(timestamp / 1000000000), 'unixepoch') AS month_year",
+    //             "avg(duration) as duration",
+    //         ])
+    //         .and_where("command = ?1")
+    //         .group_by("month_year")
+    //         .having("duration > 0");
+    //
+    //     let prev = prev.sql().expect("issue in stats previous query");
+    //     let next = next.sql().expect("issue in stats next query");
+    //     let total = total.sql().expect("issue in stats average query");
+    //     let average = average.sql().expect("issue in stats previous query");
+    //     let exits = exits.sql().expect("issue in stats exits query");
+    //     let day_of_week = day_of_week.sql().expect("issue in stats day of week query");
+    //     let duration_over_time = duration_over_time
+    //         .sql()
+    //         .expect("issue in stats duration over time query");
+    //
+    //     let prev = sqlx::query(&prev)
+    //         .bind(h.timestamp.unix_timestamp_nanos() as i64)
+    //         .bind(&h.session)
+    //         .map(Self::query_history)
+    //         .fetch_optional(&self.pool)
+    //         .await?;
+    //
+    //     let next = sqlx::query(&next)
+    //         .bind(h.timestamp.unix_timestamp_nanos() as i64)
+    //         .bind(&h.session)
+    //         .map(Self::query_history)
+    //         .fetch_optional(&self.pool)
+    //         .await?;
+    //
+    //     let total: (i64,) = sqlx::query_as(&total)
+    //         .bind(&h.command)
+    //         .fetch_one(&self.pool)
+    //         .await?;
+    //
+    //     let average: (f64,) = sqlx::query_as(&average)
+    //         .bind(&h.command)
+    //         .fetch_one(&self.pool)
+    //         .await?;
+    //
+    //     let exits: Vec<(i64, i64)> = sqlx::query_as(&exits)
+    //         .bind(&h.command)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     let day_of_week: Vec<(String, i64)> = sqlx::query_as(&day_of_week)
+    //         .bind(&h.command)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     let duration_over_time: Vec<(String, f64)> = sqlx::query_as(&duration_over_time)
+    //         .bind(&h.command)
+    //         .fetch_all(&self.pool)
+    //         .await?;
+    //
+    //     let duration_over_time = duration_over_time
+    //         .iter()
+    //         .map(|f| (f.0.clone(), f.1.round() as i64))
+    //         .collect();
+    //
+    //     Ok(HistoryStats {
+    //         next,
+    //         previous: prev,
+    //         total: total.0 as u64,
+    //         average_duration: average.0 as u64,
+    //         exits,
+    //         day_of_week,
+    //         duration_over_time,
+    //     })
+    // }
+}
 //
 // #[cfg(test)]
 // mod test {

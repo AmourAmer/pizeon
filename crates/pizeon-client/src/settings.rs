@@ -1,19 +1,19 @@
-// use std::{
-//     collections::HashMap,
-//     convert::TryFrom,
-//     fmt,
-//     io::prelude::*,
-//     path::{Path, PathBuf},
-//     str::FromStr,
-// };
+use std::{
+    collections::HashMap,
+    //     convert::TryFrom,
+    //     fmt,
+    io::prelude::*,
+    path::{Path, PathBuf},
+    //     str::FromStr,
+};
 //
 // use pizeon_common::record::HostId;
 // use clap::ValueEnum;
-// use config::{
-//     builder::DefaultState, Config, ConfigBuilder, Environment, File as ConfigFile, FileFormat,
-// };
+use config::{
+    builder::DefaultState, Config, ConfigBuilder, Environment, File as ConfigFile, FileFormat,
+};
 use eyre::{bail, eyre, Context, Error, Result};
-// use fs_err::{create_dir_all, File};
+use fs_err::{create_dir_all, File};
 // use parse_duration::parse;
 // use regex::RegexSet;
 // use semver::Version;
@@ -31,8 +31,8 @@ use serde::Deserialize;
 // pub const LAST_VERSION_CHECK_FILENAME: &str = "last_version_check_time";
 // pub const LATEST_VERSION_FILENAME: &str = "latest_version";
 // pub const HOST_ID_FILENAME: &str = "host_id";
-// static EXAMPLE_CONFIG: &str = include_str!("../config.toml");
-//
+static EXAMPLE_CONFIG: &str = include_str!("../config.toml");
+
 // mod dotfiles;
 //
 // #[derive(Clone, Debug, Deserialize, Copy, ValueEnum, PartialEq)]
@@ -346,8 +346,8 @@ pub struct Settings {
     // pub update_check: bool,
     // pub sync_address: String,
     // pub sync_frequency: String,
-    // pub db_path: String,
-    // pub record_store_path: String,
+    pub db_path: String,
+    pub record_store_path: String,
     // pub key_path: String,
     // pub session_path: String,
     // pub search_mode: SearchMode,
@@ -385,7 +385,7 @@ pub struct Settings {
     //
     // pub network_connect_timeout: u64,
     // pub network_timeout: u64,
-    // pub local_timeout: f64,
+    pub local_timeout: f64,
     // pub enter_accept: bool,
     // pub smart_sort: bool,
     //
@@ -591,80 +591,80 @@ impl Settings {
     //         None
     //     }
     //
-    //     pub fn builder() -> Result<ConfigBuilder<DefaultState>> {
-    //         let data_dir = pizeon_common::utils::data_dir();
-    //         let db_path = data_dir.join("history.db");
-    //         let record_store_path = data_dir.join("records.db");
-    //
-    //         let key_path = data_dir.join("key");
-    //         let session_path = data_dir.join("session");
-    //
-    //         Ok(Config::builder()
-    //             .set_default("history_format", "{time}\t{command}\t{duration}")?
-    //             .set_default("db_path", db_path.to_str())?
-    //             .set_default("record_store_path", record_store_path.to_str())?
-    //             .set_default("key_path", key_path.to_str())?
-    //             .set_default("session_path", session_path.to_str())?
-    //             .set_default("dialect", "us")?
-    //             .set_default("timezone", "local")?
-    //             .set_default("auto_sync", true)?
-    //             .set_default("update_check", cfg!(feature = "check-update"))?
-    //             .set_default("sync_address", "https://api.pizeon.sh")?
-    //             .set_default("sync_frequency", "10m")?
-    //             .set_default("search_mode", "fuzzy")?
-    //             .set_default("filter_mode", "global")?
-    //             .set_default("style", "auto")?
-    //             .set_default("inline_height", 0)?
-    //             .set_default("show_preview", false)?
-    //             .set_default("show_preview_auto", true)?
-    //             .set_default("max_preview_height", 4)?
-    //             .set_default("show_help", true)?
-    //             .set_default("show_tabs", true)?
-    //             .set_default("invert", false)?
-    //             .set_default("exit_mode", "return-original")?
-    //             .set_default("word_jump_mode", "emacs")?
-    //             .set_default(
-    //                 "word_chars",
-    //                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-    //             )?
-    //             .set_default("scroll_context_lines", 1)?
-    //             .set_default("shell_up_key_binding", false)?
-    //             .set_default("session_token", "")?
-    //             .set_default("workspaces", false)?
-    //             .set_default("ctrl_n_shortcuts", false)?
-    //             .set_default("secrets_filter", true)?
-    //             .set_default("network_connect_timeout", 5)?
-    //             .set_default("network_timeout", 30)?
-    //             .set_default("local_timeout", 2.0)?
-    //             // enter_accept defaults to false here, but true in the default config file. The dissonance is
-    //             // intentional!
-    //             // Existing users will get the default "False", so we don't mess with any potential
-    //             // muscle memory.
-    //             // New users will get the new default, that is more similar to what they are used to.
-    //             .set_default("enter_accept", false)?
-    //             .set_default("sync.records", false)?
-    //             .set_default("keys.scroll_exits", true)?
-    //             .set_default("keymap_mode", "emacs")?
-    //             .set_default("keymap_mode_shell", "auto")?
-    //             .set_default("keymap_cursor", HashMap::<String, String>::new())?
-    //             .set_default("smart_sort", false)?
-    //             .set_default("store_failed", true)?
-    //             .set_default(
-    //                 "prefers_reduced_motion",
-    //                 std::env::var("NO_MOTION")
-    //                     .ok()
-    //                     .map(|_| config::Value::new(None, config::ValueKind::Boolean(true)))
-    //                     .unwrap_or_else(|| config::Value::new(None, config::ValueKind::Boolean(false))),
-    //             )?
-    //             .add_source(
-    //                 Environment::with_prefix("pizeon")
-    //                     .prefix_separator("_")
-    //                     .separator("__"),
-    //             ))
-    //     }
-    //
+    pub fn builder() -> Result<ConfigBuilder<DefaultState>> {
+        let data_dir = pizeon_common::utils::data_dir();
+        let db_path = data_dir.join("history.db");
+        let record_store_path = data_dir.join("records.db");
+
+        let key_path = data_dir.join("key");
+        let session_path = data_dir.join("session");
+
+        Ok(Config::builder()
+            .set_default("history_format", "{time}\t{command}\t{duration}")?
+            .set_default("db_path", db_path.to_str())?
+            .set_default("record_store_path", record_store_path.to_str())?
+            .set_default("key_path", key_path.to_str())?
+            .set_default("session_path", session_path.to_str())?
+            .set_default("dialect", "us")?
+            .set_default("timezone", "local")?
+            .set_default("auto_sync", true)?
+            .set_default("update_check", cfg!(feature = "check-update"))?
+            .set_default("sync_address", "https://api.pizeon.sh")?
+            .set_default("sync_frequency", "10m")?
+            .set_default("search_mode", "fuzzy")?
+            .set_default("filter_mode", "global")?
+            .set_default("style", "auto")?
+            .set_default("inline_height", 0)?
+            .set_default("show_preview", false)?
+            .set_default("show_preview_auto", true)?
+            .set_default("max_preview_height", 4)?
+            .set_default("show_help", true)?
+            .set_default("show_tabs", true)?
+            .set_default("invert", false)?
+            .set_default("exit_mode", "return-original")?
+            .set_default("word_jump_mode", "emacs")?
+            .set_default(
+                "word_chars",
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            )?
+            .set_default("scroll_context_lines", 1)?
+            .set_default("shell_up_key_binding", false)?
+            .set_default("session_token", "")?
+            .set_default("workspaces", false)?
+            .set_default("ctrl_n_shortcuts", false)?
+            .set_default("secrets_filter", true)?
+            .set_default("network_connect_timeout", 5)?
+            .set_default("network_timeout", 30)?
+            .set_default("local_timeout", 2.0)?
+            // enter_accept defaults to false here, but true in the default config file. The dissonance is
+            // intentional!
+            // Existing users will get the default "False", so we don't mess with any potential
+            // muscle memory.
+            // New users will get the new default, that is more similar to what they are used to.
+            .set_default("enter_accept", false)?
+            .set_default("sync.records", false)?
+            .set_default("keys.scroll_exits", true)?
+            .set_default("keymap_mode", "emacs")?
+            .set_default("keymap_mode_shell", "auto")?
+            .set_default("keymap_cursor", HashMap::<String, String>::new())?
+            .set_default("smart_sort", false)?
+            .set_default("store_failed", true)?
+            .set_default(
+                "prefers_reduced_motion",
+                std::env::var("NO_MOTION")
+                    .ok()
+                    .map(|_| config::Value::new(None, config::ValueKind::Boolean(true)))
+                    .unwrap_or_else(|| config::Value::new(None, config::ValueKind::Boolean(false))),
+            )?
+            .add_source(
+                Environment::with_prefix("pizeon")
+                    .prefix_separator("_")
+                    .separator("__"),
+            ))
+    }
+
     pub fn new() -> Result<Self> {
-        // let config_dir = pizeon_common::utils::config_dir();
+        let config_dir = pizeon_common::utils::config_dir();
         // let data_dir = pizeon_common::utils::data_dir();
         //
         // create_dir_all(&config_dir)
@@ -672,36 +672,36 @@ impl Settings {
         //
         // create_dir_all(&data_dir).wrap_err_with(|| format!("could not create dir {data_dir:?}"))?;
         //
-        // let mut config_file = if let Ok(p) = std::env::var("PIZEON_CONFIG_DIR") {
-        //     PathBuf::from(p)
-        // } else {
-        //     let mut config_file = PathBuf::new();
-        //     config_file.push(config_dir);
-        //     config_file
-        // };
-        //
-        // config_file.push("config.toml");
-        //
-        // let mut config_builder = Self::builder()?;
-        //
-        // config_builder = if config_file.exists() {
-        //     config_builder.add_source(ConfigFile::new(
-        //         config_file.to_str().unwrap(),
-        //         FileFormat::Toml,
-        //     ))
-        // } else {
-        //     let mut file = File::create(config_file).wrap_err("could not create config file")?;
-        //     file.write_all(EXAMPLE_CONFIG.as_bytes())
-        //         .wrap_err("could not write default config file")?;
-        //
-        //     config_builder
-        // };
-        //
-        // let config = config_builder.build()?;
-        // let mut settings: Settings = config
-        //     .try_deserialize()
-        //     .map_err(|e| eyre!("failed to deserialize: {}", e))?;
-        //
+        let mut config_file = if let Ok(p) = std::env::var("PIZEON_CONFIG_DIR") {
+            PathBuf::from(p)
+        } else {
+            let mut config_file = PathBuf::new();
+            config_file.push(config_dir);
+            config_file
+        };
+
+        config_file.push("config.toml");
+
+        let mut config_builder = Self::builder()?;
+
+        config_builder = if config_file.exists() {
+            config_builder.add_source(ConfigFile::new(
+                config_file.to_str().unwrap(),
+                FileFormat::Toml,
+            ))
+        } else {
+            let mut file = File::create(config_file).wrap_err("could not create config file")?;
+            file.write_all(EXAMPLE_CONFIG.as_bytes())
+                .wrap_err("could not write default config file")?;
+
+            config_builder
+        };
+
+        let config = config_builder.build()?;
+        let mut settings: Settings = config
+            .try_deserialize()
+            .map_err(|e| eyre!("failed to deserialize: {}", e))?;
+
         // // all paths should be expanded
         // let db_path = settings.db_path;
         // let db_path = shellexpand::full(&db_path)?;
@@ -723,8 +723,7 @@ impl Settings {
         //     settings.session_token = String::from("not logged in");
         // }
         //
-        // Ok(settings)
-        Ok(Settings {})
+        Ok(settings)
     }
 
     //     pub fn example_config() -> &'static str {
