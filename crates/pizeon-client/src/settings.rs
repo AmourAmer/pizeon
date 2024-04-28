@@ -348,8 +348,8 @@ pub struct Settings {
     // pub sync_frequency: String,
     pub db_path: String,
     pub record_store_path: String,
-    // pub key_path: String,
-    // pub session_path: String,
+    pub key_path: String,
+    pub session_path: String,
     // pub search_mode: SearchMode,
     // pub filter_mode: FilterMode,
     // pub filter_mode_shell_up_key_binding: Option<FilterMode>,
@@ -400,11 +400,11 @@ pub struct Settings {
     //
     // #[serde(default)]
     // pub dotfiles: dotfiles::Settings,
-    //
-    // // This is automatically loaded when settings is created. Do not set in
-    // // config! Keep secrets and settings apart.
-    // #[serde(skip)]
-    // pub session_token: String,
+
+    // This is automatically loaded when settings is created. Do not set in
+    // config! Keep secrets and settings apart.
+    #[serde(skip)]
+    pub session_token: String,
 }
 
 impl Settings {
@@ -665,13 +665,13 @@ impl Settings {
 
     pub fn new() -> Result<Self> {
         let config_dir = pizeon_common::utils::config_dir();
-        // let data_dir = pizeon_common::utils::data_dir();
-        //
-        // create_dir_all(&config_dir)
-        //     .wrap_err_with(|| format!("could not create dir {config_dir:?}"))?;
-        //
-        // create_dir_all(&data_dir).wrap_err_with(|| format!("could not create dir {data_dir:?}"))?;
-        //
+        let data_dir = pizeon_common::utils::data_dir();
+
+        create_dir_all(&config_dir)
+            .wrap_err_with(|| format!("could not create dir {config_dir:?}"))?;
+
+        create_dir_all(&data_dir).wrap_err_with(|| format!("could not create dir {data_dir:?}"))?;
+
         let mut config_file = if let Ok(p) = std::env::var("PIZEON_CONFIG_DIR") {
             PathBuf::from(p)
         } else {
@@ -702,27 +702,27 @@ impl Settings {
             .try_deserialize()
             .map_err(|e| eyre!("failed to deserialize: {}", e))?;
 
-        // // all paths should be expanded
-        // let db_path = settings.db_path;
-        // let db_path = shellexpand::full(&db_path)?;
-        // settings.db_path = db_path.to_string();
-        //
-        // let key_path = settings.key_path;
-        // let key_path = shellexpand::full(&key_path)?;
-        // settings.key_path = key_path.to_string();
-        //
-        // let session_path = settings.session_path;
-        // let session_path = shellexpand::full(&session_path)?;
-        // settings.session_path = session_path.to_string();
-        //
-        // // Finally, set the auth token
-        // if Path::new(session_path.to_string().as_str()).exists() {
-        //     let token = fs_err::read_to_string(session_path.to_string())?;
-        //     settings.session_token = token.trim().to_string();
-        // } else {
-        //     settings.session_token = String::from("not logged in");
-        // }
-        //
+        // all paths should be expanded
+        let db_path = settings.db_path;
+        let db_path = shellexpand::full(&db_path)?;
+        settings.db_path = db_path.to_string();
+
+        let key_path = settings.key_path;
+        let key_path = shellexpand::full(&key_path)?;
+        settings.key_path = key_path.to_string();
+
+        let session_path = settings.session_path;
+        let session_path = shellexpand::full(&session_path)?;
+        settings.session_path = session_path.to_string();
+
+        // Finally, set the auth token
+        if Path::new(session_path.to_string().as_str()).exists() {
+            let token = fs_err::read_to_string(session_path.to_string())?;
+            settings.session_token = token.trim().to_string();
+        } else {
+            settings.session_token = String::from("not logged in");
+        }
+
         Ok(settings)
     }
 
