@@ -3,9 +3,9 @@ use eyre::Result;
 
 #[cfg(not(windows))]
 use rustix::{fs::Mode, process::umask};
-//
-// #[cfg(feature = "client")]
-// mod client;
+
+#[cfg(feature = "client")]
+mod client;
 //
 // #[cfg(feature = "server")]
 // mod server;
@@ -17,9 +17,9 @@ use rustix::{fs::Mode, process::umask};
 #[derive(Subcommand)]
 #[command(infer_subcommands = true)]
 pub enum PizeonCmd {
-    // #[cfg(feature = "client")]
-    // #[command(flatten)]
-    // Client(client::Cmd),
+    #[cfg(feature = "client")]
+    #[command(flatten)]
+    Client(client::Cmd),
     //
     // /// Start an pizeon server
     // #[cfg(feature = "server")]
@@ -45,22 +45,21 @@ impl PizeonCmd {
             umask(mode);
         }
 
-        // match self {
-        //     #[cfg(feature = "client")]
-        //     Self::Client(client) => client.run(),
-        //
-        //     #[cfg(feature = "server")]
-        //     Self::Server(server) => server.run(),
-        //     Self::Contributors => {
-        //         contributors::run();
-        //         Ok(())
-        //     }
-        //     Self::Uuid => {
-        //         println!("{}", pizeon_common::utils::uuid_v7().as_simple());
-        //         Ok(())
-        //     }
-        //     Self::GenCompletions(gen_completions) => gen_completions.run(),
-        // }
-        Ok(()) // TODO remove this
+        match self {
+            #[cfg(feature = "client")]
+            Self::Client(client) => client.run(),
+            //
+            //     #[cfg(feature = "server")]
+            //     Self::Server(server) => server.run(),
+            //     Self::Contributors => {
+            //         contributors::run();
+            //         Ok(())
+            //     }
+            //     Self::Uuid => {
+            //         println!("{}", pizeon_common::utils::uuid_v7().as_simple());
+            //         Ok(())
+            //     }
+            //     Self::GenCompletions(gen_completions) => gen_completions.run(),
+        }
     }
 }
