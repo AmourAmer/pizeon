@@ -1,12 +1,10 @@
-// use std::path::PathBuf;
+use std::path::PathBuf;
 
 use clap::Subcommand;
 use eyre::{Result, WrapErr};
 
-use env_logger::Builder;
-// TODO replace the following line with its following one
-use pizeon_client::settings::Settings;
-// use pizeon_client::{database::Sqlite, record::sqlite_store::SqliteStore, settings::Settings};
+// use env_logger::Builder;
+use pizeon_client::{database::Sqlite, record::sqlite_store::SqliteStore, settings::Settings};
 
 // #[cfg(feature = "sync")]
 // mod sync;
@@ -17,7 +15,7 @@ use pizeon_client::settings::Settings;
 // mod default_config;
 // mod doctor;
 // mod dotfiles;
-// mod history;
+mod history;
 // mod import;
 // mod info;
 // mod init;
@@ -29,9 +27,9 @@ use pizeon_client::settings::Settings;
 #[derive(Subcommand, Debug)]
 #[command(infer_subcommands = true)]
 pub enum Cmd {
-    // /// Manipulate shell history
-    // #[command(subcommand)]
-    // History(history::Cmd),
+    /// Atuin manipulates shell history
+    #[command(subcommand)]
+    History(history::Cmd),
     //
     // /// Import shell history from file
     // #[command(subcommand)]
@@ -104,44 +102,43 @@ impl Cmd {
         //
         // tracing::trace!(command = ?self, "client command");
         //
-        // let db_path = PathBuf::from(settings.db_path.as_str());
-        // let record_store_path = PathBuf::from(settings.record_store_path.as_str());
-        //
-        // let db = Sqlite::new(db_path, settings.local_timeout).await?;
-        // let sqlite_store = SqliteStore::new(record_store_path, settings.local_timeout).await?;
-        //
-        // match self {
-        //     // Self::History(history) => history.run(&settings, &db, sqlite_store).await,
-        //     // Self::Import(import) => import.run(&db).await,
-        //     // Self::Stats(stats) => stats.run(&db, &settings).await,
-        //     // Self::Search(search) => search.run(db, &mut settings, sqlite_store).await,
-        //     //
-        //     // #[cfg(feature = "sync")]
-        //     // Self::Sync(sync) => sync.run(settings, &db, sqlite_store).await,
-        //     //
-        //     // #[cfg(feature = "sync")]
-        //     // Self::Account(account) => account.run(settings, sqlite_store).await,
-        //     //
-        //     // Self::Kv(kv) => kv.run(&settings, &sqlite_store).await,
-        //     //
-        //     // Self::Store(store) => store.run(&settings, &db, sqlite_store).await,
-        //     //
-        //     // Self::Dotfiles(dotfiles) => dotfiles.run(&settings, sqlite_store).await,
-        //     //
-        //     // Self::Init(init) => init.run(&settings).await,
-        //     //
-        //     // Self::Info => {
-        //     //     info::run(&settings);
-        //     //     Ok(())
-        //     // }
-        //     //
-        //     // Self::Doctor => doctor::run(&settings),
-        //     //
-        //     // Self::DefaultConfig => {
-        //     //     default_config::run();
-        //     //     Ok(())
-        //     // }
-        // }
-        Ok(()) // TODO remove this
+        let db_path = PathBuf::from(settings.db_path.as_str());
+        let record_store_path = PathBuf::from(settings.record_store_path.as_str());
+
+        let db = Sqlite::new(db_path, settings.local_timeout).await?;
+        let sqlite_store = SqliteStore::new(record_store_path, settings.local_timeout).await?;
+
+        match self {
+            Self::History(history) => history.run(&settings, &db, sqlite_store).await,
+            // Self::Import(import) => import.run(&db).await,
+            // Self::Stats(stats) => stats.run(&db, &settings).await,
+            // Self::Search(search) => search.run(db, &mut settings, sqlite_store).await,
+            //
+            // #[cfg(feature = "sync")]
+            // Self::Sync(sync) => sync.run(settings, &db, sqlite_store).await,
+            //
+            // #[cfg(feature = "sync")]
+            // Self::Account(account) => account.run(settings, sqlite_store).await,
+            //
+            // Self::Kv(kv) => kv.run(&settings, &sqlite_store).await,
+            //
+            // Self::Store(store) => store.run(&settings, &db, sqlite_store).await,
+            //
+            // Self::Dotfiles(dotfiles) => dotfiles.run(&settings, sqlite_store).await,
+            //
+            // Self::Init(init) => init.run(&settings).await,
+            //
+            // Self::Info => {
+            //     info::run(&settings);
+            //     Ok(())
+            // }
+            //
+            // Self::Doctor => doctor::run(&settings),
+            //
+            // Self::DefaultConfig => {
+            //     default_config::run();
+            //     Ok(())
+            // }
+        }
     }
 }
