@@ -41,11 +41,11 @@ clipboard = ["cli-clipboard"]
 check-update = ["pizeon-client/check-update"]
 
 [dependencies]
-pizeon-server-postgres = { path = "../pizeon-server-postgres", version = "18.2.0", optional = true }
-pizeon-server = { path = "../pizeon-server", version = "18.2.0", optional = true }
-pizeon-client = { path = "../pizeon-client", version = "18.2.0", optional = true, default-features = false }
-pizeon-common = { path = "../pizeon-common", version = "18.2.0" }
-pizeon-dotfiles = { path = "../pizeon-dotfiles", version = "0.2.0" }
+pizeon-server-postgres = { path = "../pizeon-server-postgres", version = "0.0.0", optional = true }
+pizeon-server = { path = "../pizeon-server", version = "0.0.0", optional = true }
+pizeon-client = { path = "../pizeon-client", version = "0.0.0", optional = true, default-features = false }
+pizeon-common = { path = "../pizeon-common", version = "0.0.0" }
+pizeon-dotfiles = { path = "../pizeon-dotfiles", version = "0.0.0" }
 
 log = { workspace = true }
 env_logger = "0.11.2"

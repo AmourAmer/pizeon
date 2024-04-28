@@ -1,19 +1,17 @@
 [workspace]
-members = [
-  "crates/*"
-]
+members = ["crates/*"]
 
 resolver = "2"
 exclude = ["ui/backend"]
 
 [workspace.package]
-version = "18.2.0"
-authors = ["Ellie Huxtable <ellie@elliehuxtable.com>"]
-rust-version = "1.67"
-license = "MIT"
-homepage = "https://pizeon.sh"
-repository = "https://github.com/pizeonsh/pizeon"
-readme = "README.md"
+version = "0.0.0"
+authors = ["TODO TODO@TODO"]
+rust-version = "1.77"
+license = "AGPL"
+homepage = "Pas encore"
+repository = "Pas encore"
+# readme = "README.md"
 
 [workspace.dependencies]
 async-trait = "0.1.58"

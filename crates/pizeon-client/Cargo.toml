@@ -18,7 +18,7 @@ sync = ["urlencoding", "reqwest", "sha2", "hex"]
 check-update = []
 
 [dependencies]
-pizeon-common = { path = "../pizeon-common", version = "18.2.0" }
+pizeon-common = { path = "../pizeon-common", version = "0.0.0" }
 
 log = { workspace = true }
 base64 = { workspace = true }
