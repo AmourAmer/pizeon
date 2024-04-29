@@ -1,7 +1,6 @@
 use typed_builder::TypedBuilder;
-use url::Url;
 
-// use super::History;
+use super::Notice;
 
 // /// Builder for a history entry that is imported from shell history.
 // ///
@@ -72,27 +71,25 @@ use url::Url;
 /// All fields are required, as they are all present in the database.
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct NoticeFromDb {
+    blocked: bool,
     id: String,
     timestamp: time::OffsetDateTime,
-    body_url: Url,
     body: String,
-    versions: Vec<String>,
+    versions: String, // PIG FIXME should use some type supporting list
     deleted_at: Option<time::OffsetDateTime>,
     expires_at: Option<time::OffsetDateTime>,
 }
 
-// impl From<HistoryFromDb> for History {
-//     fn from(from_db: HistoryFromDb) -> Self {
-//         History {
-//             id: from_db.id.into(),
-//             timestamp: from_db.timestamp,
-//             exit: from_db.exit,
-//             command: from_db.command,
-//             cwd: from_db.cwd,
-//             duration: from_db.duration,
-//             session: from_db.session,
-//             hostname: from_db.hostname,
-//             deleted_at: from_db.deleted_at,
-//         }
-//     }
-// }
+impl From<NoticeFromDb> for Notice {
+    fn from(from_db: NoticeFromDb) -> Self {
+        Notice {
+            blocked: from_db.blocked,
+            id: from_db.id.into(),
+            timestamp: from_db.timestamp,
+            body: from_db.body,
+            versions: from_db.versions,
+            deleted_at: from_db.deleted_at,
+            expires_at: from_db.expires_at,
+        }
+    }
+}

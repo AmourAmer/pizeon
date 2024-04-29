@@ -3,7 +3,6 @@
 // use rmp::{decode::Bytes, Marker};
 // use std::env;
 // use std::fmt::Display;
-use url::Url;
 //
 // use pizeon_common::record::DecryptedData;
 // use pizeon_common::utils::uuid_v7;
@@ -29,12 +28,12 @@ pub struct NoticeId(pub String);
 //         write!(f, "{}", self.0)
 //     }
 // }
-//
-// impl From<String> for HistoryId {
-//     fn from(s: String) -> Self {
-//         Self(s)
-//     }
-// }
+
+impl From<String> for NoticeId {
+    fn from(s: String) -> Self {
+        Self(s)
+    }
+}
 
 /// Client-side notice entry.
 /// TODO very likely to change
@@ -48,19 +47,21 @@ pub struct NoticeId(pub String);
 // compatible way. (eg sensible defaults and updating the nfields parameter)
 #[derive(Debug, Clone, PartialEq, Eq, sqlx::FromRow)]
 pub struct Notice {
+    /// Whether this notice is blocked by rules
+    pub blocked: bool,
     /// A server-generated ID, used to identify the entry
     ///
     /// Stored as `notice_id` in the database.
     pub id: NoticeId,
     /// When the notice arrived.
     pub timestamp: OffsetDateTime,
-    /// the url of notice body
-    pub body_url: Url,
+    // /// the url of notice body, commented because failed to use builder
+    // pub body_url: Url,
     /// Notice body
     /// PIG FIXME should use specific trait
     pub body: String,
     /// local stored version marks of notice bodies
-    pub versions: Vec<String>,
+    pub versions: String,
     /// Timestamp, which is set when the entry is deleted, allowing a soft delete.
     pub deleted_at: Option<OffsetDateTime>,
     /// Timestamp, when the notice expires

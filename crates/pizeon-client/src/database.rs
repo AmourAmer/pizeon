@@ -188,28 +188,29 @@ impl Sqlite {
     //
     //         Ok(())
     //     }
-    //
-    //     fn query_history(row: SqliteRow) -> History {
-    //         let deleted_at: Option<i64> = row.get("deleted_at");
-    //
-    //         History::from_db()
-    //             .id(row.get("id"))
-    //             .timestamp(
-    //                 OffsetDateTime::from_unix_timestamp_nanos(row.get::<i64, _>("timestamp") as i128)
-    //                     .unwrap(),
-    //             )
-    //             .duration(row.get("duration"))
-    //             .exit(row.get("exit"))
-    //             .command(row.get("command"))
-    //             .cwd(row.get("cwd"))
-    //             .session(row.get("session"))
-    //             .hostname(row.get("hostname"))
-    //             .deleted_at(
-    //                 deleted_at.and_then(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128).ok()),
-    //             )
-    //             .build()
-    //             .into()
-    //     }
+
+    fn query_notice(row: SqliteRow) -> Notice {
+        let deleted_at: Option<i64> = row.get("deleted_at");
+        let expires_at: Option<i64> = row.get("expires_at");
+
+        Notice::from_db()
+            .blocked(row.get("blocked"))
+            .id(row.get("id"))
+            .timestamp(
+                OffsetDateTime::from_unix_timestamp_nanos(row.get::<i64, _>("timestamp") as i128)
+                    .unwrap(),
+            )
+            .body(row.get("body"))
+            .versions(row.get("versions"))
+            .deleted_at(
+                deleted_at.and_then(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128).ok()),
+            )
+            .expires_at(
+                expires_at.and_then(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128).ok()),
+            )
+            .build()
+            .into()
+    }
 }
 
 #[async_trait]
@@ -271,58 +272,38 @@ impl Database for Sqlite {
     //
     //     Ok(())
     // }
-    //
-    // // make a unique list, that only shows the *newest* version of things
-    // async fn list(
-    //     &self,
-    //     filters: &[FilterMode],
-    //     context: &Context,
-    //     max: Option<usize>,
-    //     unique: bool,
-    //     include_deleted: bool,
-    // ) -> Result<Vec<History>> {
-    //     debug!("listing history");
-    //
-    //     let mut query = SqlBuilder::select_from(SqlName::new("history").alias("h").baquoted());
-    //     query.field("*").order_desc("timestamp");
-    //     if !include_deleted {
-    //         query.and_where_is_null("deleted_at");
-    //     }
-    //
-    //     let git_root = if let Some(git_root) = context.git_root.clone() {
-    //         git_root.to_str().unwrap_or("/").to_string()
-    //     } else {
-    //         context.cwd.clone()
-    //     };
-    //
-    //     for filter in filters {
-    //         match filter {
-    //             FilterMode::Global => &mut query,
-    //             FilterMode::Host => query.and_where_eq("hostname", quote(&context.hostname)),
-    //             FilterMode::Session => query.and_where_eq("session", quote(&context.session)),
-    //             FilterMode::Directory => query.and_where_eq("cwd", quote(&context.cwd)),
-    //             FilterMode::Workspace => query.and_where_like_left("cwd", &git_root),
-    //         };
-    //     }
-    //
-    //     if unique {
-    //         query.group_by("command").having("max(timestamp)");
-    //     }
-    //
-    //     if let Some(max) = max {
-    //         query.limit(max);
-    //     }
-    //
-    //     let query = query.sql().expect("bug in list query. please report");
-    //
-    //     let res = sqlx::query(&query)
-    //         .map(Self::query_history)
-    //         .fetch_all(&self.pool)
-    //         .await?;
-    //
-    //     Ok(res)
-    // }
-    //
+
+    // show all (unexpired) notices in the pool
+    async fn list(
+        &self,
+        context: &Context,
+        max: Option<usize>,
+        include_deleted: bool,
+    ) -> Result<Vec<Notice>> {
+        debug!("listing notices");
+
+        let mut query = SqlBuilder::select_from(SqlName::new("notices").alias("n").baquoted());
+        query.field("*").order_desc("timestamp");
+        if !include_deleted {
+            query.and_where_is_null("deleted_at");
+        }
+
+        if let Some(max) = max {
+            query.limit(max);
+        }
+
+        let query = query
+            .sql()
+            .expect("bug in list query. please report to atuin or some upstream and tell me when fixed, thanks!");
+
+        let res = sqlx::query(&query)
+            .map(Self::query_notice)
+            .fetch_all(&self.pool)
+            .await?;
+
+        Ok(res)
+    }
+
     // async fn range(&self, from: OffsetDateTime, to: OffsetDateTime) -> Result<Vec<History>> {
     //     debug!("listing history from {:?} to {:?}", from, to);
     //
