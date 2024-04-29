@@ -1,12 +1,13 @@
-// use typed_builder::TypedBuilder;
-// 
+use typed_builder::TypedBuilder;
+use url::Url;
+
 // use super::History;
-// 
+
 // /// Builder for a history entry that is imported from shell history.
 // ///
 // /// The only two required fields are `timestamp` and `command`.
 // #[derive(Debug, Clone, TypedBuilder)]
-// pub struct HistoryImported {
+// pub struct NoticeImported {
 //     timestamp: time::OffsetDateTime,
 //     #[builder(setter(into))]
 //     command: String,
@@ -21,7 +22,7 @@
 //     #[builder(default, setter(strip_option, into))]
 //     hostname: Option<String>,
 // }
-// 
+
 // impl From<HistoryImported> for History {
 //     fn from(imported: HistoryImported) -> Self {
 //         History::new(
@@ -36,7 +37,7 @@
 //         )
 //     }
 // }
-// 
+//
 // /// Builder for a history entry that is captured via hook.
 // ///
 // /// This builder is used only at the `start` step of the hook,
@@ -50,7 +51,7 @@
 //     #[builder(setter(into))]
 //     cwd: String,
 // }
-// 
+//
 // impl From<HistoryCaptured> for History {
 //     fn from(captured: HistoryCaptured) -> Self {
 //         History::new(
@@ -65,23 +66,21 @@
 //         )
 //     }
 // }
-// 
-// /// Builder for a history entry that is loaded from the database.
-// ///
-// /// All fields are required, as they are all present in the database.
-// #[derive(Debug, Clone, TypedBuilder)]
-// pub struct HistoryFromDb {
-//     id: String,
-//     timestamp: time::OffsetDateTime,
-//     command: String,
-//     cwd: String,
-//     exit: i64,
-//     duration: i64,
-//     session: String,
-//     hostname: String,
-//     deleted_at: Option<time::OffsetDateTime>,
-// }
-// 
+
+/// Builder for a history entry that is loaded from the database.
+///
+/// All fields are required, as they are all present in the database.
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct NoticeFromDb {
+    id: String,
+    timestamp: time::OffsetDateTime,
+    body_url: Url,
+    body: String,
+    versions: Vec<String>,
+    deleted_at: Option<time::OffsetDateTime>,
+    expires_at: Option<time::OffsetDateTime>,
+}
+
 // impl From<HistoryFromDb> for History {
 //     fn from(from_db: HistoryFromDb) -> Self {
 //         History {

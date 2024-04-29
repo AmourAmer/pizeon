@@ -15,7 +15,7 @@ use url::Url;
 // use crate::{secrets::SECRET_PATTERNS, settings::Settings};
 use time::OffsetDateTime;
 
-// mod builder;
+mod builder;
 // pub mod store;
 //
 // const HISTORY_VERSION: &str = "v0";
@@ -86,256 +86,239 @@ pub struct Notice {
 //
 //     pub duration_over_time: Vec<(String, i64)>,
 // }
-//
-// impl History {
-//     #[allow(clippy::too_many_arguments)]
-//     fn new(
-//         timestamp: OffsetDateTime,
-//         command: String,
-//         cwd: String,
-//         exit: i64,
-//         duration: i64,
-//         session: Option<String>,
-//         hostname: Option<String>,
-//         deleted_at: Option<OffsetDateTime>,
-//     ) -> Self {
-//         let session = session
-//             .or_else(|| env::var("PIZEON_SESSION").ok())
-//             .unwrap_or_else(|| uuid_v7().as_simple().to_string());
-//         let hostname = hostname.unwrap_or_else(get_host_user);
-//
-//         Self {
-//             id: uuid_v7().as_simple().to_string().into(),
-//             timestamp,
-//             command,
-//             cwd,
-//             exit,
-//             duration,
-//             session,
-//             hostname,
-//             deleted_at,
-//         }
-//     }
-//
-//     pub fn serialize(&self) -> Result<DecryptedData> {
-//         // This is pretty much the same as what we used for the old history, with one difference -
-//         // it uses integers for timestamps rather than a string format.
-//
-//         use rmp::encode;
-//
-//         let mut output = vec![];
-//
-//         // write the version
-//         encode::write_u16(&mut output, 0)?;
-//         // INFO: ensure this is updated when adding new fields
-//         encode::write_array_len(&mut output, 9)?;
-//
-//         encode::write_str(&mut output, &self.id.0)?;
-//         encode::write_u64(&mut output, self.timestamp.unix_timestamp_nanos() as u64)?;
-//         encode::write_sint(&mut output, self.duration)?;
-//         encode::write_sint(&mut output, self.exit)?;
-//         encode::write_str(&mut output, &self.command)?;
-//         encode::write_str(&mut output, &self.cwd)?;
-//         encode::write_str(&mut output, &self.session)?;
-//         encode::write_str(&mut output, &self.hostname)?;
-//
-//         match self.deleted_at {
-//             Some(d) => encode::write_u64(&mut output, d.unix_timestamp_nanos() as u64)?,
-//             None => encode::write_nil(&mut output)?,
-//         }
-//
-//         Ok(DecryptedData(output))
-//     }
-//
-//     fn deserialize_v0(bytes: &[u8]) -> Result<History> {
-//         use rmp::decode;
-//
-//         fn error_report<E: std::fmt::Debug>(err: E) -> eyre::Report {
-//             eyre!("{err:?}")
-//         }
-//
-//         let mut bytes = Bytes::new(bytes);
-//
-//         let version = decode::read_u16(&mut bytes).map_err(error_report)?;
-//
-//         if version != 0 {
-//             bail!("expected decoding v0 record, found v{version}");
-//         }
-//
-//         let nfields = decode::read_array_len(&mut bytes).map_err(error_report)?;
-//
-//         if nfields != 9 {
-//             bail!("cannot decrypt history from a different version of Pizeon");
-//         }
-//
-//         let bytes = bytes.remaining_slice();
-//         let (id, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
-//
-//         let mut bytes = Bytes::new(bytes);
-//         let timestamp = decode::read_u64(&mut bytes).map_err(error_report)?;
-//         let duration = decode::read_int(&mut bytes).map_err(error_report)?;
-//         let exit = decode::read_int(&mut bytes).map_err(error_report)?;
-//
-//         let bytes = bytes.remaining_slice();
-//         let (command, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
-//         let (cwd, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
-//         let (session, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
-//         let (hostname, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
-//
-//         // if we have more fields, try and get the deleted_at
-//         let mut bytes = Bytes::new(bytes);
-//
-//         let (deleted_at, bytes) = match decode::read_u64(&mut bytes) {
-//             Ok(unix) => (Some(unix), bytes.remaining_slice()),
-//             // we accept null here
-//             Err(ValueReadError::TypeMismatch(Marker::Null)) => (None, bytes.remaining_slice()),
-//             Err(err) => return Err(error_report(err)),
-//         };
-//
-//         if !bytes.is_empty() {
-//             bail!("trailing bytes in encoded history. malformed")
-//         }
-//
-//         Ok(History {
-//             id: id.to_owned().into(),
-//             timestamp: OffsetDateTime::from_unix_timestamp_nanos(timestamp as i128)?,
-//             duration,
-//             exit,
-//             command: command.to_owned(),
-//             cwd: cwd.to_owned(),
-//             session: session.to_owned(),
-//             hostname: hostname.to_owned(),
-//             deleted_at: deleted_at
-//                 .map(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128))
-//                 .transpose()?,
-//         })
-//     }
-//
-//     pub fn deserialize(bytes: &[u8], version: &str) -> Result<History> {
-//         match version {
-//             HISTORY_VERSION => Self::deserialize_v0(bytes),
-//
-//             _ => bail!("unknown version {version:?}"),
-//         }
-//     }
-//
-//     /// Builder for a history entry that is imported from shell history.
-//     ///
-//     /// The only two required fields are `timestamp` and `command`.
-//     ///
-//     /// ## Examples
-//     /// ```
-//     /// use pizeon_client::history::History;
-//     ///
-//     /// let history: History = History::import()
-//     ///     .timestamp(time::OffsetDateTime::now_utc())
-//     ///     .command("ls -la")
-//     ///     .build()
-//     ///     .into();
-//     /// ```
-//     ///
-//     /// If shell history contains more information, it can be added to the builder:
-//     /// ```
-//     /// use pizeon_client::history::History;
-//     ///
-//     /// let history: History = History::import()
-//     ///     .timestamp(time::OffsetDateTime::now_utc())
-//     ///     .command("ls -la")
-//     ///     .cwd("/home/user")
-//     ///     .exit(0)
-//     ///     .duration(100)
-//     ///     .build()
-//     ///     .into();
-//     /// ```
-//     ///
-//     /// Unknown command or command without timestamp cannot be imported, which
-//     /// is forced at compile time:
-//     ///
-//     /// ```compile_fail
-//     /// use pizeon_client::history::History;
-//     ///
-//     /// // this will not compile because timestamp is missing
-//     /// let history: History = History::import()
-//     ///     .command("ls -la")
-//     ///     .build()
-//     ///     .into();
-//     /// ```
-//     pub fn import() -> builder::HistoryImportedBuilder {
-//         builder::HistoryImported::builder()
-//     }
-//
-//     /// Builder for a history entry that is captured via hook.
-//     ///
-//     /// This builder is used only at the `start` step of the hook,
-//     /// so it doesn't have any fields which are known only after
-//     /// the command is finished, such as `exit` or `duration`.
-//     ///
-//     /// ## Examples
-//     /// ```rust
-//     /// use pizeon_client::history::History;
-//     ///
-//     /// let history: History = History::capture()
-//     ///     .timestamp(time::OffsetDateTime::now_utc())
-//     ///     .command("ls -la")
-//     ///     .cwd("/home/user")
-//     ///     .build()
-//     ///     .into();
-//     /// ```
-//     ///
-//     /// Command without any required info cannot be captured, which is forced at compile time:
-//     ///
-//     /// ```compile_fail
-//     /// use pizeon_client::history::History;
-//     ///
-//     /// // this will not compile because `cwd` is missing
-//     /// let history: History = History::capture()
-//     ///     .timestamp(time::OffsetDateTime::now_utc())
-//     ///     .command("ls -la")
-//     ///     .build()
-//     ///     .into();
-//     /// ```
-//     pub fn capture() -> builder::HistoryCapturedBuilder {
-//         builder::HistoryCaptured::builder()
-//     }
-//
-//     /// Builder for a history entry that is imported from the database.
-//     ///
-//     /// All fields are required, as they are all present in the database.
-//     ///
-//     /// ```compile_fail
-//     /// use pizeon_client::history::History;
-//     ///
-//     /// // this will not compile because `id` field is missing
-//     /// let history: History = History::from_db()
-//     ///     .timestamp(time::OffsetDateTime::now_utc())
-//     ///     .command("ls -la".to_string())
-//     ///     .cwd("/home/user".to_string())
-//     ///     .exit(0)
-//     ///     .duration(100)
-//     ///     .session("somesession".to_string())
-//     ///     .hostname("localhost".to_string())
-//     ///     .deleted_at(None)
-//     ///     .build()
-//     ///     .into();
-//     /// ```
-//     pub fn from_db() -> builder::HistoryFromDbBuilder {
-//         builder::HistoryFromDb::builder()
-//     }
-//
-//     pub fn success(&self) -> bool {
-//         self.exit == 0 || self.duration == -1
-//     }
-//
-//     pub fn should_save(&self, settings: &Settings) -> bool {
-//         let secret_regex = SECRET_PATTERNS.iter().map(|f| f.1);
-//         let secret_regex = RegexSet::new(secret_regex).expect("Failed to build secrets regex");
-//
-//         !(self.command.starts_with(' ')
-//             || settings.history_filter.is_match(&self.command)
-//             || settings.cwd_filter.is_match(&self.cwd)
-//             || (secret_regex.is_match(&self.command)) && settings.secrets_filter)
-//     }
-// }
+
+impl Notice {
+    //     #[allow(clippy::too_many_arguments)]
+    //     fn new(
+    //         timestamp: OffsetDateTime,
+    //         command: String,
+    //         cwd: String,
+    //         exit: i64,
+    //         duration: i64,
+    //         session: Option<String>,
+    //         hostname: Option<String>,
+    //         deleted_at: Option<OffsetDateTime>,
+    //     ) -> Self {
+    //         let session = session
+    //             .or_else(|| env::var("PIZEON_SESSION").ok())
+    //             .unwrap_or_else(|| uuid_v7().as_simple().to_string());
+    //         let hostname = hostname.unwrap_or_else(get_host_user);
+    //
+    //         Self {
+    //             id: uuid_v7().as_simple().to_string().into(),
+    //             timestamp,
+    //             command,
+    //             cwd,
+    //             exit,
+    //             duration,
+    //             session,
+    //             hostname,
+    //             deleted_at,
+    //         }
+    //     }
+    //
+    //     pub fn serialize(&self) -> Result<DecryptedData> {
+    //         // This is pretty much the same as what we used for the old history, with one difference -
+    //         // it uses integers for timestamps rather than a string format.
+    //
+    //         use rmp::encode;
+    //
+    //         let mut output = vec![];
+    //
+    //         // write the version
+    //         encode::write_u16(&mut output, 0)?;
+    //         // INFO: ensure this is updated when adding new fields
+    //         encode::write_array_len(&mut output, 9)?;
+    //
+    //         encode::write_str(&mut output, &self.id.0)?;
+    //         encode::write_u64(&mut output, self.timestamp.unix_timestamp_nanos() as u64)?;
+    //         encode::write_sint(&mut output, self.duration)?;
+    //         encode::write_sint(&mut output, self.exit)?;
+    //         encode::write_str(&mut output, &self.command)?;
+    //         encode::write_str(&mut output, &self.cwd)?;
+    //         encode::write_str(&mut output, &self.session)?;
+    //         encode::write_str(&mut output, &self.hostname)?;
+    //
+    //         match self.deleted_at {
+    //             Some(d) => encode::write_u64(&mut output, d.unix_timestamp_nanos() as u64)?,
+    //             None => encode::write_nil(&mut output)?,
+    //         }
+    //
+    //         Ok(DecryptedData(output))
+    //     }
+    //
+    //     fn deserialize_v0(bytes: &[u8]) -> Result<History> {
+    //         use rmp::decode;
+    //
+    //         fn error_report<E: std::fmt::Debug>(err: E) -> eyre::Report {
+    //             eyre!("{err:?}")
+    //         }
+    //
+    //         let mut bytes = Bytes::new(bytes);
+    //
+    //         let version = decode::read_u16(&mut bytes).map_err(error_report)?;
+    //
+    //         if version != 0 {
+    //             bail!("expected decoding v0 record, found v{version}");
+    //         }
+    //
+    //         let nfields = decode::read_array_len(&mut bytes).map_err(error_report)?;
+    //
+    //         if nfields != 9 {
+    //             bail!("cannot decrypt history from a different version of Pizeon");
+    //         }
+    //
+    //         let bytes = bytes.remaining_slice();
+    //         let (id, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
+    //
+    //         let mut bytes = Bytes::new(bytes);
+    //         let timestamp = decode::read_u64(&mut bytes).map_err(error_report)?;
+    //         let duration = decode::read_int(&mut bytes).map_err(error_report)?;
+    //         let exit = decode::read_int(&mut bytes).map_err(error_report)?;
+    //
+    //         let bytes = bytes.remaining_slice();
+    //         let (command, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
+    //         let (cwd, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
+    //         let (session, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
+    //         let (hostname, bytes) = decode::read_str_from_slice(bytes).map_err(error_report)?;
+    //
+    //         // if we have more fields, try and get the deleted_at
+    //         let mut bytes = Bytes::new(bytes);
+    //
+    //         let (deleted_at, bytes) = match decode::read_u64(&mut bytes) {
+    //             Ok(unix) => (Some(unix), bytes.remaining_slice()),
+    //             // we accept null here
+    //             Err(ValueReadError::TypeMismatch(Marker::Null)) => (None, bytes.remaining_slice()),
+    //             Err(err) => return Err(error_report(err)),
+    //         };
+    //
+    //         if !bytes.is_empty() {
+    //             bail!("trailing bytes in encoded history. malformed")
+    //         }
+    //
+    //         Ok(History {
+    //             id: id.to_owned().into(),
+    //             timestamp: OffsetDateTime::from_unix_timestamp_nanos(timestamp as i128)?,
+    //             duration,
+    //             exit,
+    //             command: command.to_owned(),
+    //             cwd: cwd.to_owned(),
+    //             session: session.to_owned(),
+    //             hostname: hostname.to_owned(),
+    //             deleted_at: deleted_at
+    //                 .map(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128))
+    //                 .transpose()?,
+    //         })
+    //     }
+    //
+    //     pub fn deserialize(bytes: &[u8], version: &str) -> Result<History> {
+    //         match version {
+    //             HISTORY_VERSION => Self::deserialize_v0(bytes),
+    //
+    //             _ => bail!("unknown version {version:?}"),
+    //         }
+    //     }
+    //
+    //     /// Builder for a history entry that is imported from shell history.
+    //     ///
+    //     /// The only two required fields are `timestamp` and `command`.
+    //     ///
+    //     /// ## Examples
+    //     /// ```
+    //     /// use pizeon_client::history::History;
+    //     ///
+    //     /// let history: History = History::import()
+    //     ///     .timestamp(time::OffsetDateTime::now_utc())
+    //     ///     .command("ls -la")
+    //     ///     .build()
+    //     ///     .into();
+    //     /// ```
+    //     ///
+    //     /// If shell history contains more information, it can be added to the builder:
+    //     /// ```
+    //     /// use pizeon_client::history::History;
+    //     ///
+    //     /// let history: History = History::import()
+    //     ///     .timestamp(time::OffsetDateTime::now_utc())
+    //     ///     .command("ls -la")
+    //     ///     .cwd("/home/user")
+    //     ///     .exit(0)
+    //     ///     .duration(100)
+    //     ///     .build()
+    //     ///     .into();
+    //     /// ```
+    //     ///
+    //     /// Unknown command or command without timestamp cannot be imported, which
+    //     /// is forced at compile time:
+    //     ///
+    //     /// ```compile_fail
+    //     /// use pizeon_client::history::History;
+    //     ///
+    //     /// // this will not compile because timestamp is missing
+    //     /// let history: History = History::import()
+    //     ///     .command("ls -la")
+    //     ///     .build()
+    //     ///     .into();
+    //     /// ```
+    //     pub fn import() -> builder::HistoryImportedBuilder {
+    //         builder::HistoryImported::builder()
+    //     }
+    //
+    //     /// Builder for a history entry that is captured via hook.
+    //     ///
+    //     /// This builder is used only at the `start` step of the hook,
+    //     /// so it doesn't have any fields which are known only after
+    //     /// the command is finished, such as `exit` or `duration`.
+    //     ///
+    //     /// ## Examples
+    //     /// ```rust
+    //     /// use pizeon_client::history::History;
+    //     ///
+    //     /// let history: History = History::capture()
+    //     ///     .timestamp(time::OffsetDateTime::now_utc())
+    //     ///     .command("ls -la")
+    //     ///     .cwd("/home/user")
+    //     ///     .build()
+    //     ///     .into();
+    //     /// ```
+    //     ///
+    //     /// Command without any required info cannot be captured, which is forced at compile time:
+    //     ///
+    //     /// ```compile_fail
+    //     /// use pizeon_client::history::History;
+    //     ///
+    //     /// // this will not compile because `cwd` is missing
+    //     /// let history: History = History::capture()
+    //     ///     .timestamp(time::OffsetDateTime::now_utc())
+    //     ///     .command("ls -la")
+    //     ///     .build()
+    //     ///     .into();
+    //     /// ```
+    //     pub fn capture() -> builder::HistoryCapturedBuilder {
+    //         builder::HistoryCaptured::builder()
+    //     }
+
+    /// Builder for a notice entry that is imported from the database.
+    ///
+    /// Removed some compile_fail code from atuin
+    pub fn from_db() -> builder::NoticeFromDbBuilder {
+        builder::NoticeFromDb::builder()
+    }
+
+    //     pub fn success(&self) -> bool {
+    //         self.exit == 0 || self.duration == -1
+    //     }
+    //
+    //     pub fn should_save(&self, settings: &Settings) -> bool {
+    //         let secret_regex = SECRET_PATTERNS.iter().map(|f| f.1);
+    //         let secret_regex = RegexSet::new(secret_regex).expect("Failed to build secrets regex");
+    //
+    //         !(self.command.starts_with(' ')
+    //             || settings.history_filter.is_match(&self.command)
+    //             || settings.cwd_filter.is_match(&self.cwd)
+    //             || (secret_regex.is_match(&self.command)) && settings.secrets_filter)
+    //     }
+}
 //
 // #[cfg(test)]
 // mod tests {
