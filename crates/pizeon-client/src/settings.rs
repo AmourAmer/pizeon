@@ -369,7 +369,7 @@ pub struct Settings {
     // pub word_jump_mode: WordJumpMode,
     // pub word_chars: String,
     // pub scroll_context_lines: usize,
-    // pub history_format: String,
+    pub notice_format: String,
     // pub prefers_reduced_motion: bool,
     // pub store_failed: bool,
     //

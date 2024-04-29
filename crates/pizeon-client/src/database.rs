@@ -78,7 +78,6 @@ pub trait Database: Send + Sync + 'static {
     async fn list(
         &self,
         // filters: &[FilterMode], // PIG FIXME not yet
-        context: &Context,
         max: Option<usize>,
         include_deleted: bool,
     ) -> Result<Vec<Notice>>;
@@ -274,12 +273,7 @@ impl Database for Sqlite {
     // }
 
     // show all (unexpired) notices in the pool
-    async fn list(
-        &self,
-        context: &Context,
-        max: Option<usize>,
-        include_deleted: bool,
-    ) -> Result<Vec<Notice>> {
+    async fn list(&self, max: Option<usize>, include_deleted: bool) -> Result<Vec<Notice>> {
         debug!("listing notices");
 
         let mut query = SqlBuilder::select_from(SqlName::new("notices").alias("n").baquoted());
@@ -287,6 +281,8 @@ impl Database for Sqlite {
         if !include_deleted {
             query.and_where_is_null("deleted_at");
         }
+        query.and_where_ne("blocked", false);
+        // TODO examine expires_at
 
         if let Some(max) = max {
             query.limit(max);

@@ -1,18 +1,24 @@
-// use std::{
-//     fmt::{self, Display},
-//     io::{self, IsTerminal, Write},
-//     time::Duration,
-// };
+use std::{
+    fmt::{self, Display},
+    io::{self, IsTerminal, Write},
+    time::Duration,
+};
 //
 // use pizeon_common::utils::{self, Escapable as _};
 use clap::Subcommand;
 use eyre::{Context, Result};
-// use runtime_format::{FormatKey, FormatKeyError, ParseSegment, ParsedFmt};
-//
+use runtime_format::{FormatKey, FormatKeyError, ParseSegment, ParsedFmt};
+
 use pizeon_client::{
-    database::{current_context, Database},
+    database::{
+        // current_context,
+        Database,
+    },
     // encryption,
-    // history::{store::HistoryStore, History},
+    notice::{
+        // store::HistoryStore,
+        Notice,
+    },
     record::sqlite_store::SqliteStore,
     settings::{
         // FilterMode::{Directory, Global, Session},
@@ -25,7 +31,7 @@ use pizeon_client::{
 // use pizeon_client::{record, sync};
 //
 // use log::{debug, warn};
-// use time::{macros::format_description, OffsetDateTime};
+use time::{macros::format_description, OffsetDateTime};
 //
 // use super::search::format_duration_into;
 
@@ -127,160 +133,106 @@ pub enum Cmd {
 //         }
 //     }
 // }
-//
-// #[allow(clippy::cast_sign_loss)]
-// pub fn print_list(
-//     h: &[History],
-//     list_mode: ListMode,
-//     format: Option<&str>,
-//     print0: bool,
-//     reverse: bool,
-//     tz: Timezone,
-// ) {
-//     let w = std::io::stdout();
-//     let mut w = w.lock();
-//
-//     let fmt_str = match list_mode {
-//         ListMode::Human => format
-//             .unwrap_or("{time} · {duration}\t{command}")
-//             .replace("\\t", "\t"),
-//         ListMode::Regular => format
-//             .unwrap_or("{time}\t{command}\t{duration}")
-//             .replace("\\t", "\t"),
-//         // not used
-//         ListMode::CmdOnly => String::new(),
-//     };
-//
-//     let parsed_fmt = match list_mode {
-//         ListMode::Human | ListMode::Regular => parse_fmt(&fmt_str),
-//         ListMode::CmdOnly => std::iter::once(ParseSegment::Key("command")).collect(),
-//     };
-//
-//     let iterator = if reverse {
-//         Box::new(h.iter().rev()) as Box<dyn Iterator<Item = &History>>
-//     } else {
-//         Box::new(h.iter()) as Box<dyn Iterator<Item = &History>>
-//     };
-//
-//     let entry_terminator = if print0 { "\0" } else { "\n" };
-//     let flush_each_line = print0;
-//
-//     for history in iterator {
-//         let fh = FmtHistory {
-//             history,
-//             cmd_format: CmdFormat::for_output(&w),
-//             tz: &tz,
-//         };
-//         let args = parsed_fmt.with_args(&fh);
-//         let write = write!(w, "{args}{entry_terminator}");
-//         if let Err(err) = args.status() {
-//             eprintln!("ERROR: history output failed with: {err}");
-//             std::process::exit(1);
-//         }
-//         check_for_write_errors(write);
-//         if flush_each_line {
-//             check_for_write_errors(w.flush());
-//         }
-//     }
-//
-//     if !flush_each_line {
-//         check_for_write_errors(w.flush());
-//     }
-// }
-//
-// fn check_for_write_errors(write: Result<(), io::Error>) {
-//     if let Err(err) = write {
-//         // Ignore broken pipe (issue #626)
-//         if err.kind() != io::ErrorKind::BrokenPipe {
-//             eprintln!("ERROR: History output failed with the following error: {err}");
-//             std::process::exit(1);
-//         }
-//     }
-// }
-//
-// /// Type wrapper around `History` with formatting settings.
-// #[derive(Clone, Copy, Debug)]
-// struct FmtHistory<'a> {
-//     history: &'a History,
-//     cmd_format: CmdFormat,
-//     tz: &'a Timezone,
-// }
-//
-// #[derive(Clone, Copy, Debug)]
-// enum CmdFormat {
-//     Literal,
-//     Escaped,
-// }
-// impl CmdFormat {
-//     fn for_output<O: IsTerminal>(out: &O) -> Self {
-//         if out.is_terminal() {
-//             Self::Escaped
-//         } else {
-//             Self::Literal
-//         }
-//     }
-// }
-//
-// static TIME_FMT: &[time::format_description::FormatItem<'static>] =
-//     format_description!("[year]-[month]-[day] [hour repr:24]:[minute]:[second]");
-//
-// /// defines how to format the history
-// impl FormatKey for FmtHistory<'_> {
-//     #[allow(clippy::cast_sign_loss)]
-//     fn fmt(&self, key: &str, f: &mut fmt::Formatter<'_>) -> Result<(), FormatKeyError> {
-//         match key {
-//             "command" => match self.cmd_format {
-//                 CmdFormat::Literal => f.write_str(self.history.command.trim()),
-//                 CmdFormat::Escaped => f.write_str(&self.history.command.trim().escape_control()),
-//             }?,
-//             "directory" => f.write_str(self.history.cwd.trim())?,
-//             "exit" => f.write_str(&self.history.exit.to_string())?,
-//             "duration" => {
-//                 let dur = Duration::from_nanos(std::cmp::max(self.history.duration, 0) as u64);
-//                 format_duration_into(dur, f)?;
-//             }
-//             "time" => {
-//                 self.history
-//                     .timestamp
-//                     .to_offset(self.tz.0)
-//                     .format(TIME_FMT)
-//                     .map_err(|_| fmt::Error)?
-//                     .fmt(f)?;
-//             }
-//             "relativetime" => {
-//                 let since = OffsetDateTime::now_utc() - self.history.timestamp;
-//                 let d = Duration::try_from(since).unwrap_or_default();
-//                 format_duration_into(d, f)?;
-//             }
-//             "host" => f.write_str(
-//                 self.history
-//                     .hostname
-//                     .split_once(':')
-//                     .map_or(&self.history.hostname, |(host, _)| host),
-//             )?,
-//             "user" => f.write_str(
-//                 self.history
-//                     .hostname
-//                     .split_once(':')
-//                     .map_or("", |(_, user)| user),
-//             )?,
-//             _ => return Err(FormatKeyError::UnknownKey),
-//         }
-//         Ok(())
-//     }
-// }
-//
-// fn parse_fmt(format: &str) -> ParsedFmt {
-//     match ParsedFmt::new(format) {
-//         Ok(fmt) => fmt,
-//         Err(err) => {
-//             eprintln!("ERROR: History formatting failed with the following error: {err}");
-//             println!("If your formatting string contains curly braces (eg: {{var}}) you need to escape them this way: {{{{var}}.");
-//             std::process::exit(1)
-//         }
-//     }
-// }
-//
+
+#[allow(clippy::cast_sign_loss)]
+pub fn print_list(h: &[Notice], format: Option<&str>, print0: bool) {
+    let w = std::io::stdout();
+    let mut w = w.lock();
+
+    let fmt_str = format.unwrap_or("{id}\t{body}").replace("\\t", "\t");
+
+    let parsed_fmt = parse_fmt(&fmt_str);
+
+    let iterator = Box::new(h.iter()) as Box<dyn Iterator<Item = &Notice>>;
+
+    let entry_terminator = if print0 { "\0" } else { "\n" };
+    let flush_each_line = print0;
+
+    for notice in iterator {
+        let fh = FmtNotice {
+            notice,
+            output_format: OutputFormat::for_output(&w),
+        };
+        let args = parsed_fmt.with_args(&fh);
+        let write = write!(w, "{args}{entry_terminator}");
+        if let Err(err) = args.status() {
+            eprintln!("ERROR: history output failed with: {err}");
+            std::process::exit(1);
+        }
+        check_for_write_errors(write);
+        if flush_each_line {
+            check_for_write_errors(w.flush());
+        }
+    }
+
+    if !flush_each_line {
+        check_for_write_errors(w.flush());
+    }
+}
+
+fn check_for_write_errors(write: Result<(), io::Error>) {
+    if let Err(err) = write {
+        // Ignore broken pipe (issue #626)
+        if err.kind() != io::ErrorKind::BrokenPipe {
+            eprintln!("ERROR: History output failed with the following error: {err}");
+            std::process::exit(1);
+        }
+    }
+}
+
+/// Type wrapper around `Notice` with formatting settings.
+#[derive(Clone, Copy, Debug)]
+struct FmtNotice<'a> {
+    notice: &'a Notice,
+    output_format: OutputFormat,
+}
+
+#[derive(Clone, Copy, Debug)]
+enum OutputFormat {
+    Literal,
+    Escaped,
+}
+impl OutputFormat {
+    fn for_output<O: IsTerminal>(out: &O) -> Self {
+        if out.is_terminal() {
+            Self::Escaped
+        } else {
+            Self::Literal
+        }
+    }
+}
+
+static TIME_FMT: &[time::format_description::FormatItem<'static>] =
+    format_description!("[year]-[month]-[day] [hour repr:24]:[minute]:[second]");
+
+/// defines how to format the notice
+impl FormatKey for FmtNotice<'_> {
+    #[allow(clippy::cast_sign_loss)]
+    fn fmt(&self, key: &str, f: &mut fmt::Formatter<'_>) -> Result<(), FormatKeyError> {
+        match key {
+            "id" => (), //f.write_str(self.notice.id.split_once(':').map_or("", |(_, user)| user))?,
+            "body" => (),
+            // match self.output_format {
+            //     OutputFormat::Literal => f.write_str(self.notice.command.trim()),
+            //     OutputFormat::Escaped => f.write_str(&self.notice.command.trim().escape_control()),
+            // }?,
+            _ => return Err(FormatKeyError::UnknownKey),
+        }
+        Ok(())
+    }
+}
+
+fn parse_fmt(format: &str) -> ParsedFmt {
+    match ParsedFmt::new(format) {
+        Ok(fmt) => fmt,
+        Err(err) => {
+            eprintln!("ERROR: Notice formatting failed with the following error: {err}");
+            println!("If your formatting string contains curly braces (eg: {{var}}) you need to escape them this way: {{{{var}}.");
+            std::process::exit(1)
+        }
+    }
+}
+
 impl Cmd {
     //     #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
     //     async fn handle_start(
@@ -385,12 +337,11 @@ impl Cmd {
     async fn handle_list(
         db: &impl Database,
         settings: &Settings,
-        context: pizeon_client::database::Context,
         format: Option<String>,
         include_deleted: bool,
         print0: bool,
     ) -> Result<()> {
-        let notices = db.list(&context, None, include_deleted).await?;
+        let notices = db.list(None, include_deleted).await?;
 
         print_list(
             &notices,
@@ -457,15 +408,13 @@ impl Cmd {
     //         }
     //         Ok(())
     //     }
-    //
+
     pub async fn run(
         self,
         settings: &Settings,
         db: &impl Database,
         store: SqliteStore,
     ) -> Result<()> {
-        let context = current_context();
-
         // let encryption_key: [u8; 32] = encryption::load_key(settings)
         //     .context("could not load encryption key")?
         //     .into();
@@ -479,7 +428,7 @@ impl Cmd {
             //     Self::handle_end(db, store, history_store, settings, &id, exit, duration).await
             // }
             Self::List { print0, format } => {
-                Self::handle_list(db, settings, context, format, false, print0).await
+                Self::handle_list(db, settings, format, false, print0).await
             } //
               // Self::Last {
               //     human,
