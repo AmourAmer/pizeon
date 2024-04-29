@@ -202,20 +202,16 @@ impl OutputFormat {
     }
 }
 
-static TIME_FMT: &[time::format_description::FormatItem<'static>] =
-    format_description!("[year]-[month]-[day] [hour repr:24]:[minute]:[second]");
-
 /// defines how to format the notice
 impl FormatKey for FmtNotice<'_> {
     #[allow(clippy::cast_sign_loss)]
     fn fmt(&self, key: &str, f: &mut fmt::Formatter<'_>) -> Result<(), FormatKeyError> {
         match key {
-            "id" => (), //f.write_str(self.notice.id.split_once(':').map_or("", |(_, user)| user))?,
-            "body" => (),
-            // match self.output_format {
-            //     OutputFormat::Literal => f.write_str(self.notice.command.trim()),
-            //     OutputFormat::Escaped => f.write_str(&self.notice.command.trim().escape_control()),
-            // }?,
+            "id" => f.write_str(self.notice.id.split_once(':').map_or("", |(_, user)| user))?,
+            "body" => match self.output_format {
+                OutputFormat::Literal => f.write_str(self.notice.command.trim()),
+                OutputFormat::Escaped => f.write_str(&self.notice.command.trim().escape_control()),
+            }?,
             _ => return Err(FormatKeyError::UnknownKey),
         }
         Ok(())
