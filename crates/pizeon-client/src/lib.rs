@@ -10,7 +10,7 @@ extern crate log;
 //
 pub mod database;
 // pub mod encryption;
-// pub mod history;
+pub mod notice;
 // pub mod import;
 // pub mod kv;
 // pub mod ordering;

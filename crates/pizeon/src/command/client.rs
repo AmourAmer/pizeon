@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use clap::Subcommand;
 use eyre::{Result, WrapErr};
 
-// use env_logger::Builder;
+use env_logger::Builder;
 use pizeon_client::{database::Sqlite, record::sqlite_store::SqliteStore, settings::Settings};
 
 // #[cfg(feature = "sync")]
@@ -15,7 +15,7 @@ use pizeon_client::{database::Sqlite, record::sqlite_store::SqliteStore, setting
 // mod default_config;
 // mod doctor;
 // mod dotfiles;
-mod history;
+mod notice;
 // mod import;
 // mod info;
 // mod init;
@@ -27,9 +27,9 @@ mod history;
 #[derive(Subcommand, Debug)]
 #[command(infer_subcommands = true)]
 pub enum Cmd {
-    /// Atuin manipulates shell history
+    /// Manipulates notices
     #[command(subcommand)]
-    History(history::Cmd),
+    Notice(notice::Cmd),
     //
     // /// Import shell history from file
     // #[command(subcommand)]
@@ -94,14 +94,14 @@ impl Cmd {
     }
 
     async fn run_inner(self, mut settings: Settings) -> Result<()> {
-        // Builder::new()
-        //     .filter_level(log::LevelFilter::Off)
-        //     .filter_module("sqlx_sqlite::regexp", log::LevelFilter::Off)
-        //     .parse_env("PIZEON_LOG")
-        //     .init();
-        //
-        // tracing::trace!(command = ?self, "client command");
-        //
+        Builder::new()
+            .filter_level(log::LevelFilter::Off)
+            .filter_module("sqlx_sqlite::regexp", log::LevelFilter::Off)
+            .parse_env("PIZEON_LOG")
+            .init();
+
+        tracing::trace!(command = ?self, "client command");
+
         let db_path = PathBuf::from(settings.db_path.as_str());
         let record_store_path = PathBuf::from(settings.record_store_path.as_str());
 
@@ -109,7 +109,7 @@ impl Cmd {
         let sqlite_store = SqliteStore::new(record_store_path, settings.local_timeout).await?;
 
         match self {
-            Self::History(history) => history.run(&settings, &db, sqlite_store).await,
+            Self::Notice(notice) => notice.run(&settings, &db, sqlite_store).await,
             // Self::Import(import) => import.run(&db).await,
             // Self::Stats(stats) => stats.run(&db, &settings).await,
             // Self::Search(search) => search.run(db, &mut settings, sqlite_store).await,

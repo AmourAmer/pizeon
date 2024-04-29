@@ -11,7 +11,7 @@ use async_trait::async_trait;
 use fs_err as fs;
 // use itertools::Itertools;
 // use rand::{distributions::Alphanumeric, Rng};
-// use sql_builder::{bind::Bind, esc, quote, SqlBuilder, SqlName};
+use sql_builder::{bind::Bind, esc, quote, SqlBuilder, SqlName};
 use sqlx::{
     sqlite::{
         SqliteConnectOptions, SqliteJournalMode, SqlitePool, SqlitePoolOptions, SqliteRow,
@@ -19,27 +19,24 @@ use sqlx::{
     },
     Result, Row,
 };
-// use time::OffsetDateTime;
-//
+use time::OffsetDateTime;
+
 // use crate::{
 //     history::{HistoryId, HistoryStats},
 //     utils::get_host_user,
 // };
 //
-// use super::{
-//     history::History,
-//     ordering,
-//     settings::{FilterMode, SearchMode, Settings},
-// };
-//
-// pub struct Context {
-//     pub session: String,
-//     pub cwd: String,
-//     pub hostname: String,
-//     pub host_id: String,
-//     pub git_root: Option<PathBuf>,
-// }
-//
+use super::{
+    notice::Notice,
+    //     ordering,
+    //     settings::{FilterMode, SearchMode, Settings},
+};
+
+pub struct Context {
+    pub hostname: String,
+    pub host_id: String,
+}
+
 // #[derive(Default, Clone)]
 // pub struct OptFilters {
 //     pub exit: Option<i64>,
@@ -78,14 +75,13 @@ pub trait Database: Send + Sync + 'static {
     // async fn save_bulk(&self, h: &[History]) -> Result<()>;
     //
     // async fn load(&self, id: &str) -> Result<Option<History>>;
-    // async fn list(
-    //     &self,
-    //     filters: &[FilterMode],
-    //     context: &Context,
-    //     max: Option<usize>,
-    //     unique: bool,
-    //     include_deleted: bool,
-    // ) -> Result<Vec<History>>;
+    async fn list(
+        &self,
+        // filters: &[FilterMode], // PIG FIXME not yet
+        context: &Context,
+        max: Option<usize>,
+        include_deleted: bool,
+    ) -> Result<Vec<Notice>>;
     // async fn range(&self, from: OffsetDateTime, to: OffsetDateTime) -> Result<Vec<History>>;
     //
     // async fn update(&self, h: &History) -> Result<()>;
@@ -110,9 +106,9 @@ pub trait Database: Send + Sync + 'static {
     //     query: &str,
     //     filter_options: OptFilters,
     // ) -> Result<Vec<History>>;
-    //
-    // async fn query_history(&self, query: &str) -> Result<Vec<History>>;
-    //
+
+    async fn query_notice(&self, query: &str) -> Result<Vec<Notice>>;
+
     // async fn all_with_count(&self) -> Result<Vec<(History, i32)>>;
     //
     // async fn stats(&self, h: &History) -> Result<HistoryStats>;
@@ -561,16 +557,16 @@ impl Database for Sqlite {
     //
     //     Ok(ordering::reorder_fuzzy(search_mode, orig_query, res))
     // }
-    //
-    // async fn query_history(&self, query: &str) -> Result<Vec<History>> {
-    //     let res = sqlx::query(query)
-    //         .map(Self::query_history)
-    //         .fetch_all(&self.pool)
-    //         .await?;
-    //
-    //     Ok(res)
-    // }
-    //
+
+    async fn query_notice(&self, query: &str) -> Result<Vec<Notice>> {
+        let res = sqlx::query(query)
+            .map(Self::query_notice)
+            .fetch_all(&self.pool)
+            .await?;
+
+        Ok(res)
+    }
+
     // async fn all_with_count(&self) -> Result<Vec<(History, i32)>> {
     //     debug!("listing history");
     //

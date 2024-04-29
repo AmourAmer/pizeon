@@ -10,10 +10,7 @@ use eyre::{Context, Result};
 // use runtime_format::{FormatKey, FormatKeyError, ParseSegment, ParsedFmt};
 //
 use pizeon_client::{
-    database::{
-        // current_context,
-        Database,
-    },
+    database::{current_context, Database},
     // encryption,
     // history::{store::HistoryStore, History},
     record::sqlite_store::SqliteStore,
@@ -31,7 +28,7 @@ use pizeon_client::{
 // use time::{macros::format_description, OffsetDateTime};
 //
 // use super::search::format_duration_into;
-//
+
 #[derive(Subcommand, Debug)]
 #[command(infer_subcommands = true)]
 pub enum Cmd {
@@ -49,45 +46,35 @@ pub enum Cmd {
     //     duration: Option<u64>,
     // },
     //
-    // /// List all items in history
-    // List {
-    //     #[arg(long, short)]
-    //     cwd: bool,
-    //
-    //     #[arg(long, short)]
-    //     session: bool,
-    //
-    //     #[arg(long)]
-    //     human: bool,
-    //
-    //     /// Show only the text of the command
-    //     #[arg(long)]
-    //     cmd_only: bool,
-    //
-    //     /// Terminate the output with a null, for better multiline support
-    //     #[arg(long)]
-    //     print0: bool,
-    //
-    //     #[arg(long, short, default_value = "true")]
-    //     // accept no value
-    //     #[arg(num_args(0..=1), default_missing_value("true"))]
-    //     // accept a value
-    //     #[arg(action = clap::ArgAction::Set)]
-    //     reverse: bool,
-    //
-    //     /// Display the command time in another timezone other than the configured default.
-    //     ///
-    //     /// This option takes one of the following kinds of values:
-    //     /// - the special value "local" (or "l") which refers to the system time zone
-    //     /// - an offset from UTC (e.g. "+9", "-2:30")
-    //     #[arg(long, visible_alias = "tz")]
-    //     timezone: Option<Timezone>,
-    //
-    //     /// Available variables: {command}, {directory}, {duration}, {user}, {host}, {exit} and {time}.
-    //     /// Example: --format "{time} - [{duration}] - {directory}$\t{command}"
-    //     #[arg(long, short)]
-    //     format: Option<String>,
-    // },
+    /// List all notices
+    List {
+        // TODO postponed problem to front-end
+        // #[arg(long, short)]
+        // server: String, // PIG TODO maybe some more specific type
+
+        // If someone want cli use of pizeon, impl this.
+        // But I don't know how to set arg in atuin 18.2.0
+        // #[arg(long)]
+        // human: bool,
+        //
+        /// Terminate the output with a null, for better multiline support
+        #[arg(long)]
+        print0: bool,
+
+        // PIG FIXME copied from atuin, slim chance it can be used later. Can be
+        // deleted after 2025
+        // #[arg(long, short, default_value = "true")]
+        // // accept no value
+        // #[arg(num_args(0..=1), default_missing_value("true"))]
+        // // accept a value
+        // #[arg(action = clap::ArgAction::Set)]
+        // reverse: bool,
+        //
+        /// Available variables: {command}, {directory}, {duration}, {user}, {host}, {exit} and {time}.
+        /// Example: --format "{time} - [{duration}] - {directory}$\t{command}"
+        #[arg(long, short)]
+        format: Option<String>,
+    },
     //
     // /// Get the last command ran
     // Last {
@@ -392,48 +379,31 @@ impl Cmd {
     //
     //         Ok(())
     //     }
-    //
-    //     #[allow(clippy::too_many_arguments)]
-    //     #[allow(clippy::fn_params_excessive_bools)]
-    //     async fn handle_list(
-    //         db: &impl Database,
-    //         settings: &Settings,
-    //         context: pizeon_client::database::Context,
-    //         session: bool,
-    //         cwd: bool,
-    //         mode: ListMode,
-    //         format: Option<String>,
-    //         include_deleted: bool,
-    //         print0: bool,
-    //         reverse: bool,
-    //         tz: Timezone,
-    //     ) -> Result<()> {
-    //         let filters = match (session, cwd) {
-    //             (true, true) => [Session, Directory],
-    //             (true, false) => [Session, Global],
-    //             (false, true) => [Global, Directory],
-    //             (false, false) => [settings.filter_mode, Global],
-    //         };
-    //
-    //         let history = db
-    //             .list(&filters, &context, None, false, include_deleted)
-    //             .await?;
-    //
-    //         print_list(
-    //             &history,
-    //             mode,
-    //             match format {
-    //                 None => Some(settings.history_format.as_str()),
-    //                 _ => format.as_deref(),
-    //             },
-    //             print0,
-    //             reverse,
-    //             tz,
-    //         );
-    //
-    //         Ok(())
-    //     }
-    //
+
+    #[allow(clippy::too_many_arguments)]
+    #[allow(clippy::fn_params_excessive_bools)]
+    async fn handle_list(
+        db: &impl Database,
+        settings: &Settings,
+        context: pizeon_client::database::Context,
+        format: Option<String>,
+        include_deleted: bool,
+        print0: bool,
+    ) -> Result<()> {
+        let notices = db.list(&context, None, include_deleted).await?;
+
+        print_list(
+            &notices,
+            match format {
+                None => Some(settings.notice_format.as_str()),
+                _ => format.as_deref(),
+            },
+            print0,
+        );
+
+        Ok(())
+    }
+
     //     async fn handle_prune(
     //         db: &impl Database,
     //         settings: &Settings,
@@ -494,8 +464,8 @@ impl Cmd {
         db: &impl Database,
         store: SqliteStore,
     ) -> Result<()> {
-        // let context = current_context();
-        //
+        let context = current_context();
+
         // let encryption_key: [u8; 32] = encryption::load_key(settings)
         //     .context("could not load encryption key")?
         //     .into();
@@ -508,53 +478,38 @@ impl Cmd {
             // Self::End { id, exit, duration } => {
             //     Self::handle_end(db, store, history_store, settings, &id, exit, duration).await
             // }
-            // Self::List {
-            //     session,
-            //     cwd,
-            //     human,
-            //     cmd_only,
-            //     print0,
-            //     reverse,
-            //     timezone,
-            //     format,
-            // } => {
-            //     let mode = ListMode::from_flags(human, cmd_only);
-            //     let tz = timezone.unwrap_or(settings.timezone);
-            //     Self::handle_list(
-            //         db, settings, context, session, cwd, mode, format, false, print0, reverse, tz,
-            //     )
-            //     .await
-            // }
-            //
-            // Self::Last {
-            //     human,
-            //     cmd_only,
-            //     timezone,
-            //     format,
-            // } => {
-            //     let last = db.last().await?;
-            //     let last = last.as_ref().map(std::slice::from_ref).unwrap_or_default();
-            //     let tz = timezone.unwrap_or(settings.timezone);
-            //     print_list(
-            //         last,
-            //         ListMode::from_flags(human, cmd_only),
-            //         match format {
-            //             None => Some(settings.history_format.as_str()),
-            //             _ => format.as_deref(),
-            //         },
-            //         false,
-            //         true,
-            //         tz,
-            //     );
-            //
-            //     Ok(())
-            // }
-            //
-            // Self::InitStore => history_store.init_store(db).await,
-            //
-            // Self::Prune { dry_run } => {
-            //     Self::handle_prune(db, settings, store, context, dry_run).await
-            // }
+            Self::List { print0, format } => {
+                Self::handle_list(db, settings, context, format, false, print0).await
+            } //
+              // Self::Last {
+              //     human,
+              //     cmd_only,
+              //     timezone,
+              //     format,
+              // } => {
+              //     let last = db.last().await?;
+              //     let last = last.as_ref().map(std::slice::from_ref).unwrap_or_default();
+              //     let tz = timezone.unwrap_or(settings.timezone);
+              //     print_list(
+              //         last,
+              //         ListMode::from_flags(human, cmd_only),
+              //         match format {
+              //             None => Some(settings.history_format.as_str()),
+              //             _ => format.as_deref(),
+              //         },
+              //         false,
+              //         true,
+              //         tz,
+              //     );
+              //
+              //     Ok(())
+              // }
+              //
+              // Self::InitStore => history_store.init_store(db).await,
+              //
+              // Self::Prune { dry_run } => {
+              //     Self::handle_prune(db, settings, store, context, dry_run).await
+              // }
         }
     }
 }
