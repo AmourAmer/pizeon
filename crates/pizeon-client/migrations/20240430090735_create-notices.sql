@@ -2,7 +2,7 @@ create table if not exists notices (
   blocked boolean not null,
 	id text primary key,
 	timestamp integer not null,
-	body text not null,
+	body json not null,
 	versions text not null,
 	deleted_at integer,
   expires_at integer
