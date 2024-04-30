@@ -593,14 +593,14 @@ impl Settings {
     //
     pub fn builder() -> Result<ConfigBuilder<DefaultState>> {
         let data_dir = pizeon_common::utils::data_dir();
-        let db_path = data_dir.join("history.db");
+        let db_path = data_dir.join("notice.db");
         let record_store_path = data_dir.join("records.db");
 
         let key_path = data_dir.join("key");
         let session_path = data_dir.join("session");
 
         Ok(Config::builder()
-            .set_default("history_format", "{time}\t{command}\t{duration}")?
+            .set_default("notice_format", "{id}\t{body}")?
             .set_default("db_path", db_path.to_str())?
             .set_default("record_store_path", record_store_path.to_str())?
             .set_default("key_path", key_path.to_str())?
@@ -663,6 +663,7 @@ impl Settings {
             ))
     }
 
+    // PIG FIXME:
     pub fn new() -> Result<Self> {
         let config_dir = pizeon_common::utils::config_dir();
         let data_dir = pizeon_common::utils::data_dir();
