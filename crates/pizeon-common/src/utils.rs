@@ -1,4 +1,4 @@
-// use std::borrow::Cow;
+use std::borrow::Cow;
 // use std::env;
 use std::path::PathBuf;
 //
@@ -111,37 +111,37 @@ pub fn data_dir() -> PathBuf {
 //     // only set on xonsh
 //     env::var("PIZEON_SHELL_XONSH").is_ok()
 // }
-//
-// /// Extension trait for anything that can behave like a string to make it easy to escape control
-// /// characters.
-// ///
-// /// Intended to help prevent control characters being printed and interpreted by the terminal when
-// /// printing history as well as to ensure the commands that appear in the interactive search
-// /// reflect the actual command run rather than just the printable characters.
-// pub trait Escapable: AsRef<str> {
-//     fn escape_control(&self) -> Cow<str> {
-//         if !self.as_ref().contains(|c: char| c.is_ascii_control()) {
-//             self.as_ref().into()
-//         } else {
-//             let mut remaining = self.as_ref();
-//             // Not a perfect way to reserve space but should reduce the allocations
-//             let mut buf = String::with_capacity(remaining.as_bytes().len());
-//             while let Some(i) = remaining.find(|c: char| c.is_ascii_control()) {
-//                 // safe to index with `..i`, `i` and `i+1..` as part[i] is a single byte ascii char
-//                 buf.push_str(&remaining[..i]);
-//                 buf.push('^');
-//                 buf.push(match remaining.as_bytes()[i] {
-//                     0x7F => '?',
-//                     code => char::from_u32(u32::from(code) + 64).unwrap(),
-//                 });
-//                 remaining = &remaining[i + 1..];
-//             }
-//             buf.push_str(remaining);
-//             buf.into()
-//         }
-//     }
-// }
-//
+
+/// Extension trait for anything that can behave like a string to make it easy to escape control
+/// characters.
+///
+/// Intended to help prevent control characters being printed and interpreted by the terminal when
+/// printing history as well as to ensure the commands that appear in the interactive search
+/// reflect the actual command run rather than just the printable characters.
+pub trait Escapable: AsRef<str> {
+    fn escape_control(&self) -> Cow<str> {
+        if !self.as_ref().contains(|c: char| c.is_ascii_control()) {
+            self.as_ref().into()
+        } else {
+            let mut remaining = self.as_ref();
+            // Not a perfect way to reserve space but should reduce the allocations
+            let mut buf = String::with_capacity(remaining.as_bytes().len());
+            while let Some(i) = remaining.find(|c: char| c.is_ascii_control()) {
+                // safe to index with `..i`, `i` and `i+1..` as part[i] is a single byte ascii char
+                buf.push_str(&remaining[..i]);
+                buf.push('^');
+                buf.push(match remaining.as_bytes()[i] {
+                    0x7F => '?',
+                    code => char::from_u32(u32::from(code) + 64).unwrap(),
+                });
+                remaining = &remaining[i + 1..];
+            }
+            buf.push_str(remaining);
+            buf.into()
+        }
+    }
+}
+
 // pub fn unquote(s: &str) -> Result<String> {
 //     if s.chars().count() < 2 {
 //         return Err(eyre!("not enough chars"));
@@ -165,9 +165,9 @@ pub fn data_dir() -> PathBuf {
 //
 //     Ok(s.to_string())
 // }
-//
-// impl<T: AsRef<str>> Escapable for T {}
-//
+
+impl<T: AsRef<str>> Escapable for T {}
+
 // #[cfg(test)]
 // mod tests {
 //     use time::Month;

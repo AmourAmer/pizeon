@@ -3,10 +3,10 @@ use std::{
     io::{self, IsTerminal, Write},
     time::Duration,
 };
-//
-// use pizeon_common::utils::{self, Escapable as _};
+
 use clap::Subcommand;
 use eyre::{Context, Result};
+use pizeon_common::utils::{self, Escapable as _};
 use runtime_format::{FormatKey, FormatKeyError, ParseSegment, ParsedFmt};
 
 use pizeon_client::{
@@ -139,6 +139,7 @@ pub fn print_list(h: &[Notice], format: Option<&str>, print0: bool) {
     let w = std::io::stdout();
     let mut w = w.lock();
 
+    // PIG TODO: add timestamp to this and settings, also for `fmt` below
     let fmt_str = format.unwrap_or("{id}\t{body}").replace("\\t", "\t");
 
     let parsed_fmt = parse_fmt(&fmt_str);
@@ -207,10 +208,10 @@ impl FormatKey for FmtNotice<'_> {
     #[allow(clippy::cast_sign_loss)]
     fn fmt(&self, key: &str, f: &mut fmt::Formatter<'_>) -> Result<(), FormatKeyError> {
         match key {
-            "id" => f.write_str(self.notice.id.split_once(':').map_or("", |(_, user)| user))?,
+            "id" => f.write_str(&self.notice.id.0)?,
             "body" => match self.output_format {
-                OutputFormat::Literal => f.write_str(self.notice.command.trim()),
-                OutputFormat::Escaped => f.write_str(&self.notice.command.trim().escape_control()),
+                OutputFormat::Literal => f.write_str(self.notice.body.trim()),
+                OutputFormat::Escaped => f.write_str(&self.notice.body.trim().escape_control()),
             }?,
             _ => return Err(FormatKeyError::UnknownKey),
         }
