@@ -36,35 +36,20 @@ use super::Notice;
 //         )
 //     }
 // }
-//
-// /// Builder for a history entry that is captured via hook.
-// ///
-// /// This builder is used only at the `start` step of the hook,
-// /// so it doesn't have any fields which are known only after
-// /// the command is finished, such as `exit` or `duration`.
-// #[derive(Debug, Clone, TypedBuilder)]
-// pub struct HistoryCaptured {
-//     timestamp: time::OffsetDateTime,
-//     #[builder(setter(into))]
-//     command: String,
-//     #[builder(setter(into))]
-//     cwd: String,
-// }
-//
-// impl From<HistoryCaptured> for History {
-//     fn from(captured: HistoryCaptured) -> Self {
-//         History::new(
-//             captured.timestamp,
-//             captured.command,
-//             captured.cwd,
-//             -1,
-//             -1,
-//             None,
-//             None,
-//             None,
-//         )
-//     }
-// }
+
+/// Builder for a notice entry manually added
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct NoticeCreated {
+    timestamp: time::OffsetDateTime,
+    #[builder(setter(into))]
+    body: String,
+}
+
+impl From<NoticeCreated> for Notice {
+    fn from(created: NoticeCreated) -> Self {
+        Notice::new(false, created.timestamp, created.body, None, None)
+    }
+}
 
 /// Builder for a history entry that is loaded from the database.
 ///

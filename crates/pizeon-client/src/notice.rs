@@ -5,8 +5,8 @@
 // use std::fmt::Display;
 //
 // use pizeon_common::record::DecryptedData;
-// use pizeon_common::utils::uuid_v7;
-//
+use pizeon_common::utils::uuid_v7;
+
 // use eyre::{bail, eyre, Result};
 // use regex::RegexSet;
 //
@@ -90,34 +90,24 @@ pub struct Notice {
 
 impl Notice {
     //     #[allow(clippy::too_many_arguments)]
-    //     fn new(
-    //         timestamp: OffsetDateTime,
-    //         command: String,
-    //         cwd: String,
-    //         exit: i64,
-    //         duration: i64,
-    //         session: Option<String>,
-    //         hostname: Option<String>,
-    //         deleted_at: Option<OffsetDateTime>,
-    //     ) -> Self {
-    //         let session = session
-    //             .or_else(|| env::var("PIZEON_SESSION").ok())
-    //             .unwrap_or_else(|| uuid_v7().as_simple().to_string());
-    //         let hostname = hostname.unwrap_or_else(get_host_user);
-    //
-    //         Self {
-    //             id: uuid_v7().as_simple().to_string().into(),
-    //             timestamp,
-    //             command,
-    //             cwd,
-    //             exit,
-    //             duration,
-    //             session,
-    //             hostname,
-    //             deleted_at,
-    //         }
-    //     }
-    //
+    fn new(
+        blocked: bool,
+        timestamp: OffsetDateTime,
+        body: String,
+        deleted_at: Option<OffsetDateTime>,
+        expires_at: Option<OffsetDateTime>,
+    ) -> Self {
+        Self {
+            blocked,
+            id: uuid_v7().as_simple().to_string().into(),
+            timestamp,
+            body,
+            versions: String::from(""),
+            deleted_at,
+            expires_at,
+        }
+    }
+
     //     pub fn serialize(&self) -> Result<DecryptedData> {
     //         // This is pretty much the same as what we used for the old history, with one difference -
     //         // it uses integers for timestamps rather than a string format.
@@ -264,40 +254,15 @@ impl Notice {
     //     pub fn import() -> builder::HistoryImportedBuilder {
     //         builder::HistoryImported::builder()
     //     }
-    //
-    //     /// Builder for a history entry that is captured via hook.
-    //     ///
-    //     /// This builder is used only at the `start` step of the hook,
-    //     /// so it doesn't have any fields which are known only after
-    //     /// the command is finished, such as `exit` or `duration`.
-    //     ///
-    //     /// ## Examples
-    //     /// ```rust
-    //     /// use pizeon_client::history::History;
-    //     ///
-    //     /// let history: History = History::capture()
-    //     ///     .timestamp(time::OffsetDateTime::now_utc())
-    //     ///     .command("ls -la")
-    //     ///     .cwd("/home/user")
-    //     ///     .build()
-    //     ///     .into();
-    //     /// ```
-    //     ///
-    //     /// Command without any required info cannot be captured, which is forced at compile time:
-    //     ///
-    //     /// ```compile_fail
-    //     /// use pizeon_client::history::History;
-    //     ///
-    //     /// // this will not compile because `cwd` is missing
-    //     /// let history: History = History::capture()
-    //     ///     .timestamp(time::OffsetDateTime::now_utc())
-    //     ///     .command("ls -la")
-    //     ///     .build()
-    //     ///     .into();
-    //     /// ```
-    //     pub fn capture() -> builder::HistoryCapturedBuilder {
-    //         builder::HistoryCaptured::builder()
-    //     }
+
+    /// Builder for a notice entry manually added
+    ///
+    /// ## Examples
+    /// TODO: write eg
+    ///
+    pub fn create() -> builder::NoticeCreatedBuilder {
+        builder::NoticeCreated::builder()
+    }
 
     /// Builder for a notice entry that is imported from the database.
     ///

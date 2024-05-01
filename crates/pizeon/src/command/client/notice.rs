@@ -38,10 +38,8 @@ use time::{macros::format_description, OffsetDateTime};
 #[derive(Subcommand, Debug)]
 #[command(infer_subcommands = true)]
 pub enum Cmd {
-    // /// Begins a new command in the history
-    // Start {
-    //     command: Vec<String>,
-    // },
+    /// Add a notice
+    Add { notice: Vec<String> },
     //
     // /// Finishes a new command in the history (adds time, exit code)
     // End {
@@ -231,37 +229,21 @@ fn parse_fmt(format: &str) -> ParsedFmt {
 }
 
 impl Cmd {
-    //     #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
-    //     async fn handle_start(
-    //         db: &impl Database,
-    //         settings: &Settings,
-    //         command: &[String],
-    //     ) -> Result<()> {
-    //         let command = command.join(" ");
-    //
-    //         // It's better for pizeon to silently fail here and attempt to
-    //         // store whatever is ran, than to throw an error to the terminal
-    //         let cwd = utils::get_current_dir();
-    //
-    //         let h: History = History::capture()
-    //             .timestamp(OffsetDateTime::now_utc())
-    //             .command(command)
-    //             .cwd(cwd)
-    //             .build()
-    //             .into();
-    //
-    //         if !h.should_save(settings) {
-    //             return Ok(());
-    //         }
-    //
-    //         // print the ID
-    //         // we use this as the key for calling end
-    //         println!("{}", h.id);
-    //         db.save(&h).await?;
-    //
-    //         Ok(())
-    //     }
-    //
+    // #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
+    async fn handle_add(db: &impl Database, settings: &Settings, notice: &[String]) -> Result<()> {
+        let body = notice.join(" ");
+
+        let h: Notice = Notice::create()
+            .timestamp(OffsetDateTime::now_utc())
+            .body(body)
+            .build()
+            .into();
+
+        db.save(&h).await?;
+
+        Ok(())
+    }
+
     //     #[allow(unused_variables)]
     //     async fn handle_end(
     //         db: &impl Database,
@@ -420,7 +402,7 @@ impl Cmd {
         // let history_store = HistoryStore::new(store.clone(), host_id, encryption_key);
 
         match self {
-            // Self::Start { command } => Self::handle_start(db, settings, &command).await,
+            Self::Add { notice } => Self::handle_add(db, settings, &notice).await,
             // Self::End { id, exit, duration } => {
             //     Self::handle_end(db, store, history_store, settings, &id, exit, duration).await
             // }

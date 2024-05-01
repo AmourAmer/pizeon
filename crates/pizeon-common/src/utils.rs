@@ -5,8 +5,8 @@ use std::path::PathBuf;
 // use eyre::{eyre, Result};
 //
 // use rand::RngCore;
-// use uuid::Uuid;
-//
+use uuid::Uuid;
+
 // pub fn random_bytes<const N: usize>() -> [u8; N] {
 //     let mut ret = [0u8; N];
 //
@@ -14,11 +14,11 @@ use std::path::PathBuf;
 //
 //     ret
 // }
-//
-// pub fn uuid_v7() -> Uuid {
-//     Uuid::now_v7()
-// }
-//
+
+pub fn uuid_v7() -> Uuid {
+    Uuid::now_v7()
+}
+
 // pub fn has_git_dir(path: &str) -> bool {
 //     let mut gitdir = PathBuf::from(path);
 //     gitdir.push(".git");
