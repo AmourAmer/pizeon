@@ -1,11 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod notices;
-use notices::get_abstract;
-use notices::get_notice;
-mod repos;
-use repos::get_bill;
+mod api;
+use api::{notices::get_abstract, notices::get_notice, repos::get_bill};
 
 fn main() {
     tauri::Builder::default()

@@ -2929,6 +2929,7 @@ name = "pizeon-bubble"
 version = "0.0.0"
 dependencies = [
  "chrono",
+ "eyre",
  "pizeon-client",
  "serde",
  "serde_json",
