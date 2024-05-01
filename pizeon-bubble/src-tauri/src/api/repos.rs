@@ -4,10 +4,11 @@ use pizeon_client::database::Database;
 #[tauri::command]
 pub async fn get_bill(repo: Repo) -> Vec<String> {
     let db = db().await.unwrap();
-    let notices = db.list(None, false).await;
-    if repo == Repo::Blocked {
-        vec![String::from("1"), String::from("3")]
-    } else {
-        vec![String::from("5")]
-    }
+    db.list(None, false)
+        .await
+        .unwrap()
+        .iter()
+        .map(|notice| notice.id.0.clone())
+        .collect()
+    // FIXME: of course
 }
