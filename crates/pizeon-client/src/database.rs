@@ -279,8 +279,8 @@ impl Database for Sqlite {
         if !include_deleted {
             query.and_where_is_null("deleted_at");
         }
-        query.and_where_ne("blocked", false);
-        // TODO examine expires_at
+        query.and_where_eq("blocked", false);
+        // TODO: examine expires_at
 
         if let Some(max) = max {
             query.limit(max);
