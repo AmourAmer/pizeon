@@ -82,14 +82,14 @@ pub trait Database: Send + Sync + 'static {
         include_deleted: bool,
     ) -> Result<Vec<Notice>>;
     // async fn range(&self, from: OffsetDateTime, to: OffsetDateTime) -> Result<Vec<History>>;
-    //
-    // async fn update(&self, h: &History) -> Result<()>;
+
+    async fn update(&self, h: &Notice) -> Result<()>;
     // async fn history_count(&self, include_deleted: bool) -> Result<i64>;
     //
     // async fn last(&self) -> Result<Option<History>>;
     // async fn before(&self, timestamp: OffsetDateTime, count: i64) -> Result<Vec<History>>;
-    //
-    // async fn delete(&self, h: History) -> Result<()>;
+
+    async fn delete(&self, h: Notice) -> Result<()>;
     // async fn delete_rows(&self, ids: &[HistoryId]) -> Result<()>;
     // async fn deleted(&self) -> Result<Vec<History>>;
     //
@@ -246,29 +246,26 @@ impl Database for Sqlite {
     //
     //     Ok(res)
     // }
-    //
-    // async fn update(&self, h: &History) -> Result<()> {
-    //     debug!("updating sqlite history");
-    //
-    //     sqlx::query(
-    //         "update history
-    //             set timestamp = ?2, duration = ?3, exit = ?4, command = ?5, cwd = ?6, session = ?7, hostname = ?8, deleted_at = ?9
-    //             where id = ?1",
-    //     )
-    //     .bind(h.id.0.as_str())
-    //     .bind(h.timestamp.unix_timestamp_nanos() as i64)
-    //     .bind(h.duration)
-    //     .bind(h.exit)
-    //     .bind(h.command.as_str())
-    //     .bind(h.cwd.as_str())
-    //     .bind(h.session.as_str())
-    //     .bind(h.hostname.as_str())
-    //     .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
-    //     .execute(&self.pool)
-    //     .await?;
-    //
-    //     Ok(())
-    // }
+
+    async fn update(&self, h: &Notice) -> Result<()> {
+        debug!("updating sqlite history");
+
+        sqlx::query(
+            "update notices
+                set blocked = ?1, timestamp = ?3, body = ?4, versions = ?5, deleted_at = ?6, expires_at = ?7
+                where id = ?2",
+        )
+        .bind(h.blocked)
+        .bind(h.id.0.as_str())
+        .bind(h.timestamp.unix_timestamp_nanos() as i64)
+        .bind(h.body.as_str())
+        .bind(h.versions.as_str())
+        .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
+    }
 
     // show all (unexpired) notices in the pool
     async fn list(&self, max: Option<usize>, include_deleted: bool) -> Result<Vec<Notice>> {
@@ -577,23 +574,24 @@ impl Database for Sqlite {
     //
     //     Ok(res)
     // }
-    //
-    // // deleted_at doesn't mean the actual time that the user deleted it,
-    // // but the time that the system marks it as deleted
-    // async fn delete(&self, mut h: History) -> Result<()> {
-    //     let now = OffsetDateTime::now_utc();
-    //     h.command = rand::thread_rng()
-    //         .sample_iter(&Alphanumeric)
-    //         .take(32)
-    //         .map(char::from)
-    //         .collect(); // overwrite with random string
-    //     h.deleted_at = Some(now); // delete it
-    //
-    //     self.update(&h).await?; // save it
-    //
-    //     Ok(())
-    // }
-    //
+
+    // deleted_at doesn't mean the actual time that the user deleted it,
+    // but the time that the system marks it as deleted
+    async fn delete(&self, mut h: Notice) -> Result<()> {
+        let now = OffsetDateTime::now_utc();
+        // h.command = rand::thread_rng()
+        //     .sample_iter(&Alphanumeric)
+        //     .take(32)
+        //     .map(char::from)
+        //     .collect(); // atuin overwrite with random string, making it not soft
+        //     delete at all.
+        h.deleted_at = Some(now); // delete it
+
+        self.update(&h).await?; // save it
+
+        Ok(())
+    }
+
     // async fn delete_rows(&self, ids: &[HistoryId]) -> Result<()> {
     //     let mut tx = self.pool.begin().await?;
     //
