@@ -71,7 +71,7 @@ pub struct Context {
 
 #[async_trait]
 pub trait Database: Send + Sync + 'static {
-    // async fn save(&self, h: &History) -> Result<()>;
+    async fn save(&self, h: &Notice) -> Result<()>;
     // async fn save_bulk(&self, h: &[History]) -> Result<()>;
     //
     // async fn load(&self, id: &str) -> Result<Option<History>>;
@@ -156,26 +156,24 @@ impl Sqlite {
         Ok(())
     }
 
-    //     async fn save_raw(tx: &mut sqlx::Transaction<'_, sqlx::Sqlite>, h: &History) -> Result<()> {
-    //         sqlx::query(
-    //             "insert or ignore into history(id, timestamp, duration, exit, command, cwd, session, hostname, deleted_at)
-    //                 values(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
-    //         )
-    //         .bind(h.id.0.as_str())
-    //         .bind(h.timestamp.unix_timestamp_nanos() as i64)
-    //         .bind(h.duration)
-    //         .bind(h.exit)
-    //         .bind(h.command.as_str())
-    //         .bind(h.cwd.as_str())
-    //         .bind(h.session.as_str())
-    //         .bind(h.hostname.as_str())
-    //         .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
-    //         .execute(&mut **tx)
-    //         .await?;
-    //
-    //         Ok(())
-    //     }
-    //
+    async fn save_raw(tx: &mut sqlx::Transaction<'_, sqlx::Sqlite>, h: &Notice) -> Result<()> {
+        sqlx::query(
+            "insert or ignore into notices(blocked, id, timestamp, body, versions, deleted_at, expires_at)
+            values(?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+        )
+        .bind(h.blocked)
+        .bind(h.id.0.as_str())
+        .bind(h.timestamp.unix_timestamp_nanos() as i64)
+        .bind(h.body.as_str())
+        .bind(h.versions.as_str())
+        .bind(h.deleted_at.map(|t| t.unix_timestamp_nanos() as i64))
+        .bind(h.expires_at.unwrap_or(OffsetDateTime::now_utc() + Duration::from_secs(14 * 24 * 60 * 60)).unix_timestamp_nanos() as i64)
+        .execute(&mut **tx)
+        .await?;
+
+        Ok(())
+    }
+
     //     async fn delete_row_raw(
     //         tx: &mut sqlx::Transaction<'_, sqlx::Sqlite>,
     //         id: HistoryId,
@@ -214,15 +212,15 @@ impl Sqlite {
 
 #[async_trait]
 impl Database for Sqlite {
-    // async fn save(&self, h: &History) -> Result<()> {
-    //     debug!("saving history to sqlite");
-    //     let mut tx = self.pool.begin().await?;
-    //     Self::save_raw(&mut tx, h).await?;
-    //     tx.commit().await?;
-    //
-    //     Ok(())
-    // }
-    //
+    async fn save(&self, h: &Notice) -> Result<()> {
+        debug!("saving notice to sqlite");
+        let mut tx = self.pool.begin().await?;
+        Self::save_raw(&mut tx, h).await?;
+        tx.commit().await?;
+
+        Ok(())
+    }
+
     // async fn save_bulk(&self, h: &[History]) -> Result<()> {
     //     debug!("saving history to sqlite");
     //

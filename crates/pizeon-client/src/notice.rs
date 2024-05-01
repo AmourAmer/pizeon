@@ -1,9 +1,9 @@
-// use core::fmt::Formatter;
+use core::fmt::Formatter;
 // use rmp::decode::ValueReadError;
 // use rmp::{decode::Bytes, Marker};
 // use std::env;
-// use std::fmt::Display;
-//
+use std::fmt::Display;
+
 // use pizeon_common::record::DecryptedData;
 use pizeon_common::utils::uuid_v7;
 
@@ -23,11 +23,11 @@ mod builder;
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct NoticeId(pub String);
 
-// impl Display for HistoryId {
-//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-//         write!(f, "{}", self.0)
-//     }
-// }
+impl Display for NoticeId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 impl From<String> for NoticeId {
     fn from(s: String) -> Self {
