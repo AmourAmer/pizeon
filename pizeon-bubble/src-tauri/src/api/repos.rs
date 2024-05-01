@@ -1,5 +1,15 @@
-use super::{db, notices::Repo};
+use super::db;
+use eyre::Result;
 use pizeon_client::{database::Database, notice::Notice};
+use serde::{Deserialize, Serialize};
+
+#[derive(PartialEq, Serialize, Deserialize)]
+pub enum Repo {
+    Fresh,
+    Blocked,
+    Fridge,
+    Junk,
+}
 
 #[tauri::command]
 pub async fn get_bill(repo: Repo) -> Vec<String> {
@@ -24,4 +34,15 @@ pub async fn get_bill(repo: Repo) -> Vec<String> {
         .map(|notice| notice.id.0.clone())
         .collect()
     // FIXME: Did I write actually Repo filter already? Or some enhancement?
+}
+
+#[tauri::command]
+pub async fn move_notice(_id: &str, repo: Repo) -> Result<()> {
+    let db = db().await.unwrap();
+    db.list(None, false)
+        .await
+        .unwrap()
+        .iter()
+        .map(|notice| notice.id.0.clone());
+    Ok(())
 }

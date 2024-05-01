@@ -1,3 +1,4 @@
+use super::repos::Repo;
 use chrono::{Duration, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -11,13 +12,6 @@ pub struct Notice {
 pub struct Abstract {
     heading: String,
     date: i64,
-}
-#[derive(PartialEq, Serialize, Deserialize)]
-pub enum Repo {
-    Fresh,
-    Blocked,
-    Fridge,
-    Junk,
 }
 #[derive(Serialize, Deserialize)]
 pub struct Meal {
