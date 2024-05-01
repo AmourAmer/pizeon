@@ -39,10 +39,10 @@ pub async fn get_bill(repo: Repo) -> Vec<String> {
 #[tauri::command]
 pub async fn move_notice(_id: &str, repo: Repo) -> Result<()> {
     let db = db().await.unwrap();
-    db.list(None, false)
-        .await
-        .unwrap()
-        .iter()
-        .map(|notice| notice.id.0.clone());
+    let Some(mut h) = db.load(id).await? else {
+        // warn!("history entry is missing"); // atuin warns so.
+        return Ok(());
+    };
+
     Ok(())
 }

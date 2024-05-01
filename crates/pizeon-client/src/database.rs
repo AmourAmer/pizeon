@@ -73,8 +73,8 @@ pub struct Context {
 pub trait Database: Send + Sync + 'static {
     async fn save(&self, h: &Notice) -> Result<()>;
     // async fn save_bulk(&self, h: &[History]) -> Result<()>;
-    //
-    // async fn load(&self, id: &str) -> Result<Option<History>>;
+
+    async fn load(&self, id: &str) -> Result<Option<Notice>>;
     async fn list(
         &self,
         // filters: &[FilterMode], // PIG FIXME not yet
@@ -234,18 +234,18 @@ impl Database for Sqlite {
     //
     //     Ok(())
     // }
-    //
-    // async fn load(&self, id: &str) -> Result<Option<History>> {
-    //     debug!("loading history item {}", id);
-    //
-    //     let res = sqlx::query("select * from history where id = ?1")
-    //         .bind(id)
-    //         .map(Self::query_history)
-    //         .fetch_optional(&self.pool)
-    //         .await?;
-    //
-    //     Ok(res)
-    // }
+
+    async fn load(&self, id: &str) -> Result<Option<Notice>> {
+        debug!("loading notice entry {}", id);
+
+        let res = sqlx::query("select * from history where id = ?1")
+            .bind(id)
+            .map(Self::query_notice)
+            .fetch_optional(&self.pool)
+            .await?;
+
+        Ok(res)
+    }
 
     async fn update(&self, h: &Notice) -> Result<()> {
         debug!("updating sqlite history");
