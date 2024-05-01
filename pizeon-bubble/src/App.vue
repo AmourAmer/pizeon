@@ -7,7 +7,7 @@ const destinations = [
   ["/meals", "Go to Meals"],
   ["/kitchen", "Go to Kitchen"],
   [{ name: "bill", params: { type: "Fridge" } }, "Open the Fridge"],
-  [{ name: "bill", params: { type: "Unwelcomed" } }, "Check outdoors"],
+  [{ name: "bill", params: { type: "Blocked" } }, "Check outdoors"],
   [{ name: "bill", params: { type: "Junk" } }, "Examine trash can"],
   ["/office", "Go to your Office"],
 ];

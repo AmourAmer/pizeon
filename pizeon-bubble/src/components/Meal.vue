@@ -9,7 +9,7 @@ interface Notice {
 type Signature = string;
 enum Repo {
   Fresh = "Fresh",
-  Unwelcomed = "Unwelcomed",
+  Blocked = "Blocked",
   Fridge = "Fridge",
   Junk = "Junk",
 }

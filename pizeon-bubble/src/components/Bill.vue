@@ -11,7 +11,7 @@ interface Abstract {
 }
 enum Repo {
   Fresh = "Fresh",
-  Unwelcomed = "Unwelcomed",
+  Blocked = "Blocked",
   Fridge = "Fridge",
   Junk = "Junk",
 }

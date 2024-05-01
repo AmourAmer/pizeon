@@ -12,7 +12,7 @@ interface Notice {
 // TODO these types are used anywhere, I should refactor
 enum Repo {
   Fresh = "Fresh",
-  Unwelcomed = "Unwelcomed",
+  Blocked = "Blocked",
   Fridge = "Fridge",
   Junk = "Junk",
 }
@@ -30,7 +30,7 @@ const mealTemplate: Meal = {
     body: "Fetching data",
   },
   signs: [],
-  repo: Repo.Unwelcomed,
+  repo: Repo.Blocked,
 };
 
 const ids: Ref<string[]> = useStorage("mealIds", []);

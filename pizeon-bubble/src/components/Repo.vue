@@ -5,7 +5,7 @@ import { computedAsync } from "@vueuse/core";
 import Bill from "./Bill.vue";
 enum Repo {
   Fresh = "Fresh",
-  Unwelcomed = "Unwelcomed",
+  Blocked = "Blocked",
   Fridge = "Fridge",
   Junk = "Junk",
 }

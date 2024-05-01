@@ -15,7 +15,7 @@ pub struct Abstract {
 #[derive(PartialEq, Serialize, Deserialize)]
 pub enum Repo {
     Fresh,
-    Unwelcomed,
+    Blocked,
     Fridge,
     Junk,
 }
