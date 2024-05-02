@@ -45,6 +45,8 @@ pub async fn move_notice(id: String, repo: Repo) {
 
     match repo {
         Repo::Junk => db.delete(h).await.unwrap(),
+        Repo::Fridge => db.freeze(h).await.unwrap(),
+        Repo::Fresh => db.recover(h).await.unwrap(),
         _ => (),
     }
 }

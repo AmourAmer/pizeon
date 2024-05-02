@@ -90,6 +90,8 @@ pub trait Database: Send + Sync + 'static {
     // async fn before(&self, timestamp: OffsetDateTime, count: i64) -> Result<Vec<History>>;
 
     async fn delete(&self, h: Notice) -> Result<()>;
+    async fn recover(&self, h: Notice) -> Result<()>;
+    async fn freeze(&self, h: Notice) -> Result<()>;
     // async fn delete_rows(&self, ids: &[HistoryId]) -> Result<()>;
     // async fn deleted(&self) -> Result<Vec<History>>;
     //
@@ -593,6 +595,30 @@ impl Database for Sqlite {
         Ok(())
     }
 
+    // mark entry as not deleted
+    async fn recover(&self, mut h: Notice) -> Result<()> {
+        h.deleted_at = None;
+        h.expires_at = match h.expires_at {
+            // PIG TODO: this is ugly, any better ways?
+            Some(t) => Some(t),
+            None => Some(OffsetDateTime::now_utc() + Duration::from_secs(14 * 24 * 60 * 60)),
+        };
+
+        self.update(&h).await?; // save it
+
+        Ok(())
+    }
+
+    // freeze the entry so it never expires
+    async fn freeze(&self, mut h: Notice) -> Result<()> {
+        h.deleted_at = None;
+        h.expires_at = None;
+
+        self.update(&h).await?; // save it
+
+        Ok(())
+    }
+
     // async fn delete_rows(&self, ids: &[HistoryId]) -> Result<()> {
     //     let mut tx = self.pool.begin().await?;
     //
@@ -722,7 +748,7 @@ impl Database for Sqlite {
     //     })
     // }
 }
-//
+
 // #[cfg(test)]
 // mod test {
 //     use super::*;
