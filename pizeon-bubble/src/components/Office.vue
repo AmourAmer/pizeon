@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import { toRef, Ref, computed, ComputedRef } from "vue";
+import { ref, Ref, computed, ComputedRef } from "vue";
+import { useStorage } from "@vueuse/core";
 import Slice from "./Slice.vue";
-interface Form {
-  server: string;
-  body: string;
-  signature?: string;
-}
 
+const template = ref("classic");
 // TODO template, cache, sendForm
 const submitForm = function () {
   // TODO don't forget timestamp and signature
   formData.value = [];
 };
-const slices: Ref<string[]> = toRef(["server", "heading", "body"]);
-const formData: Ref<(string[] | string)[]> = toRef([]);
+const templateTo = () => {
+  let slices: string[] = [];
+  switch (template.value) {
+    case "hell":
+      slices.push();
+      break;
+    default:
+      slices.push("heading", "body");
+  }
+  return ["server"].concat(slices).concat("signature");
+};
+const slices: Ref<string[]> = computed(templateTo);
+const formData: Ref<(string[] | string)[]> = useStorage(template.value, []); // TODO: multi-account?!
 const server: ComputedRef<string[]> = computed(
   () => (formData.value[slices.value.indexOf("server")] || []) as string[],
 );
