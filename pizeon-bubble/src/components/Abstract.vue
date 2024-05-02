@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { toRef } from "vue";
 import time from "../utils/time";
 interface Abstract {
   heading: string;
@@ -10,7 +10,7 @@ const props = defineProps<Abstract>();
 defineEmits<{
   (e: "check"): void;
 }>();
-const { month, day } = time(ref(props.date));
+const { month, day } = time(toRef(props.date).value);
 // TODO should use useSwipe to move them
 </script>
 
