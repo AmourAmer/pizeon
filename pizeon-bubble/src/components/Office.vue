@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { toRef, Ref } from "vue";
+import { toRef, Ref, computed } from "vue";
 import Slice from "./Slice.vue";
 interface Form {
   server: string;
+  body: string;
   signature?: string;
 }
 
@@ -11,8 +12,9 @@ const submitForm = function () {
   // TODO don't forget timestamp and signature
   formData.value = [];
 };
-const slices: Ref<string[]> = toRef(["body"]);
-const formData = toRef([""]);
+const slices: Ref<string[]> = toRef(["server", "heading", "body"]);
+const formData = toRef([]);
+const server = computed(() => formData.value[slices.value.indexOf("server")]);
 </script>
 
 <template>
@@ -22,6 +24,7 @@ const formData = toRef([""]);
       :key="i"
       v-model="formData[i]"
       :slice="slice"
+      :server="server"
     />
     <button type="submit">Submit</button>
   </form>
