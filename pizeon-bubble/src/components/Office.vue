@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRef, Ref, computed } from "vue";
+import { toRef, Ref, computed, ComputedRef } from "vue";
 import Slice from "./Slice.vue";
 interface Form {
   server: string;
@@ -13,8 +13,10 @@ const submitForm = function () {
   formData.value = [];
 };
 const slices: Ref<string[]> = toRef(["server", "heading", "body"]);
-const formData = toRef([]);
-const server = computed(() => formData.value[slices.value.indexOf("server")]);
+const formData: Ref<(string[] | string)[]> = toRef([]);
+const server: ComputedRef<string[]> = computed(
+  () => (formData.value[slices.value.indexOf("server")] || []) as string[],
+);
 </script>
 
 <template>

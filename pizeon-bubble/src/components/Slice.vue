@@ -3,7 +3,7 @@
 import { ModelRef } from "vue";
 const props = defineProps<{
   slice: string;
-  server: [string];
+  server: string[];
 }>();
 const model: ModelRef<string | undefined, string> = defineModel();
 const isSelect = function () {
