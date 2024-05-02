@@ -264,6 +264,7 @@ impl Database for Sqlite {
         .bind(h.body.as_str())
         .bind(h.versions.as_str())
         .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
+        .bind(h.expires_at.map(|t|t.unix_timestamp_nanos() as i64))
         .execute(&self.pool)
         .await?;
 

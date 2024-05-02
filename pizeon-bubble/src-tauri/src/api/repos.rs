@@ -20,8 +20,10 @@ pub async fn get_bill(repo: Repo) -> Vec<String> {
         if notice.blocked {
             return Repo::Blocked;
         }
-        Repo::Fresh
-        // TODO: Fridge
+        if notice.expires_at.is_some() {
+            return Repo::Fresh;
+        }
+        Repo::Fridge
     }
 
     let db = db().await.unwrap();
