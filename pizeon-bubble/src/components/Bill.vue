@@ -18,7 +18,7 @@ enum Repo {
 
 const props = defineProps<{ bill: string[] }>();
 defineEmits<{
-  (e: "changed"): void;
+  (e: "changed", id: string, repo: Repo): void;
 }>();
 const ids: Ref<string[]> = useStorage("mealIds", []);
 
@@ -60,7 +60,7 @@ async function move(id: string, repo: Repo) {
       v-for="repo in Repo"
       @click="
         move(bill[i], repo);
-        $emit('changed');
+        $emit('changed', bill[i], repo);
       "
     >
       TO {{ repo }}

@@ -12,13 +12,17 @@ enum Repo {
 const props = defineProps<{
   type: Repo;
 }>();
-// TODO: Maybe should make Repos a frontend thing? At least should update when data change
+// TODO: A not-so-elegant impl of updating bill. Should let back-end tell when updated successfully
 const f = () =>
   invoke("get_bill", {
     repo: props.type,
   }) as Promise<string[]>;
 const bill: Ref<string[]> = computedAsync(async () => await f(), []);
-const update = () => f().then((res) => (bill.value = res));
+const update = (id: string, repo: Repo) => {
+  if (repo != props.type) {
+    bill.value = bill.value.filter((i) => i != id);
+  }
+};
 </script>
 
 <template>
