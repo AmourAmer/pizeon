@@ -1,5 +1,4 @@
 use super::db;
-use eyre::Result;
 use pizeon_client::{database::Database, notice::Notice};
 use serde::{Deserialize, Serialize};
 
@@ -26,7 +25,7 @@ pub async fn get_bill(repo: Repo) -> Vec<String> {
     }
 
     let db = db().await.unwrap();
-    db.list(None, false)
+    db.list(None, true)
         .await
         .unwrap()
         .iter()

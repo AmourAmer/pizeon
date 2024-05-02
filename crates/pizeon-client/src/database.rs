@@ -238,7 +238,7 @@ impl Database for Sqlite {
     async fn load(&self, id: &str) -> Result<Option<Notice>> {
         debug!("loading notice entry {}", id);
 
-        let res = sqlx::query("select * from history where id = ?1")
+        let res = sqlx::query("select * from notices where id = ?1")
             .bind(id)
             .map(Self::query_notice)
             // PIG TODO: don't quite understand type and what is what
