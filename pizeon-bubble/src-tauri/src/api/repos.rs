@@ -37,12 +37,15 @@ pub async fn get_bill(repo: Repo) -> Vec<String> {
 }
 
 #[tauri::command]
-pub async fn move_notice(_id: &str, repo: Repo) -> Result<()> {
+pub async fn move_notice(id: String, repo: Repo) {
     let db = db().await.unwrap();
-    let Some(mut h) = db.load(id).await? else {
+    let Some(h) = db.load(&id).await.unwrap() else {
         // warn!("history entry is missing"); // atuin warns so.
-        return Ok(());
+        return;
     };
 
-    Ok(())
+    match repo {
+        Repo::Junk => db.delete(h).await.unwrap(),
+        _ => (),
+    }
 }

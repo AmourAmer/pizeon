@@ -241,6 +241,7 @@ impl Database for Sqlite {
         let res = sqlx::query("select * from history where id = ?1")
             .bind(id)
             .map(Self::query_notice)
+            // PIG TODO: don't quite understand type and what is what
             .fetch_optional(&self.pool)
             .await?;
 
@@ -248,7 +249,7 @@ impl Database for Sqlite {
     }
 
     async fn update(&self, h: &Notice) -> Result<()> {
-        debug!("updating sqlite history");
+        debug!("updating sqlite notices");
 
         sqlx::query(
             "update notices
