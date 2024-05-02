@@ -17,6 +17,9 @@ enum Repo {
 }
 
 const props = defineProps<{ bill: string[] }>();
+defineEmits<{
+  (e: "changed"): void;
+}>();
 const ids: Ref<string[]> = useStorage("mealIds", []);
 
 async function getS(bill: string[]): Promise<Abstract[]> {
@@ -53,7 +56,13 @@ async function move(id: string, repo: Repo) {
 <template>
   <div v-for="(abstract, i) in abstracts" :key="i">
     <Abstract v-bind="abstract" @check="addId(bill[i])" />
-    <button v-for="repo in Repo" @click="move(bill[i], repo)">
+    <button
+      v-for="repo in Repo"
+      @click="
+        move(bill[i], repo);
+        $emit('changed');
+      "
+    >
       TO {{ repo }}
     </button>
   </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { Ref, toRef } from "vue";
+import { Ref } from "vue";
 import { computedAsync } from "@vueuse/core";
 import Bill from "./Bill.vue";
 enum Repo {
@@ -12,16 +12,16 @@ enum Repo {
 const props = defineProps<{
   type: Repo;
 }>();
-// TODO Maybe should make Repos a frontend thing? At least should update when data change
-const bill: Ref<string[]> = computedAsync(
-  async () =>
-    await invoke("get_bill", {
-      repo: toRef(props.type).value,
-    }),
-  [],
-);
+// TODO: Maybe should make Repos a frontend thing? At least should update when data change
+const f = () =>
+  invoke("get_bill", {
+    repo: props.type,
+  }) as Promise<string[]>;
+const bill: Ref<string[]> = computedAsync(async () => await f(), []);
+const update = () => f().then((res) => (bill.value = res));
 </script>
 
 <template>
-  <Bill :bill="bill" />
+  BILL {{ bill }}
+  <Bill :bill="bill" @changed="update" />
 </template>
