@@ -4,19 +4,28 @@ import { ref, Ref, computed, ComputedRef } from "vue";
 import { useStorage } from "@vueuse/core";
 import Slice from "./workspace/Slice.vue";
 
+interface stringMap {
+  [key: string]: string | string[];
+}
+
 const template = ref("classic");
 // TODO: template, cache, sendForm
 const submitForm = function () {
   // TODO: don't forget timestamp and signature
   // FIXME: don't forget notice type
-  let bundle = {};
+  let bundle: stringMap = {};
+  for (let i = 1; i < formData.value.length - 1; i++) {
+    bundle[slices.value[i]] = formData.value[i];
+  }
   invoke("send_notice", {
     servers: formData.value[0],
     body: JSON.stringify(bundle),
-    // signature: formData.value.slice(-1)
+    signatures: (formData.value[formData.value.length - 1] as string[]).map(
+      (s) => s,
+    ),
   }),
     // TODO: ~~send back a notice containing server respone~~
-    (formData.value = []);
+    (formData.value = initFormData());
 };
 const templateTo = () => {
   let slices: string[] = [];
@@ -29,8 +38,14 @@ const templateTo = () => {
   }
   return ["server"].concat(slices).concat("signature");
 };
+const initFormData = function () {
+  return templateTo().map((_) => "");
+};
 const slices: Ref<string[]> = computed(templateTo);
-const formData: Ref<(string[] | string)[]> = useStorage(template.value, []); // TODO: multi-account?!
+const formData: Ref<(string[] | string)[]> = useStorage(
+  template.value,
+  initFormData(),
+); // TODO: multi-account?!
 const server: ComputedRef<string[]> = computed(
   () => (formData.value[slices.value.indexOf("server")] || []) as string[],
 );

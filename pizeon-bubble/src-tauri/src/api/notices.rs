@@ -71,16 +71,18 @@ pub fn get_abstract(repo: Repo, id: &str) -> Abstract {
 pub async fn send_notice(
     servers: Vec<String>,
     body: String,
-    // signature: Vec<String>,
+    signatures: Vec<String>,
 ) -> Result<(), ()> {
     for server in servers {
-        let h: RawNotice = RawNotice::create()
-            .timestamp(OffsetDateTime::now_utc())
-            .body(body.clone())
-            .build()
-            .into();
+        if server == "self" {
+            let h: RawNotice = RawNotice::create()
+                .timestamp(OffsetDateTime::now_utc())
+                .body(body.clone())
+                .build()
+                .into();
 
-        db().await.unwrap().save(&h).await.unwrap();
+            db().await.unwrap().save(&h).await.unwrap();
+        }
     }
 
     // TODO: actually send to server, of course
