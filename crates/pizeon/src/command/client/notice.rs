@@ -239,7 +239,6 @@ impl Cmd {
             .build()
             .into();
 
-        println!("{}", h.id);
         db.save(&h).await?;
 
         Ok(())

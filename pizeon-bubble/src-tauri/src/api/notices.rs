@@ -1,6 +1,10 @@
 use super::repos::Repo;
+use crate::api::db;
 use chrono::{Duration, Utc};
+use pizeon_client::database::Database;
+use pizeon_client::notice::Notice as RawNotice;
 use serde::{Deserialize, Serialize};
+use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize)]
 pub struct Notice {
@@ -61,4 +65,24 @@ pub fn get_abstract(repo: Repo, id: &str) -> Abstract {
             date: (Utc::now() - Duration::days(1)).timestamp(),
         }
     }
+}
+
+#[tauri::command]
+pub async fn send_notice(
+    servers: Vec<String>,
+    body: String,
+    // signature: Vec<String>,
+) -> Result<(), ()> {
+    for server in servers {
+        let h: RawNotice = RawNotice::create()
+            .timestamp(OffsetDateTime::now_utc())
+            .body(body.clone())
+            .build()
+            .into();
+
+        db().await.unwrap().save(&h).await.unwrap();
+    }
+
+    // TODO: actually send to server, of course
+    Ok(())
 }

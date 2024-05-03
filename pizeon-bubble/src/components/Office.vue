@@ -1,13 +1,22 @@
 <script setup lang="ts">
+import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed, ComputedRef } from "vue";
 import { useStorage } from "@vueuse/core";
-import Slice from "./Slice.vue";
+import Slice from "./workspace/Slice.vue";
 
 const template = ref("classic");
-// TODO template, cache, sendForm
+// TODO: template, cache, sendForm
 const submitForm = function () {
-  // TODO don't forget timestamp and signature
-  formData.value = [];
+  // TODO: don't forget timestamp and signature
+  // FIXME: don't forget notice type
+  let bundle = {};
+  invoke("send_notice", {
+    servers: formData.value[0],
+    body: JSON.stringify(bundle),
+    // signature: formData.value.slice(-1)
+  }),
+    // TODO: ~~send back a notice containing server respone~~
+    (formData.value = []);
 };
 const templateTo = () => {
   let slices: string[] = [];

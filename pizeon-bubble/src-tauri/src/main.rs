@@ -3,7 +3,7 @@
 
 mod api;
 use api::{
-    notices::{get_abstract, get_notice},
+    notices::{get_abstract, get_notice, send_notice},
     repos::{get_bill, move_notice},
 };
 
@@ -14,6 +14,7 @@ fn main() {
             get_notice,
             get_bill,
             move_notice,
+            send_notice,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
