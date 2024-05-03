@@ -2930,6 +2930,7 @@ version = "0.0.0"
 dependencies = [
  "chrono",
  "eyre",
+ "json",
  "pizeon-client",
  "serde",
  "serde_json",

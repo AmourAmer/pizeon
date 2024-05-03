@@ -22,15 +22,11 @@ defineEmits<{
 }>();
 const ids: Ref<string[]> = useStorage("mealIds", []);
 
-async function getS(bill: string[]): Promise<Abstract[]> {
-  return Promise.all(
-    bill.map(
-      async (item) =>
-        await invoke("get_abstract", {
-          repo: Repo.Fresh,
-          id: item,
-        }),
-    ),
+function getS(bill: string[]): Promise<Abstract>[] {
+  return bill.map((item) =>
+    invoke("get_abstract", {
+      id: item,
+    }),
   );
 }
 
@@ -39,9 +35,10 @@ function addId(newId: string) {
   ids.value.push(newId);
 }
 
-const abstracts: Ref<Abstract[] | null> = computedAsync(
-  async () => await getS(props.bill),
-  null,
+const abstracts: Ref<Ref<Abstract>[]> = computedAsync(async () =>
+  getS(props.bill).map((ab) =>
+    computedAsync(async () => await ab, { heading: "fetch failed", date: 1 }),
+  ),
 );
 
 async function move(id: string, repo: Repo) {
@@ -54,8 +51,9 @@ async function move(id: string, repo: Repo) {
 </script>
 
 <template>
+  SHIT: {{ abstracts }}
   <div v-for="(abstract, i) in abstracts" :key="i">
-    <Abstract v-bind="abstract" @check="addId(bill[i])" />
+    <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
     <button
       v-for="repo in Repo"
       @click="
