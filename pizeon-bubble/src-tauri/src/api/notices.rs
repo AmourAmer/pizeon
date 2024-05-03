@@ -1,11 +1,9 @@
-use super::repos::Repo;
+use super::repos::{which_repo, Repo};
 use crate::api::db;
-use chrono::Utc;
 use json;
 use pizeon_client::database::Database;
 use pizeon_client::notice::Notice as RawNotice;
 use serde::{Deserialize, Serialize};
-use std::time::Duration;
 use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize)]
@@ -26,32 +24,23 @@ pub struct Meal {
     repo: Repo,
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 pub async fn get_notice(id: &str) -> Result<Meal, ()> {
-    if id == "1" {
-        Ok(Meal {
-            notice: Notice {
-                heading: String::from("hi"),
-                body: String::from("join us"),
-                date: Utc::now().timestamp(),
-            },
-            signs: vec![String::from("fake sign")],
-            repo: Repo::Fresh,
-        })
-    } else {
-        // Should use cachedValues
-        std::thread::sleep(std::time::Duration::from_millis(2383));
-        Ok(Meal {
-            notice: Notice {
-                heading: String::from("hell"),
-                body: String::from("Dark lord will consume you"),
-                date: (Utc::now() - Duration::from_secs(24 * 60 * 60)).timestamp(),
-            },
-            signs: vec![String::from("shitty sign"), String::from("more signs")],
-            repo: Repo::Junk,
-        })
-    }
+    let db = db().await.unwrap();
+    let h = db.load(id).await.unwrap().unwrap();
+    let body = json::parse(h.body.as_str()).unwrap();
+    Ok(Meal {
+        repo: which_repo(&h),
+        notice: Notice {
+            heading: body["heading"]
+                .as_str()
+                .unwrap_or("Missing heading!")
+                .into(),
+            body: h.body,
+            date: (h.timestamp).unix_timestamp(),
+        },
+        signs: vec![],
+    })
 }
 
 #[tauri::command]

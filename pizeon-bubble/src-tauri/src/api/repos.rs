@@ -10,22 +10,21 @@ pub enum Repo {
     Junk,
 }
 
+pub fn which_repo(notice: &Notice) -> Repo {
+    if notice.deleted_at.is_some() {
+        return Repo::Junk;
+    }
+    if notice.blocked {
+        return Repo::Blocked;
+    }
+    if notice.expires_at.is_some() {
+        return Repo::Fresh;
+    }
+    Repo::Fridge
+}
+
 #[tauri::command]
 pub async fn get_bill(repo: Repo) -> Vec<String> {
-    // I don't know why I wrote this inside fn.
-    fn which_repo(notice: &Notice) -> Repo {
-        if notice.deleted_at.is_some() {
-            return Repo::Junk;
-        }
-        if notice.blocked {
-            return Repo::Blocked;
-        }
-        if notice.expires_at.is_some() {
-            return Repo::Fresh;
-        }
-        Repo::Fridge
-    }
-
     let db = db().await.unwrap();
     db.list(None, true)
         .await
