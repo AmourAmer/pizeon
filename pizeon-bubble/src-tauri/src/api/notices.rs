@@ -74,14 +74,17 @@ pub async fn send_notice(
     signatures: Vec<String>,
 ) -> Result<(), ()> {
     for server in servers {
-        if server == "self" {
-            let h: RawNotice = RawNotice::create()
-                .timestamp(OffsetDateTime::now_utc())
-                .body(body.clone())
-                .build()
-                .into();
+        match server.as_str() {
+            "self" | "localhost" => {
+                let h: RawNotice = RawNotice::create()
+                    .timestamp(OffsetDateTime::now_utc())
+                    .body(body.clone())
+                    .build()
+                    .into();
 
-            db().await.unwrap().save(&h).await.unwrap();
+                db().await.unwrap().save(&h).await.unwrap();
+            }
+            _ => (),
         }
     }
 

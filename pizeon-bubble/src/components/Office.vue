@@ -17,15 +17,16 @@ const submitForm = function () {
   for (let i = 1; i < formData.value.length - 1; i++) {
     bundle[slices.value[i]] = formData.value[i];
   }
+  bundle.template = template.value;
   invoke("send_notice", {
     servers: formData.value[0],
     body: JSON.stringify(bundle),
     signatures: (formData.value[formData.value.length - 1] as string[]).map(
       (s) => s,
     ),
-  }),
-    // TODO: ~~send back a notice containing server respone~~
-    (formData.value = initFormData());
+  });
+  // TODO: ~~send back a notice containing server respone~~
+  formData.value = initFormData();
 };
 const templateTo = () => {
   let slices: string[] = [];
@@ -39,7 +40,9 @@ const templateTo = () => {
   return ["server"].concat(slices).concat("signature");
 };
 const initFormData = function () {
-  return templateTo().map((_) => "");
+  return templateTo().map((s) =>
+    s === "server" || s === "signature" ? ["self"] : "",
+  );
 };
 const slices: Ref<string[]> = computed(templateTo);
 const formData: Ref<(string[] | string)[]> = useStorage(
