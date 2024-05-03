@@ -73,7 +73,7 @@ pub async fn send_notice(
 ) -> Result<(), ()> {
     for server in servers {
         match server.as_str() {
-            "self" | "" => {
+            "self" | "localhost" => {
                 let h: RawNotice = RawNotice::create()
                     .timestamp(OffsetDateTime::now_utc())
                     .body(body.clone())

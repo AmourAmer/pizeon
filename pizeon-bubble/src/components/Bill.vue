@@ -37,7 +37,10 @@ function addId(newId: string) {
 
 const abstracts: Ref<Ref<Abstract>[]> = computedAsync(async () =>
   getS(props.bill).map((ab) =>
-    computedAsync(async () => await ab, { heading: "fetch failed", date: 1 }),
+    computedAsync(async () => await ab, {
+      heading: "fetch or parse failed, consider deleting it?",
+      date: 1,
+    }),
   ),
 );
 
@@ -46,13 +49,13 @@ async function move(id: string, repo: Repo) {
     id,
     repo,
   });
-  // TODO force update abstracts
+  // TODO: force update abstracts
 }
 </script>
 
 <template>
-  SHIT: {{ abstracts }}
   <div v-for="(abstract, i) in abstracts" :key="i">
+    {{ abstract }}
     <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
     <button
       v-for="repo in Repo"
