@@ -9,7 +9,7 @@ use time::OffsetDateTime;
 #[derive(Serialize, Deserialize)]
 pub struct Notice {
     heading: String,
-    body: String,
+    bare_body: String,
     date: i64,
 }
 #[derive(Serialize)]
@@ -36,7 +36,7 @@ pub async fn get_notice(id: &str) -> Result<Meal, ()> {
                 .as_str()
                 .unwrap_or("Missing heading!")
                 .into(),
-            body: h.body,
+            bare_body: h.body,
             date: (h.timestamp).unix_timestamp(),
         },
         signs: vec![],

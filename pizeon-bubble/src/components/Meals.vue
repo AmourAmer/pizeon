@@ -3,12 +3,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { computed, Ref } from "vue";
 import { computedAsync, useStorage } from "@vueuse/core";
 import Meal from "./Meal.vue";
+import { Notice } from "../utils/type";
 
-interface Notice {
-  date: number;
-  heading: string;
-  body: string;
-}
 // TODO these types are used anywhere, I should refactor
 enum Repo {
   Fresh = "Fresh",
@@ -27,7 +23,7 @@ const mealTemplate: Meal = {
   notice: {
     date: 0,
     heading: "Please wait",
-    body: "Fetching data",
+    bare_body: "Fetching data",
   },
   signs: [],
   repo: Repo.Blocked,

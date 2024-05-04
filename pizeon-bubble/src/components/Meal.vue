@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import time from "../utils/time";
-interface Notice {
-  date: number;
-  heading: string;
-  body: string;
-}
+import { Notice } from "../utils/type";
+
 type Signature = string;
 enum Repo {
   Fresh = "Fresh",
@@ -31,7 +28,7 @@ const { month, day } = time(computed(() => props.notice.date));
     <button @click="$emit('close')">Close me</button>
     <h1>{{ notice.heading }}</h1>
     <b>Repo: {{ repo }}</b>
-    <p>{{ notice.body }}</p>
+    <p>{{ notice.bare_body }}</p>
     <p>{{ month }}/{{ day }}</p>
     <s v-for="(sign, i) in signs" :key="i">{{ sign }}, </s>...
     <!-- <p>{{ id }}</p> -->
