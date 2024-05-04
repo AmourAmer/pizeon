@@ -14,6 +14,9 @@ importers:
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.26(typescript@5.4.5))
+      katex:
+        specifier: ^0.16.10
+        version: 0.16.10
       vue:
         specifier: ^3.4.26
         version: 3.4.26(typescript@5.4.5)
@@ -423,6 +426,10 @@ packages:
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
 
+  commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
+
   computeds@0.0.1:
     resolution: {integrity: sha512-7CEBgcMjVmitjYo5q8JTJVra6X5mQ20uTThdK+0kR7UEaDrAWEQcRiBtWJzga4eRpP6afNwwLsX2SET2JhVB1Q==}
 
@@ -451,6 +458,10 @@ packages:
 
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
+    hasBin: true
+
+  katex@0.16.10:
+    resolution: {integrity: sha512-ZiqaC04tp2O5utMsl2TEZTXxa6WSC4yo0fv5ML++D3QZv/vx2Mct0mTlRx3O+uUkjfuAgOkzsCmq5MiUEsDDdA==}
     hasBin: true
 
   lru-cache@6.0.0:
@@ -865,6 +876,8 @@ snapshots:
     dependencies:
       balanced-match: 1.0.2
 
+  commander@8.3.0: {}
+
   computeds@0.0.1: {}
 
   csstype@3.1.3: {}
@@ -905,6 +918,10 @@ snapshots:
     optional: true
 
   he@1.2.0: {}
+
+  katex@0.16.10:
+    dependencies:
+      commander: 8.3.0
 
   lru-cache@6.0.0:
     dependencies:
