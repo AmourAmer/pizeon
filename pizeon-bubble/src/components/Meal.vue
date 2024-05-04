@@ -22,9 +22,13 @@ defineEmits<{
 }>();
 
 const { month, day } = time(computed(() => props.notice.date));
-const noticeTemplate = computed(() =>
-  JSON.parse(props.notice.bare_body).template.toLowerCase(),
-);
+const noticeTemplate = computed(() => {
+  try {
+    return JSON.parse(props.notice.bare_body)?.template.toLowerCase();
+  } catch {
+    return "classic";
+  }
+});
 </script>
 
 <template>

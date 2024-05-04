@@ -7,7 +7,16 @@ interface ClassicNotice {
 const props = defineProps<{
   data: string;
 }>();
-const cooked: Ref<ClassicNotice> = computed(() => JSON.parse(props.data));
+const cooked: Ref<ClassicNotice> = computed(() => {
+  try {
+    return JSON.parse(props.data);
+  } catch {
+    return {
+      heading: "missing heading still",
+      body: props.data,
+    };
+  }
+});
 const heading = computed(() => cooked.value.heading);
 const body = computed(() => cooked.value.body);
 </script>
