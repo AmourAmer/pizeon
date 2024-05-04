@@ -54,11 +54,17 @@ async function move(id: string, repo: Repo) {
 </script>
 
 <template>
-  <div v-for="(abstract, i) in abstracts" :key="i">
+  <div
+    v-for="(abstract, i) in abstracts"
+    :key="i"
+    style="box-shadow: 0 8px 8px rgba(128, 0, 128, 0.5); margin: 48px"
+  >
     {{ abstract }}
     <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
     <button
       v-for="repo in Repo"
+      :key="repo"
+      v-show="repo != 'Blocked'"
       @click="
         move(bill[i], repo);
         $emit('changed', bill[i], repo);
