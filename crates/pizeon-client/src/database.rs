@@ -191,6 +191,7 @@ impl Sqlite {
     fn query_notice(row: SqliteRow) -> Notice {
         let deleted_at: Option<i64> = row.get("deleted_at");
         let expires_at: Option<i64> = row.get("expires_at");
+        let last_changed: Option<i64> = row.get("last_changed");
 
         Notice::from_db()
             .blocked(row.get("blocked"))
@@ -206,6 +207,10 @@ impl Sqlite {
             )
             .expires_at(
                 expires_at.and_then(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128).ok()),
+            )
+            .last_changed(
+                last_changed
+                    .and_then(|t| OffsetDateTime::from_unix_timestamp_nanos(t as i128).ok()),
             )
             .build()
             .into()

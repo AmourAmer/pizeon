@@ -63,6 +63,7 @@ pub struct NoticeFromDb {
     versions: String, // PIG FIXME should use some type supporting list
     deleted_at: Option<time::OffsetDateTime>,
     expires_at: Option<time::OffsetDateTime>,
+    last_changed: Option<time::OffsetDateTime>,
 }
 
 impl From<NoticeFromDb> for Notice {
@@ -75,6 +76,7 @@ impl From<NoticeFromDb> for Notice {
             versions: from_db.versions,
             deleted_at: from_db.deleted_at,
             expires_at: from_db.expires_at,
+            last_changed: from_db.last_changed,
         }
     }
 }

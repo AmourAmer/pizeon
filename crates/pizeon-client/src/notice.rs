@@ -66,6 +66,8 @@ pub struct Notice {
     pub deleted_at: Option<OffsetDateTime>,
     /// Timestamp, when the notice expires
     pub expires_at: Option<OffsetDateTime>,
+    /// Timestamp
+    pub last_changed: Option<OffsetDateTime>,
 }
 
 // #[derive(Debug, Clone, PartialEq, Eq, sqlx::FromRow)]
@@ -105,6 +107,7 @@ impl Notice {
             versions: String::from(""),
             deleted_at,
             expires_at,
+            last_changed: None,
         }
     }
 

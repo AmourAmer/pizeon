@@ -5,7 +5,8 @@ create table if not exists notices (
 	body json not null,
 	versions text not null,
 	deleted_at integer,
-  expires_at integer
+  expires_at integer,
+  last_changed integer
 
 	-- unique(timestamp, cwd, command)
 );

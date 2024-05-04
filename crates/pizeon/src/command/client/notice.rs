@@ -229,7 +229,7 @@ fn parse_fmt(format: &str) -> ParsedFmt {
 }
 
 impl Cmd {
-    // #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
+    // TODO: interactively, choose from templates
     async fn handle_add(db: &impl Database, settings: &Settings, notice: &[String]) -> Result<()> {
         let body = notice.join(" ");
 
