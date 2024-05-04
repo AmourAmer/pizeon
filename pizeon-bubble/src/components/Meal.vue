@@ -23,15 +23,15 @@ defineEmits<{
   (e: "close"): void;
 }>();
 
-const { month, day } = time(computed(() => props.notice?.date || 0).value);
+const { month, day } = time(computed(() => props.notice.date));
 </script>
 
 <template>
   <div>
     <button @click="$emit('close')">Close me</button>
-    <h1>{{ notice?.heading }}</h1>
+    <h1>{{ notice.heading }}</h1>
     <b>Repo: {{ repo }}</b>
-    <p>{{ notice?.body }}</p>
+    <p>{{ notice.body }}</p>
     <p>{{ month }}/{{ day }}</p>
     <s v-for="(sign, i) in signs" :key="i">{{ sign }}, </s>...
     <!-- <p>{{ id }}</p> -->
