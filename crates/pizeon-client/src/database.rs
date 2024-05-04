@@ -260,7 +260,7 @@ impl Database for Sqlite {
 
         sqlx::query(
             "update notices
-                set blocked = ?1, timestamp = ?3, body = ?4, versions = ?5, deleted_at = ?6, expires_at = ?7
+                set blocked = ?1, timestamp = ?3, body = ?4, versions = ?5, deleted_at = ?6, expires_at = ?7, last_changed = ?8
                 where id = ?2",
         )
         .bind(h.blocked)
@@ -270,6 +270,8 @@ impl Database for Sqlite {
         .bind(h.versions.as_str())
         .bind(h.deleted_at.map(|t|t.unix_timestamp_nanos() as i64))
         .bind(h.expires_at.map(|t|t.unix_timestamp_nanos() as i64))
+        .bind(OffsetDateTime::now_utc().unix_timestamp_nanos() as i64) // why rust-analyzer doesn't
+            // fmt this line?
         .execute(&self.pool)
         .await?;
 
