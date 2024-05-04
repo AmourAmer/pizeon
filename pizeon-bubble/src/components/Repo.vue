@@ -26,6 +26,7 @@ const update = (id: string, repo: Repo) => {
 </script>
 
 <template>
-  BILL {{ bill }}
-  <Bill :bill="bill" @changed="update" />
+  <div>
+    <Bill :bill="bill" @changed="update" />
+  </div>
 </template>
