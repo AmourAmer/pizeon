@@ -63,6 +63,7 @@ const server: ComputedRef<string[]> = computed(
       :slice="slice"
       :server="server"
     />
+    <!-- FIXME: export and copy on submitting -->
     <button type="submit">Submit</button>
   </form>
 </template>

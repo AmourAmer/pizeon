@@ -49,7 +49,7 @@ async function move(id: string, repo: Repo) {
     id,
     repo,
   });
-  // TODO: force update abstracts
+  // TODO: force update abstracts, maybe with suspense?
 }
 </script>
 
