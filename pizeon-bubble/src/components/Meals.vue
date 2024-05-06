@@ -39,11 +39,8 @@ const meals: Ref<Ref<Meal>[]> = computed(() =>
 </script>
 
 <template>
-  <div>
-    <button @click="ids = []">Clear All</button>
-    <!-- TODO scroll to btm, or use css to upside down? -->
-    {{ ids }}
-    {{ meals }}
+  <button @click="ids = []">Clear All</button>
+  <div style="display: flex; flex-direction: column-reverse">
     <Meal
       v-for="(meal, i) in meals"
       :key="i"
