@@ -30,7 +30,7 @@ pub async fn get_notice(id: &str) -> Result<Meal, ()> {
     let h = db.load(id).await.unwrap().unwrap();
     let body = json::parse(h.body.as_str()).unwrap();
     Ok(Meal {
-        repo: which_repo(&h),
+        repo: which_repo(&h).unwrap_or(Repo::Junk),
         notice: Notice {
             heading: body["heading"]
                 .as_str()
