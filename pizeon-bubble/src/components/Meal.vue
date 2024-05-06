@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, Ref } from "vue";
 import time from "../utils/time";
 import { Repo, Notice } from "../utils/type";
 import ClassicNotice from "./meal/Classic.vue";
@@ -8,19 +8,26 @@ type Signature = string;
 
 const props = defineProps<{
   notice: Notice;
-  signs: Signature[];
   repo: Repo;
 }>();
 defineEmits<{
   (e: "close"): void;
 }>();
 
+// TODO: any need to toRef props? maybe should use toRefs to be more elegant
 const { month, day } = time(computed(() => props.notice.date));
 const noticeTemplate = computed(() => {
   try {
     return JSON.parse(props.notice.bare_body)?.template.toLowerCase();
   } catch {
     return "classic";
+  }
+});
+const signs: Ref<Signature[]> = computed(() => {
+  try {
+    return JSON.parse(props.notice.bare_body)?.signature || [];
+  } catch {
+    return [];
   }
 });
 </script>
