@@ -14,7 +14,7 @@ pub enum Repo {
 
 pub fn which_repo(notice: &Notice) -> Option<Repo> {
     if let Some(deleted_at) = notice.deleted_at {
-        let ddl = OffsetDateTime::now_utc() + Duration::from_secs(24 * 60 * 60);
+        let ddl = OffsetDateTime::now_utc() - Duration::from_secs(24 * 60 * 60);
         if deleted_at > ddl {
             return Some(Repo::Junk);
         } else {
