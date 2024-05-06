@@ -30,6 +30,7 @@ const initMsg = () => {
 };
 
 onMounted(() => {
+  // TODO: auto or enter, remember which to focus
   if (props.slice == "heading") {
     document.getElementById(props.slice)?.focus();
   }

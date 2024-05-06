@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Ref, computed } from "vue";
+import { Repo } from "../../utils/type";
 interface ClassicNotice {
   heading: string;
   body: string;
 }
 const props = defineProps<{
   data: string;
+  repo: Repo;
 }>();
 const cooked: Ref<ClassicNotice> = computed(() => {
   try {

@@ -3,12 +3,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
 import { computedAsync } from "@vueuse/core";
 import Bill from "./Bill.vue";
-enum Repo {
-  Fresh = "Fresh",
-  Blocked = "Blocked",
-  Fridge = "Fridge",
-  Junk = "Junk",
-}
+import { Repo } from "../utils/type";
 const props = defineProps<{
   type: Repo;
 }>();

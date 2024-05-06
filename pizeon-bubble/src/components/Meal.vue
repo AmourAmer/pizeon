@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import time from "../utils/time";
-import { Notice } from "../utils/type";
+import { Repo, Notice } from "../utils/type";
 import ClassicNotice from "./meal/Classic.vue";
 
 type Signature = string;
-enum Repo {
-  Fresh = "Fresh",
-  Blocked = "Blocked",
-  Fridge = "Fridge",
-  Junk = "Junk",
-}
 
 const props = defineProps<{
   notice: Notice;
@@ -39,6 +33,7 @@ const noticeTemplate = computed(() => {
     <ClassicNotice
       v-if="noticeTemplate == 'classic'"
       :data="notice.bare_body"
+      :repo="repo"
     />
     <p>{{ month }}/{{ day }}</p>
     <s v-for="(sign, i) in signs" :key="i">{{ sign }}, </s>...

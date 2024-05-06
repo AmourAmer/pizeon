@@ -4,3 +4,9 @@ export interface Notice {
   bare_body: string;
 }
 
+export enum Repo {
+  Fresh = "Fresh",
+  Blocked = "Blocked",
+  Fridge = "Fridge",
+  Junk = "Junk",
+}

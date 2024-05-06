@@ -3,17 +3,12 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
 import { computedAsync, useStorage } from "@vueuse/core";
 import Abstract from "./Abstract.vue";
+import { Repo } from "../utils/type";
 
 interface Abstract {
   heading: string;
   body?: string;
   date: number;
-}
-enum Repo {
-  Fresh = "Fresh",
-  Blocked = "Blocked",
-  Fridge = "Fridge",
-  Junk = "Junk",
 }
 
 const props = defineProps<{ bill: string[] }>();

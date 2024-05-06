@@ -3,15 +3,10 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { computed, Ref } from "vue";
 import { computedAsync, useStorage } from "@vueuse/core";
 import Meal from "./Meal.vue";
-import { Notice } from "../utils/type";
+import { Repo, Notice } from "../utils/type";
 
-// TODO these types are used anywhere, I should refactor
-enum Repo {
-  Fresh = "Fresh",
-  Blocked = "Blocked",
-  Fridge = "Fridge",
-  Junk = "Junk",
-}
+// TODO: these types are used anywhere, I should refactor
+
 type Signature = string;
 interface Meal {
   notice: Notice;
