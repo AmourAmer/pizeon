@@ -21,6 +21,7 @@ for (let i = 0; i < destinations.length; i++) {
     )
       return;
     router.push(destinations[i][0]);
+    e.preventDefault();
   });
 }
 </script>

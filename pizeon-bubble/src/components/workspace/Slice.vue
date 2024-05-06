@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// use useStorage here, because I don't know how to bind value to parent
-import { ModelRef } from "vue";
+import { ModelRef, onMounted } from "vue";
+
 const props = defineProps<{
   slice: string;
   server: string[];
@@ -28,6 +28,12 @@ const initMsg = () => {
         : "Please select a server on which you are going to publish your notice";
   }
 };
+
+onMounted(() => {
+  if (props.slice == "heading") {
+    document.getElementById(props.slice)?.focus();
+  }
+});
 </script>
 
 <template>
