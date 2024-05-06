@@ -14,7 +14,7 @@ const submitForm = function () {
   // TODO: don't forget timestamp and signature
   // FIXME: don't forget notice type
   let bundle: stringMap = {};
-  for (let i = 1; i < formData.value.length - 1; i++) {
+  for (let i = 1; i < formData.value.length; i++) {
     bundle[slices.value[i]] = formData.value[i];
   }
   bundle.template = template.value;

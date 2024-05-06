@@ -40,6 +40,7 @@ pub async fn get_notice(id: &str) -> Result<Meal, ()> {
             date: (h.timestamp).unix_timestamp(),
         },
         signs: vec![],
+        // FIXME: verify keys
     })
 }
 
