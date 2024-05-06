@@ -24,6 +24,10 @@ for (let i = 0; i < destinations.length; i++) {
     e.preventDefault();
   });
 }
+onKeyStroke("Escape", () => {
+  // This is so silly! The type definition of activeElement should be more precise
+  (document.activeElement as HTMLElement)?.blur();
+});
 </script>
 
 <template>
