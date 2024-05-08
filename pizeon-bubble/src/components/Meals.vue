@@ -39,13 +39,15 @@ const meals: Ref<Ref<Meal>[]> = computed(() =>
 </script>
 
 <template>
-  <button @click="ids = []">Clear All</button>
-  <div style="display: flex; flex-direction: column-reverse">
-    <Meal
-      v-for="(meal, i) in meals"
-      :key="i"
-      v-bind="meal.value"
-      @close="ids.splice(i, 1)"
-    />
+  <div>
+    <button @click="ids = []">Clear All</button>
+    <div style="display: flex; flex-direction: column-reverse">
+      <Meal
+        v-for="(meal, i) in meals"
+        :key="i"
+        v-bind="meal.value"
+        @close="ids.splice(i, 1)"
+      />
+    </div>
   </div>
 </template>
