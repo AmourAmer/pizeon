@@ -12,17 +12,39 @@ const destinations = [
   ["/office", "Go to your Office"],
 ];
 
+let prefix = "";
+// FIXME: to create key-binding like gg
+// FIXME: use global table to avoid multi-bind
+function normal_mode(
+  keys: string | (string | [string, string[]])[],
+  fn: (e: KeyboardEvent) => void,
+) {
+  if (typeof keys == "string") keys = [keys];
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (typeof key == "string") keys[i] = ["", [key]];
+  }
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    onKeyStroke(key[1], (e) => {
+      if (
+        e.target &&
+        "tagName" in e.target &&
+        (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+      )
+        return;
+
+      if (prefix === key[0]) {
+        fn(e);
+        prefix = "";
+      }
+      e.preventDefault();
+    });
+  }
+}
+
 for (let i = 0; i < destinations.length; i++) {
-  onKeyStroke([(i + 1).toString()], (e) => {
-    if (
-      e.target &&
-      "tagName" in e.target &&
-      (e.target?.tagName === "INPUT" || e.target?.tagName === "TEXTAREA")
-    )
-      return;
-    router.push(destinations[i][0]);
-    e.preventDefault();
-  });
+  normal_mode([(i + 1).toString()], () => router.push(destinations[i][0]));
 }
 onKeyStroke("Escape", () => {
   // This is so silly! The type definition of activeElement should be more precise
