@@ -3,6 +3,7 @@
 
 mod api;
 use api::{
+    kitchen::{get_servers, whoami},
     notices::{get_abstract, get_notice, send_notice},
     repos::{get_bill, move_notice},
 };
@@ -15,6 +16,8 @@ fn main() {
             get_bill,
             move_notice,
             send_notice,
+            whoami,
+            get_servers,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

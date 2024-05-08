@@ -8,9 +8,9 @@ const props = defineProps<{
 const model: ModelRef<string | undefined, string> = defineModel();
 const selectFor = function (slice: string) {
   // TODO: use real back-end fn calls, should store data in kinda table
-  if (["server", "signature"].indexOf(slice) >= 0)
-    return ["A", "B", "C", "D", "self"];
-  else return [];
+  if (["signature"].indexOf(slice) >= 0) return ["A", "B", "C", "D", "self"];
+  if (["server"].indexOf(slice) >= 0) return ["A", "B", "C", "D", "self"];
+  return [];
 };
 const isTextarea = function () {
   return ["body"].indexOf(props.slice) >= 0;
