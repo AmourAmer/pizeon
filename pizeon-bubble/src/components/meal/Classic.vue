@@ -3,7 +3,7 @@ import { Ref, computed } from "vue";
 import { Repo } from "../../utils/type";
 interface ClassicNotice {
   heading: string;
-  body: string;
+  raw: string;
 }
 const props = defineProps<{
   data: string;
@@ -16,16 +16,16 @@ const cooked: Ref<ClassicNotice> = computed(() => {
 
   return {
     heading: "missing heading still",
-    body: props.data,
+    raw: props.data,
   };
 });
 const heading = computed(() => cooked.value.heading);
-const body = computed(() => cooked.value.body);
+const raw = computed(() => cooked.value.raw);
 </script>
 
 <template>
   <div>
     <h1>{{ heading }}</h1>
-    <i>{{ body }}</i>
+    <i>{{ raw }}</i>
   </div>
 </template>

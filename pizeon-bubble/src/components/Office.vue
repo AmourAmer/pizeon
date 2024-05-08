@@ -35,7 +35,7 @@ const templateTo = () => {
       slices.push();
       break;
     default:
-      slices.push("heading", "body");
+      slices.push("heading", "raw");
   }
   return ["server"].concat(slices).concat("signature");
 };

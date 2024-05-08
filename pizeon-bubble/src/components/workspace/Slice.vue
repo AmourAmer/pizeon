@@ -19,12 +19,12 @@ const selectFor: Ref<string[]> = computedAsync(async () => {
   return [];
 }, []);
 const isTextarea = function () {
-  return ["body"].indexOf(props.slice) >= 0;
+  return ["raw"].indexOf(props.slice) >= 0;
 };
 
 const initMsg = () => {
   switch (props.slice) {
-    case "body":
+    case "raw":
       return props.server.length > 0
         ? "What are you going to publish on " +
             props.server.slice(0, -1).join(", ") +
