@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { ModelRef, onMounted } from "vue";
+import { invoke } from "@tauri-apps/api/tauri";
+import { Ref, ModelRef, onMounted } from "vue";
+import { computedAsync } from "@vueuse/core";
 
 const props = defineProps<{
   slice: string;
   server: string[];
 }>();
 const model: ModelRef<string | undefined, string> = defineModel();
-const selectFor = function (slice: string) {
+const selectFor: Ref<string[]> = computedAsync(async () => {
   // TODO: use real back-end fn calls, should store data in kinda table
-  if (["signature"].indexOf(slice) >= 0) return ["A", "B", "C", "D", "self"];
-  if (["server"].indexOf(slice) >= 0) return ["A", "B", "C", "D", "self"];
+  if (props.slice === "signature") return ["A", "B", "C", "D", "self"];
+  if (props.slice === "server")
+    return await (invoke("get_servers", {}) as Promise<string[]>).then(
+      (res: string[]) => res.concat("self"),
+    );
+
   return [];
-};
+}, []);
 const isTextarea = function () {
   return ["body"].indexOf(props.slice) >= 0;
 };
@@ -46,16 +52,10 @@ onMounted(() => {
     v-model="model"
     :placeholder="initMsg()"
   />
-  <select
-    v-else-if="selectFor(slice).length > 0"
-    :id="slice"
-    v-model="model"
-    multiple
-  >
+  <select v-else-if="selectFor.length > 0" :id="slice" v-model="model" multiple>
     <!-- TODO: shortcut multi-select -->
-    <!-- TODO: default choice -->
     <option disabled value="">Please select one or more, I don't know</option>
-    <option v-for="(option, i) in selectFor(slice)" :key="i">
+    <option v-for="(option, i) in selectFor" :key="i">
       {{ option }}
     </option>
   </select>
