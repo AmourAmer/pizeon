@@ -55,15 +55,20 @@ const server: ComputedRef<string[]> = computed(
 </script>
 
 <template>
-  <form @submit.prevent="submitForm">
-    <Slice
-      v-for="(slice, i) in slices"
-      :key="i"
-      v-model="formData[i]"
-      :slice="slice"
-      :server="server"
-    />
-    <!-- FIXME: export and copy on submitting -->
-    <button type="submit">Submit</button>
-  </form>
+  <div>
+    <form @submit.prevent="submitForm">
+      <Slice
+        v-for="(slice, i) in slices"
+        :key="i"
+        v-model="formData[i]"
+        :slice="slice"
+        :server="server"
+      />
+      <!-- FIXME: export and copy on submitting -->
+      <button type="submit">Submit</button>
+    </form>
+    If parsing isn't satisfying or anything, plz
+    mailto:Amour&ltpizeon@tuta.io&gt
+    <!-- TODO: click to open mailto: link and use ctx as body -->
+  </div>
 </template>
