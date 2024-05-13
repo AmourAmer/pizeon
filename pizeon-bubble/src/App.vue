@@ -13,7 +13,7 @@ const destinations = [
 ];
 
 let prefix = "";
-// FIXME: to create key-binding like gg
+// FIXME: to create key-binding like gg, maybe with pinia plugin?
 // FIXME: use global table to avoid multi-bind
 function normal_mode(
   keys: string | (string | [string, string[]])[],

@@ -19,6 +19,7 @@ const cooked: Ref<ClassicNotice> = computed(() => {
     raw: props.data,
   };
 });
+// TODO: deduplicate
 const heading = computed(() => cooked.value.heading);
 const raw = computed(() => cooked.value.raw);
 </script>
@@ -26,6 +27,6 @@ const raw = computed(() => cooked.value.raw);
 <template>
   <div>
     <h1>{{ heading }}</h1>
-    <i>{{ raw }}</i>
+    <i contenteditable>{{ raw }}</i>
   </div>
 </template>
