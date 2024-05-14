@@ -12,6 +12,7 @@
   "dependencies": {
     "@tauri-apps/api": "^1.5.4",
     "@vueuse/core": "^10.9.0",
+    "diff": "^5.2.0",
     "katex": "^0.16.10",
     "vue": "^3.4.26",
     "vue-router": "^4.3.2"
