@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { ref, Ref, computed, ComputedRef } from "vue";
+import { ref, Ref, computed, toRef } from "vue";
 import { useStorage } from "@vueuse/core";
 import Event from "./workspace/Event.vue";
 
@@ -51,9 +51,8 @@ const formData: Ref<(string[] | string)[]> = useStorage(
   template.value,
   initFormData(),
 ); // TODO: multi-account?!
-const server: ComputedRef<string[]> = computed(
-  () => (formData.value[slices.value.indexOf("server")] || []) as string[],
-);
+const server: Ref<string[]> = toRef(["self"]);
+const signature: Ref<string> = toRef("self");
 
 const templateComponent = computed(() => {
   switch (template.value) {
@@ -67,18 +66,36 @@ const templateComponent = computed(() => {
 
 <template>
   <div>
-    <select v-model="template">
-      <!-- <option value="classic">classic</option> -->
-      <option :value="'event'">event</option>
-    </select>
-    {{ template }}
+    <div>
+      Send to:
+      <select multiple v-model="server">
+        <option :value="'self'">self</option>
+        <option :value="'test 1'">test 1</option>
+      </select>
+    </div>
+    <div>
+      Sent by:
+      <select v-model="signature">
+        <option :value="'self'">self</option>
+        <option :value="'test 1'">test 1</option>
+      </select>
+    </div>
+    <div>
+      Template:
+      <select v-model="template">
+        <!-- <option value="classic">classic</option> -->
+        <option :value="'event'">event</option>
+      </select>
+      {{ template }}
+    </div>
+    <!-- FIXME: URGENT switch to templateData -->
     <component :is="templateComponent" v-model="formData" :server="server" />
-    <form @submit.prevent="submitForm">
-      <!-- FIXME: export and copy on submitting -->
-      <button type="submit">Publish</button>
-    </form>
-    If parsing isn't satisfying or anything, plz
-    mailto:Amour&lt;pizeon@tuta.io&gt;
+    <!-- FIXME: export and copy on submitting -->
+    <button @click="submitForm">Publish</button>
+    <footer>
+      If parsing isn't satisfying or anything, plz
+      mailto:Amour&lt;pizeon@tuta.io&gt;
+    </footer>
     <!-- TODO: click to open mailto: link and use ctx as body -->
   </div>
 </template>

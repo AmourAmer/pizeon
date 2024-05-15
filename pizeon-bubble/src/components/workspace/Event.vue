@@ -1,8 +1,11 @@
 <script setup lang="ts">
-const model = defineModel<(string[] | string)[]>();
+const data = defineModel<(string[] | string)[]>();
+defineProps<{
+  server: String[];
+}>();
 </script>
 
 <!-- TODO: server, formdatk -->
 <template>
-  <div>{{ model }}</div>
+  <div>{{ server }}, {{ data }}</div>
 </template>
