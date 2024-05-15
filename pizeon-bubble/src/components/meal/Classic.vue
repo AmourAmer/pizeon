@@ -27,6 +27,11 @@ const raw = computed(() => cooked.value.raw);
 <template>
   <div>
     <h1>{{ heading }}</h1>
-    <pre contenteditable v-text="raw" style="text-align: left" />
+    <!-- FIXME: don't nav at numbers -->
+    <i
+      contenteditable
+      v-text="raw"
+      style="text-align: left; white-space: pre-wrap"
+    />
   </div>
 </template>

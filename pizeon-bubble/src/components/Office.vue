@@ -2,12 +2,13 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed, ComputedRef } from "vue";
 import { useStorage } from "@vueuse/core";
-import Slice from "./workspace/Slice.vue";
+import Event from "./workspace/Event.vue";
 
 interface stringMap {
   [key: string]: string | string[];
 }
 
+// FIXME: refactor
 const template = ref("classic");
 // TODO: template, cache, sendForm
 const submitForm = function () {
@@ -56,16 +57,15 @@ const server: ComputedRef<string[]> = computed(
 
 <template>
   <div>
+    <select v-model="template">
+      <!-- <option value="classic">classic</option> -->
+      <option :value="Event">event</option>
+    </select>
+    {{ template }}
+    <component :is="template" v-model="formData" :server="server" />
     <form @submit.prevent="submitForm">
-      <Slice
-        v-for="(slice, i) in slices"
-        :key="i"
-        v-model="formData[i]"
-        :slice="slice"
-        :server="server"
-      />
       <!-- FIXME: export and copy on submitting -->
-      <button type="submit">Submit</button>
+      <button type="submit">Publish</button>
     </form>
     If parsing isn't satisfying or anything, plz
     mailto:Amour&lt;pizeon@tuta.io&gt;
