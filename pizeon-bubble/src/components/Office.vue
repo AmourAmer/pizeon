@@ -12,19 +12,18 @@ interface stringMap {
 const template = ref("event");
 // TODO: template, cache, sendForm
 const submitForm = function () {
-  // TODO: don't forget timestamp and signature
-  // FIXME: don't forget notice type
+  // TODO: don't forget signature
+  // FIXME: don't forget notice template type
   let bundle: stringMap = {};
+  // FIXME: of course, since this's been refactored
   for (let i = 1; i < formData.value.length; i++) {
     bundle[slices.value[i]] = formData.value[i];
   }
   bundle.template = template.value;
   invoke("send_notice", {
-    servers: formData.value[0],
+    servers,
     body: JSON.stringify(bundle),
-    signatures: (formData.value[formData.value.length - 1] as string[]).map(
-      (s) => s,
-    ),
+    signatures: [signature].map((s) => s),
   });
   // TODO: ~~send back a notice containing server respone~~
   formData.value = initFormData();
@@ -51,7 +50,7 @@ const formData: Ref<(string[] | string)[]> = useStorage(
   template.value,
   initFormData(),
 ); // TODO: multi-account?!
-const server: Ref<string[]> = toRef(["self"]);
+const servers: Ref<string[]> = toRef(["self"]);
 const signature: Ref<string> = toRef("self");
 
 const templateComponent = computed(() => {
@@ -62,13 +61,14 @@ const templateComponent = computed(() => {
       return Event;
   }
 });
+const templateData = toRef([]);
 </script>
 
 <template>
   <div>
     <div>
       Send to:
-      <select multiple v-model="server">
+      <select multiple v-model="servers">
         <option :value="'self'">self</option>
         <option :value="'test 1'">test 1</option>
       </select>
@@ -88,8 +88,11 @@ const templateComponent = computed(() => {
       </select>
       {{ template }}
     </div>
-    <!-- FIXME: URGENT switch to templateData -->
-    <component :is="templateComponent" v-model="formData" :server="server" />
+    <component
+      :is="templateComponent"
+      v-model="templateData"
+      :servers="servers"
+    />
     <!-- FIXME: export and copy on submitting -->
     <button @click="submitForm">Publish</button>
     <footer>
