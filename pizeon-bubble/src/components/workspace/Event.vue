@@ -1,4 +1,8 @@
+<script setup lang="ts">
+const model = defineModel<(string[] | string)[]>();
+</script>
+
 <!-- TODO: server, formdatk -->
 <template>
-  <div>cookj</div>
+  <div>{{ model }}</div>
 </template>

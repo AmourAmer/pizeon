@@ -9,7 +9,7 @@ interface stringMap {
 }
 
 // FIXME: refactor
-const template = ref("classic");
+const template = ref("event");
 // TODO: template, cache, sendForm
 const submitForm = function () {
   // TODO: don't forget timestamp and signature
@@ -46,6 +46,7 @@ const initFormData = function () {
   );
 };
 const slices: Ref<string[]> = computed(templateTo);
+// TODO: this is kind of ugly, should polish, also in ./workspace/*
 const formData: Ref<(string[] | string)[]> = useStorage(
   template.value,
   initFormData(),
@@ -53,16 +54,25 @@ const formData: Ref<(string[] | string)[]> = useStorage(
 const server: ComputedRef<string[]> = computed(
   () => (formData.value[slices.value.indexOf("server")] || []) as string[],
 );
+
+const templateComponent = computed(() => {
+  switch (template.value) {
+    case "event":
+      return Event;
+    default:
+      return Event;
+  }
+});
 </script>
 
 <template>
   <div>
     <select v-model="template">
       <!-- <option value="classic">classic</option> -->
-      <option :value="Event">event</option>
+      <option :value="'event'">event</option>
     </select>
     {{ template }}
-    <component :is="template" v-model="formData" :server="server" />
+    <component :is="templateComponent" v-model="formData" :server="server" />
     <form @submit.prevent="submitForm">
       <!-- FIXME: export and copy on submitting -->
       <button type="submit">Publish</button>
