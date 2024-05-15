@@ -68,7 +68,7 @@ const server: ComputedRef<string[]> = computed(
       <button type="submit">Submit</button>
     </form>
     If parsing isn't satisfying or anything, plz
-    mailto:Amour&ltpizeon@tuta.io&gt
+    mailto:Amour&lt;pizeon@tuta.io&gt;
     <!-- TODO: click to open mailto: link and use ctx as body -->
   </div>
 </template>

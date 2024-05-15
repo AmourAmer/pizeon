@@ -44,20 +44,27 @@ onMounted(() => {
 </script>
 
 <template>
-  {{ model }}
-  <label :for="slice">{{ slice }}</label>
-  <textarea
-    v-if="isTextarea()"
-    :id="slice"
-    v-model="model"
-    :placeholder="initMsg()"
-  />
-  <select v-else-if="selectFor.length > 0" :id="slice" v-model="model" multiple>
-    <!-- TODO: shortcut multi-select -->
-    <option disabled value="">Please select one or more, I don't know</option>
-    <option v-for="(option, i) in selectFor" :key="i">
-      {{ option }}
-    </option>
-  </select>
-  <input v-else type="text" :id="slice" v-model="model" />
+  <div>
+    <!-- {{ model }} -->
+    <label :for="slice">{{ slice }}</label>
+    <textarea
+      v-if="isTextarea()"
+      :id="slice"
+      v-model="model"
+      :placeholder="initMsg()"
+    />
+    <select
+      v-else-if="selectFor.length > 0"
+      :id="slice"
+      v-model="model"
+      multiple
+    >
+      <!-- TODO: shortcut multi-select -->
+      <option disabled value="">Please select one or more, I don't know</option>
+      <option v-for="(option, i) in selectFor" :key="i">
+        {{ option }}
+      </option>
+    </select>
+    <input v-else type="text" :id="slice" v-model="model" />
+  </div>
 </template>

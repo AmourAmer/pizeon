@@ -27,6 +27,6 @@ const raw = computed(() => cooked.value.raw);
 <template>
   <div>
     <h1>{{ heading }}</h1>
-    <i contenteditable>{{ raw }}</i>
+    <pre contenteditable v-text="raw" style="text-align: left" />
   </div>
 </template>
