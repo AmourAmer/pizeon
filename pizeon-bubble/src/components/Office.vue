@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { ref, Ref, computed, toRef } from "vue";
+import { ref, Ref, computed } from "vue";
 import { useStorage } from "@vueuse/core";
 import Event from "./workspace/Event.vue";
 
@@ -15,15 +15,15 @@ const submitForm = function () {
   // TODO: don't forget signature
   // FIXME: don't forget notice template type
   let bundle: stringMap = {};
-  // FIXME: of course, since this's been refactored
+  // FIXME: of course, since this's been refactored, so refactor it, too.
   for (let i = 1; i < formData.value.length; i++) {
     bundle[slices.value[i]] = formData.value[i];
   }
   bundle.template = template.value;
   invoke("send_notice", {
-    servers,
+    servers: servers.value,
     body: JSON.stringify(bundle),
-    signatures: [signature].map((s) => s),
+    signatures: [signature.value].map((s) => s),
   });
   // TODO: ~~send back a notice containing server respone~~
   formData.value = initFormData();
@@ -50,8 +50,8 @@ const formData: Ref<(string[] | string)[]> = useStorage(
   template.value,
   initFormData(),
 ); // TODO: multi-account?!
-const servers: Ref<string[]> = toRef(["self"]);
-const signature: Ref<string> = toRef("self");
+const servers: Ref<string[]> = ref(["self"]);
+const signature: Ref<string> = ref("self");
 
 const templateComponent = computed(() => {
   switch (template.value) {
@@ -61,7 +61,7 @@ const templateComponent = computed(() => {
       return Event;
   }
 });
-const templateData = toRef([]);
+const templateData = ref([]);
 </script>
 
 <template>
@@ -77,7 +77,7 @@ const templateData = toRef([]);
       Sent by:
       <select v-model="signature">
         <option :value="'self'">self</option>
-        <option :value="'test 1'">test 1</option>
+        <option :value="'test 2'">test 2</option>
       </select>
     </div>
     <div>
