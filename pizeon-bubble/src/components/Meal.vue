@@ -23,6 +23,12 @@ const noticeTemplate = computed(() => {
     return "classic";
   }
 });
+const noticeComponent = computed(() => {
+  switch (noticeTemplate.value) {
+    default:
+      return ClassicNotice;
+  }
+});
 const signs: Ref<Signature[]> = computed(() => {
   try {
     return JSON.parse(props.notice.bare_body)?.signature || [];
@@ -37,11 +43,7 @@ const signs: Ref<Signature[]> = computed(() => {
   <div style="box-shadow: 0 8px 8px rgba(0, 0, 0, 0.5); margin: 8px">
     <button @click="$emit('close')">Close me</button>
     <b>Repo: {{ repo }}</b>
-    <ClassicNotice
-      v-if="noticeTemplate == 'classic'"
-      :data="notice.bare_body"
-      :repo="repo"
-    />
+    <component :is="noticeComponent" :data="notice.bare_body" :repo="repo" />
     <p>{{ month }}/{{ day }}</p>
     <s v-for="sign in signs" :key="sign">{{ sign }}, </s>...
   </div>
