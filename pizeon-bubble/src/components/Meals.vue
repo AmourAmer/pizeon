@@ -31,6 +31,7 @@ async function getNotice(id: string): Promise<Meal> {
   });
 }
 
+// TODO: intro id, :key
 const meals: Ref<Ref<Meal>[]> = computed(() =>
   ids.value.map((id) =>
     computedAsync(async () => await getNotice(id), mealTemplate),

@@ -55,7 +55,7 @@ onKeyStroke("Escape", () => {
 <template>
   <div class="container">
     <nav>
-      <RouterLink v-for="(dest, i) in destinations" :key="i" :to="dest[0]">
+      <RouterLink v-for="(dest, i) in destinations" :to="dest[0]">
         {{ dest[1] }}({{ i + 1 }})
       </RouterLink>
     </nav>

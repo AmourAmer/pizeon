@@ -30,6 +30,7 @@ function addId(newId: string) {
   ids.value.push(newId);
 }
 
+// TODO: introduce id, :key="id"
 const abstracts: Ref<Ref<Abstract>[]> = computedAsync(async () =>
   getS(props.bill).map((ab) =>
     computedAsync(async () => await ab, {
@@ -58,7 +59,6 @@ async function move(id: string, repo: Repo) {
     <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
     <button
       v-for="repo in Repo"
-      :key="repo"
       v-show="repo != 'Blocked'"
       @click="
         move(bill[i], repo);

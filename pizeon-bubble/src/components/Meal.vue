@@ -43,6 +43,6 @@ const signs: Ref<Signature[]> = computed(() => {
       :repo="repo"
     />
     <p>{{ month }}/{{ day }}</p>
-    <s v-for="(sign, i) in signs" :key="i">{{ sign }}, </s>...
+    <s v-for="sign in signs" :key="sign">{{ sign }}, </s>...
   </div>
 </template>
