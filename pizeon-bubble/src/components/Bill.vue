@@ -12,8 +12,8 @@ interface Abstract {
 }
 
 const props = defineProps<{ bill: string[] }>();
-defineEmits<{
-  (e: "changed", id: string, repo: Repo): void;
+const emit = defineEmits<{
+  (e: "changed"): void;
 }>();
 const ids: Ref<string[]> = useStorage("mealIds", []);
 
@@ -45,14 +45,16 @@ async function move(id: string, repo: Repo) {
     id,
     repo,
   });
-  // TODO: force update abstracts, maybe with suspense?
+  // TODO: races?
+  emit("changed");
 }
 </script>
 
 <template>
+  <!-- TODO: change to id -->
   <div
     v-for="(abstract, i) in abstracts"
-    :key="i"
+    :key="abstract.value.date"
     style="box-shadow: 0 8px 8px rgba(128, 0, 128, 0.5); margin: 48px"
   >
     {{ abstract }}
@@ -60,10 +62,7 @@ async function move(id: string, repo: Repo) {
     <button
       v-for="repo in Repo"
       v-show="repo != 'Blocked'"
-      @click="
-        move(bill[i], repo);
-        $emit('changed', bill[i], repo);
-      "
+      @click="move(bill[i], repo)"
     >
       TO {{ repo }}
     </button>

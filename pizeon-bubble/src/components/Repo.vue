@@ -13,10 +13,8 @@ const f = () =>
     repo: props.type,
   }) as Promise<string[]>;
 const bill: Ref<string[]> = computedAsync(async () => await f(), []);
-const update = (id: string, repo: Repo) => {
-  if (repo != props.type) {
-    bill.value = bill.value.filter((i) => i != id);
-  }
+const update = () => {
+  f().then((newb) => (bill.value = newb));
 };
 </script>
 
