@@ -36,7 +36,7 @@ const placeholder = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div v-show="!datum.deleted">
     <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
     <textarea
       ref="textarea"

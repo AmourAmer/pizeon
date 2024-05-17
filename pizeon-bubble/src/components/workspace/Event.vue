@@ -14,18 +14,21 @@ defineProps<{
 defineExpose({
   finalize() {
     const result: { heading?: any; raw: stringMap[] } = {
-      raw: data.value.filter((item) => delete item.symbol),
+      raw: data.value.filter(
+        (item) => !item.deleted && delete item.deleted && delete item.id,
+      ),
     };
     if (data.value[0].type == "heading") {
       result.heading = data.value[0].body;
     }
+    data.value = [];
     return result;
   },
 });
 
 const addItem = (idx: number) => {
   data.value.splice(idx, 0, {
-    symbol: uuidv4(),
+    id: uuidv4(),
     type: "text",
   });
 };
@@ -44,7 +47,7 @@ const slice = (type: string) => {
     <button @click="addItem(0)">+</button>
     <div
       v-for="(datum, i) in data"
-      :key="datum.symbol"
+      :key="datum.id"
       style="
         border: 1px solid black;
         margin: 3px;
@@ -52,7 +55,7 @@ const slice = (type: string) => {
         justify-content: center;
       "
     >
-      <button @click="data.splice(i, 1)">x</button>
+      <button @click="datum.deleted = !datum.deleted">x</button>
       <component :is="slice(datum.type)" :datum="datum" :servers="servers" />
       <button @click="addItem(i + 1)">+</button>
     </div>
