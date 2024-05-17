@@ -2,10 +2,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed } from "vue";
 import Event from "./workspace/Event.vue";
-
-interface stringMap {
-  [key: string]: string | string[];
-}
+import { stringMap } from "../utils/type";
 
 // FIXME: refactor
 const template = ref("event");
@@ -14,7 +11,7 @@ const notePage = ref<InstanceType<typeof Event> | null>(null);
 // TODO: template, cache, sendForm
 const submitForm = () => {
   // TODO: don't forget signature
-  let bundle: stringMap = notePage.value?.foo() || {};
+  let bundle: stringMap = { raw: notePage.value?.foo() } || {};
   bundle.servers = servers.value;
   bundle.signature = signature.value;
   bundle.template = template.value;

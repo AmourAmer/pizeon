@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Ref } from "vue";
 import { useStorage } from "@vueuse/core";
-// TODO: this default is silly, I don't want to de-sync(though this doesn't happen). But if I don't do so, ts keeps warning me.
-const data: Ref<string[]> = useStorage("event", []);
+import { stringMap } from "../../utils/type";
+
+const data: Ref<(string | stringMap)[]> = useStorage("event", []);
 defineProps<{
   servers: String[];
 }>();
@@ -10,9 +11,13 @@ defineProps<{
 defineExpose({
   // FIXME: someone help me name this plz orz
   foo() {
-    return {
+    const bar: { heading?: any; raw: (string | stringMap)[] } = {
       raw: data.value,
     }; // TODO: heading, raw
+    if (typeof data.value[0] == "object" && data.value[0].type == "heading") {
+      bar.heading = data.value[0].body;
+    }
+    return bar;
   },
 });
 </script>

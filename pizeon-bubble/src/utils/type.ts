@@ -10,3 +10,7 @@ export enum Repo {
   Fridge = "Fridge",
   Junk = "Junk",
 }
+
+export interface stringMap {
+  [key: string]: any;
+}
