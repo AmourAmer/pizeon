@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed } from "vue";
-import { useStorage } from "@vueuse/core";
 import Event from "./workspace/Event.vue";
 
 interface stringMap {
@@ -10,15 +9,14 @@ interface stringMap {
 
 // FIXME: refactor
 const template = ref("event");
+// TODO: should use some generic type, maybe helpful: https://vuejs.org/guide/typescript/composition-api.html#typing-component-template-refs
+const notePage = ref<InstanceType<typeof Event> | null>(null);
 // TODO: template, cache, sendForm
-const submitForm = function () {
+const submitForm = () => {
   // TODO: don't forget signature
-  // FIXME: don't forget notice template type
-  let bundle: stringMap = {};
-  // FIXME: of course, since this's been refactored, so refactor it, too.
-  for (let i = 1; i < formData.value.length; i++) {
-    bundle[slices.value[i]] = formData.value[i];
-  }
+  let bundle: stringMap = notePage.value?.foo() || {};
+  bundle.servers = servers.value;
+  bundle.signature = signature.value;
   bundle.template = template.value;
   invoke("send_notice", {
     servers: servers.value,
@@ -26,30 +24,7 @@ const submitForm = function () {
     signatures: [signature.value].map((s) => s),
   });
   // TODO: ~~send back a notice containing server respone~~
-  formData.value = initFormData();
 };
-const templateTo = () => {
-  let slices: string[] = [];
-  switch (template.value) {
-    case "hell":
-      slices.push();
-      break;
-    default:
-      slices.push("heading", "raw");
-  }
-  return ["server"].concat(slices).concat("signature");
-};
-const initFormData = function () {
-  return templateTo().map((s) =>
-    s === "server" || s === "signature" ? ["self"] : "",
-  );
-};
-const slices: Ref<string[]> = computed(templateTo);
-// TODO: this is kind of ugly, should polish, also in ./workspace/*
-const formData: Ref<(string[] | string)[]> = useStorage(
-  template.value,
-  initFormData(),
-); // TODO: multi-account?!
 const servers: Ref<string[]> = ref(["self"]);
 const signature: Ref<string> = ref("self");
 
@@ -61,7 +36,6 @@ const templateComponent = computed(() => {
       return Event;
   }
 });
-const templateData = ref([]);
 </script>
 
 <template>
@@ -88,11 +62,7 @@ const templateData = ref([]);
       </select>
       {{ template }}
     </div>
-    <component
-      :is="templateComponent"
-      v-model="templateData"
-      :servers="servers"
-    />
+    <component :is="templateComponent" ref="notePage" :servers="servers" />
     <!-- FIXME: export and copy on submitting -->
     <button @click="submitForm">Publish</button>
     <footer>

@@ -66,6 +66,7 @@ pub async fn send_notice(
             "self" | "localhost" => {
                 let h: RawNotice = RawNotice::create()
                     .timestamp(OffsetDateTime::now_utc())
+                    // TODO: substitute variables
                     .body(body.clone())
                     .build()
                     .into();
