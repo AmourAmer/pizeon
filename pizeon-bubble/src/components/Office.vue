@@ -11,7 +11,7 @@ const notePage = ref<InstanceType<typeof Event> | null>(null);
 // TODO: template, cache, sendForm
 const submitForm = () => {
   // TODO: don't forget signature
-  let bundle: stringMap = { raw: notePage.value?.foo() } || {};
+  let bundle: stringMap = { raw: notePage.value?.finalize() } || {};
   bundle.servers = servers.value;
   bundle.signature = signature.value;
   bundle.template = template.value;
@@ -42,6 +42,7 @@ const templateComponent = computed(() => {
       <select multiple v-model="servers">
         <option :value="'self'">self</option>
         <option :value="'test 1'">test 1</option>
+        <option :value="'test 3'">test 3</option>
       </select>
     </div>
     <div>
