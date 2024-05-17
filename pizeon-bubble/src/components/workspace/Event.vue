@@ -2,8 +2,9 @@
 import { Ref, computed } from "vue";
 import { useStorage, useTextareaAutosize } from "@vueuse/core";
 import { stringMap } from "../../utils/type";
+import { v4 as uuidv4 } from "uuid";
 
-const data: Ref<(string | stringMap)[]> = useStorage("event", []);
+const data: Ref<stringMap[]> = useStorage("event", []);
 const props = defineProps<{
   servers: string[];
 }>();
@@ -12,10 +13,10 @@ const { textarea } = useTextareaAutosize({ styleProp: "minHeight" });
 
 defineExpose({
   finalize() {
-    const result: { heading?: any; raw: (string | stringMap)[] } = {
-      raw: data.value,
-    }; // TODO: heading, raw
-    if (typeof data.value[0] == "object" && data.value[0].type == "heading") {
+    const result: { heading?: any; raw: stringMap[] } = {
+      raw: data.value.filter((item) => delete item.symbol),
+    };
+    if (data.value[0].type == "heading") {
       result.heading = data.value[0].body;
     }
     return result;
@@ -40,19 +41,26 @@ const placeholder = computed(() => {
       );
   }
 });
+
+const addItem = (idx: number) => {
+  data.value.splice(idx, 0, {
+    symbol: uuidv4(),
+    type: "text",
+  });
+};
 </script>
 
-<!-- TODO: server, formdatk -->
 <template>
   <div>
     <div>{{ servers }}, {{ data }}</div>
-    <button @click="data.push('0')">+</button>
-    <textarea
-      ref="textarea"
-      class="resize-none"
-      :placeholder="placeholder"
-      :rows="3"
-    />
+    <!-- <textarea ref="textarea" class="resize-none" :placeholder="placeholder" :rows="3" /> -->
+    <button @click="addItem(0)">+</button>
+    <div v-for="(datum, i) in data" :key="datum.symbol">
+      {{ datum.symbol }}
+      <button @click="data.splice(i, 1)">x</button>
+      {{ datum }}
+      <button @click="addItem(i + 1)">+</button>
+    </div>
   </div>
 </template>
 

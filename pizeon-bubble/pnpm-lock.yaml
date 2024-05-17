@@ -20,6 +20,9 @@ importers:
       katex:
         specifier: ^0.16.10
         version: 0.16.10
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
       vue:
         specifier: ^3.4.26
         version: 3.4.26(typescript@5.4.5)
@@ -523,6 +526,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+
   vite@5.2.10:
     resolution: {integrity: sha512-PAzgUZbP7msvQvqdSD+ErD5qGnSFiGOoWmV5yAKUEI0kdhjbH6nMWVyZQC/hSc4aXwc0oJ9aEdIiF9Oje0JFCw==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -989,6 +996,8 @@ snapshots:
   to-fast-properties@2.0.0: {}
 
   typescript@5.4.5: {}
+
+  uuid@9.0.1: {}
 
   vite@5.2.10:
     dependencies:

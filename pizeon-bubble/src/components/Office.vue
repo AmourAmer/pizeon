@@ -13,7 +13,7 @@ const submitForm = () => {
   // TODO: don't forget signature
   let bundle: stringMap = { raw: notePage.value?.finalize() } || {};
   bundle.servers = servers.value;
-  bundle.signature = signature.value;
+  bundle.signature = [signature.value];
   bundle.template = template.value;
   invoke("send_notice", {
     servers: servers.value,
