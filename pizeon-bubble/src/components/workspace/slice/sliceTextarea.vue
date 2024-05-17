@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, computed } from "vue";
+import { Ref, computed, watch } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
@@ -14,6 +14,17 @@ if (datum.value.body) {
   input.value = datum.value.body;
 }
 datum.value.body = input;
+
+watch(input, (newInput) => {
+  const l = ["time"];
+  for (let i = 0; i < l.length; i++) {
+    const keyword = l[i];
+    if (newInput.startsWith(keyword + ": ")) {
+      datum.value.type = keyword;
+      input.value = "";
+    }
+  }
+});
 
 const placeholder = computed(() => {
   const msg = (dest: string) =>

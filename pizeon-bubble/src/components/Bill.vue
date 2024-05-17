@@ -51,7 +51,7 @@ async function move(id: string, repo: Repo) {
 </script>
 
 <template>
-  <!-- TODO: change to id -->
+  <!-- TODO: change to id, fridge & trash still flashes, while fresh doesn't -->
   <div
     v-for="(abstract, i) in abstracts"
     :key="abstract.value.date"

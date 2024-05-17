@@ -35,8 +35,12 @@ const addItem = (idx: number) => {
 
 const slice = (type: string) => {
   switch (type) {
-    default:
+    case "text":
       return sliceTextarea;
+    case "time":
+      return sliceTextarea;
+    default:
+      return null;
   }
 };
 </script>
