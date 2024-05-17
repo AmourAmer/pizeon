@@ -4,6 +4,7 @@ import { useStorage } from "@vueuse/core";
 import { stringMap } from "@utils/type";
 import { v4 as uuidv4 } from "uuid";
 import sliceTextarea from "./slice/sliceTextarea.vue";
+import sliceTime from "./slice/sliceTime.vue";
 
 // TODO: another storage name
 const data: Ref<stringMap[]> = useStorage("event", []);
@@ -38,10 +39,14 @@ const slice = (type: string) => {
     case "text":
       return sliceTextarea;
     case "time":
-      return sliceTextarea;
+      return sliceTime;
     default:
-      return null;
+      return sliceTextarea;
   }
+};
+
+const validateSlice: (type: string) => boolean = (type: string) => {
+  return true;
 };
 </script>
 
@@ -49,21 +54,17 @@ const slice = (type: string) => {
   <div>
     <div>{{ servers }}, {{ data }}</div>
     <button @click="addItem(0)">+</button>
-    <div
-      v-for="(datum, i) in data"
-      :key="datum.id"
-      style="
+    <div v-for="(datum, i) in data" :key="datum.id" style="
         border: 1px solid black;
         margin: 3px;
         display: flex;
         justify-content: center;
-      "
-    >
+      ">
       <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. -->
       <button @click="datum.deleted = !datum.deleted">x</button>
       <!-- TODO: why cannot use v-model! -->
       <!-- TODO: Unhandled Promise Rejection: Maximum recursive updates exceeded in component <Event>. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include co... -->
-      <component :is="slice(datum.type)" :datum="datum" :servers="servers" />
+      <component :is="slice(datum.type)" :datum="datum" :servers="servers" :validator="validateSlice" />
       <button @click="addItem(i + 1)">+</button>
     </div>
   </div>

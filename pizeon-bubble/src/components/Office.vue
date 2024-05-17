@@ -62,6 +62,7 @@ const templateComponent = computed(() => {
     </div>
     <component :is="templateComponent" ref="notePage" :servers="servers" />
     <!-- FIXME: export and copy on submitting -->
+    <button>Preview(Not implemented yet)</button>
     <button @click="submitForm">Publish</button>
     <footer>
       If parsing isn't satisfying or anything, plz

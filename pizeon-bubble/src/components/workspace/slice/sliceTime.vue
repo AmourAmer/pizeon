@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { Ref, computed } from "vue";
+import { Ref, computed, watch } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
-import { useUpdateType } from "src/utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
   servers: string[];
-  validator: (type: string) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 if (datum.value.body) {
@@ -17,7 +15,16 @@ if (datum.value.body) {
 }
 datum.value.body = input;
 
-const warning = useUpdateType(input, props.validator);
+watch(input, (newInput) => {
+  const l = ["time"];
+  for (let i = 0; i < l.length; i++) {
+    const keyword = l[i];
+    if (newInput.startsWith(keyword + ": ")) {
+      datum.value.type = keyword;
+      input.value = "";
+    }
+  }
+});
 
 const placeholder = computed(() => {
   const msg = (dest: string) =>
@@ -32,8 +39,8 @@ const placeholder = computed(() => {
     default:
       return msg(
         props.servers.slice(0, -1).join(", ") +
-        ", and " +
-        props.servers.slice(-1),
+          ", and " +
+          props.servers.slice(-1),
       );
   }
 });
@@ -41,9 +48,14 @@ const placeholder = computed(() => {
 
 <template>
   <div v-show="!datum.deleted">
-    <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
-    <textarea ref="textarea" class="resize-none" v-model="input" :placeholder="placeholder" :rows="3" />
-    {{ warning }}
+    TIME:
+    <textarea
+      ref="textarea"
+      class="resize-none"
+      v-model="input"
+      :placeholder="placeholder"
+      :rows="3"
+    />
   </div>
 </template>
 
