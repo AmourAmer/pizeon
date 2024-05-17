@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ref } from "vue";
 import { useStorage } from "@vueuse/core";
-import { stringMap } from "../../utils/type";
+import { stringMap } from "@utils/type";
 import { v4 as uuidv4 } from "uuid";
 import sliceTextarea from "./slice/sliceTextarea.vue";
 
@@ -55,7 +55,10 @@ const slice = (type: string) => {
         justify-content: center;
       "
     >
+      <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. -->
       <button @click="datum.deleted = !datum.deleted">x</button>
+      <!-- TODO: why cannot use v-model! -->
+      <!-- TODO: Unhandled Promise Rejection: Maximum recursive updates exceeded in component <Event>. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include co... -->
       <component :is="slice(datum.type)" :datum="datum" :servers="servers" />
       <button @click="addItem(i + 1)">+</button>
     </div>

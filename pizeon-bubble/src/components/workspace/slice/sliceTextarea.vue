@@ -2,7 +2,7 @@
 import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
-import { stringMap } from "../../../utils/type";
+import { stringMap } from "@utils/type";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
@@ -45,7 +45,6 @@ const placeholder = computed(() => {
       :placeholder="placeholder"
       :rows="3"
     />
-    C{{ datum }}C D{{ input }}D
   </div>
 </template>
 
