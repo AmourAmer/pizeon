@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { Ref, computed } from "vue";
-import { useStorage, useTextareaAutosize } from "@vueuse/core";
+import { Ref } from "vue";
+import { useStorage } from "@vueuse/core";
 import { stringMap } from "../../utils/type";
 import { v4 as uuidv4 } from "uuid";
+import sliceTextarea from "./slice/sliceTextarea.vue";
 
+// TODO: another storage name
 const data: Ref<stringMap[]> = useStorage("event", []);
-const props = defineProps<{
+defineProps<{
   servers: string[];
 }>();
-
-const { textarea } = useTextareaAutosize({ styleProp: "minHeight" });
 
 defineExpose({
   finalize() {
@@ -23,54 +23,38 @@ defineExpose({
   },
 });
 
-const placeholder = computed(() => {
-  const msg = (dest: string) =>
-    "What notice do you want to send on " + dest + "?";
-  switch (props.servers.length) {
-    case 0:
-      return "Please choose a server to send notice to";
-    case 1:
-      return msg(props.servers[0]);
-    case 2:
-      return msg(props.servers[0] + " and " + props.servers[1]);
-    default:
-      return msg(
-        props.servers.slice(0, -1).join(", ") +
-          ", and " +
-          props.servers.slice(-1),
-      );
-  }
-});
-
 const addItem = (idx: number) => {
   data.value.splice(idx, 0, {
     symbol: uuidv4(),
     type: "text",
   });
 };
+
+const slice = (type: string) => {
+  switch (type) {
+    default:
+      return sliceTextarea;
+  }
+};
 </script>
 
 <template>
   <div>
     <div>{{ servers }}, {{ data }}</div>
-    <!-- <textarea ref="textarea" class="resize-none" :placeholder="placeholder" :rows="3" /> -->
     <button @click="addItem(0)">+</button>
-    <div v-for="(datum, i) in data" :key="datum.symbol">
-      {{ datum.symbol }}
+    <div
+      v-for="(datum, i) in data"
+      :key="datum.symbol"
+      style="
+        border: 1px solid black;
+        margin: 3px;
+        display: flex;
+        justify-content: center;
+      "
+    >
       <button @click="data.splice(i, 1)">x</button>
-      {{ datum }}
+      <component :is="slice(datum.type)" :datum="datum" :servers="servers" />
       <button @click="addItem(i + 1)">+</button>
     </div>
   </div>
 </template>
-
-<style scoped>
-textarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-textarea::-webkit-scrollbar {
-  display: none;
-}
-</style>
