@@ -61,7 +61,7 @@ export function useUpdateDatum(datum: Ref<stringMap>, map: stringMap) {
 export function useInitCheck(datum: Ref<stringMap>, map: stringMap) {
   for (let key in map) {
     for (let keyword of dict[datum.value.type as keyof typeof dict]) {
-      if (map[key].value.startsWith(keyword + ": ")) {
+      if (map[key].value?.startsWith(keyword + ": ")) {
         map[key].value = map[key].value.slice(keyword.length + 2);
         break;
       }
