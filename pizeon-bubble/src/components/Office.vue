@@ -7,11 +7,11 @@ import { stringMap } from "../utils/type";
 // FIXME: refactor
 const template = ref("event");
 // TODO: should use some generic type, maybe helpful: https://vuejs.org/guide/typescript/composition-api.html#typing-component-template-refs
-const notePage = ref<InstanceType<typeof Event> | null>(null);
+const draftPage = ref<InstanceType<typeof Event> | null>(null);
 // TODO: template, cache, sendForm
 const submitForm = () => {
   // TODO: don't forget signature
-  let bundle: stringMap = { raw: notePage.value?.finalize() } || {};
+  let bundle: stringMap = draftPage.value?.finalize() || {};
   bundle.servers = servers.value;
   bundle.signature = [signature.value];
   bundle.template = template.value;
@@ -60,7 +60,7 @@ const templateComponent = computed(() => {
       </select>
       {{ template }}
     </div>
-    <component :is="templateComponent" ref="notePage" :servers="servers" />
+    <component :is="templateComponent" ref="draftPage" :servers="servers" />
     <!-- FIXME: export and copy on submitting -->
     <button>Preview(Not implemented yet)</button>
     <button @click="submitForm">Publish</button>
