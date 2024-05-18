@@ -6,10 +6,10 @@ import { stringMap } from "@utils/type";
 export const dict = {
   time: ["time", "date"],
   text: ["text"],
+  heading: ["heading", "h"],
 };
 
 function done(
-  input: Ref<string>,
   newInput: string,
   keyword: string,
   datum: Ref<stringMap>,
@@ -17,7 +17,7 @@ function done(
   rValidator: (type: string, datum: stringMap) => false | string,
 ) {
   if (!newInput.startsWith(pattern + ": ")) return false;
-  const res = rValidator(keyword, datum);
+  const res = rValidator(keyword, datum.value);
   if (res) return res;
   datum.value.type = keyword;
   // FIXME: watch misses this last update, this pushed me to do init check on each slice
@@ -37,7 +37,7 @@ export function useUpdateType(
     let keyword: keyof typeof dict;
     for (keyword in dict) {
       for (let i of dict[keyword]) {
-        const res = done(input, newInput, keyword, datum, i, rValidator);
+        const res = done(newInput, keyword, datum, i, rValidator);
         if (!res) continue;
         if (res != true) msg.value = res;
         return;
@@ -58,6 +58,7 @@ export function useUpdateDatum(datum: Ref<stringMap>, map: stringMap) {
   }
 }
 
+// FIXME: this fn is created because input misses last update
 export function useInitCheck(datum: Ref<stringMap>, map: stringMap) {
   for (let key in map) {
     for (let keyword of dict[datum.value.type as keyof typeof dict]) {

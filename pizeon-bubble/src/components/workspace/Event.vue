@@ -5,6 +5,7 @@ import { stringMap } from "@utils/type";
 import { v4 as uuidv4 } from "uuid";
 import sliceTextarea from "./slice/sliceTextarea.vue";
 import sliceTime from "./slice/sliceTime.vue";
+import sliceHeading from "./slice/sliceHeading.vue";
 
 // TODO: another storage name
 const data: Ref<stringMap[]> = useStorage("event", []);
@@ -42,6 +43,8 @@ const slice = (type: string) => {
       return sliceTextarea;
     case "time":
       return sliceTime;
+    case "heading":
+      return sliceHeading;
     default:
       return sliceTextarea;
   }
@@ -52,6 +55,11 @@ const rValidateSlice: (type: string, datum: stringMap) => false | string = (
   type: string,
   datum: stringMap,
 ) => {
+  if (type == "heading")
+    if (data.value[0] == datum) return false;
+    // maybe use id?
+    else
+      return "Heading can only be added at the first position, click the first add button and change new item to heading";
   return false;
 };
 </script>
