@@ -3,7 +3,7 @@ import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
-import { useUpdateType, useUpdateDatum } from "src/utils/slice";
+import { useUpdateType, useUpdateDatum, useInitCheck } from "src/utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
@@ -16,6 +16,7 @@ if (datum.value.body) {
   input.value = datum.value.body;
 }
 useUpdateDatum(datum, { body: input });
+useInitCheck(datum, { body: input });
 
 const warning = useUpdateType(input, datum, props.rValidator);
 

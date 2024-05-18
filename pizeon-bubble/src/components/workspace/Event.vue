@@ -17,11 +17,13 @@ defineExpose({
     const result: { heading?: any; raw: stringMap[] } = {
       raw: data.value.filter(
         (item) => !item.deleted && delete item.deleted && delete item.id,
+        // TODO: clean unneeded properties
       ),
     };
     if (data.value[0].type == "heading") {
       result.heading = data.value[0].body;
     }
+    // TODO: option to keep
     data.value = [];
     return result;
   },
@@ -46,7 +48,10 @@ const slice = (type: string) => {
 };
 
 // FIXME: Yes, this is silly type. But I really don't want to make a tuple or write something like `v-if="vali == true`
-const rValidateSlice: (type: string, datum: stringMap) => false | string = (type: string, datum: stringMap) => {
+const rValidateSlice: (type: string, datum: stringMap) => false | string = (
+  type: string,
+  datum: stringMap,
+) => {
   return false;
 };
 </script>
@@ -55,16 +60,25 @@ const rValidateSlice: (type: string, datum: stringMap) => false | string = (type
   <div>
     <div>{{ servers }}, {{ data }}</div>
     <button @click="addItem(0)">+</button>
-    <div v-for="(datum, i) in data" :key="datum.id" style="
+    <div
+      v-for="(datum, i) in data"
+      :key="datum.id"
+      style="
         border: 1px solid black;
         margin: 3px;
         display: flex;
         justify-content: center;
-      ">
+      "
+    >
       <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. Maybe it's because display: none?! -->
       <button @click="datum.deleted = !datum.deleted">x</button>
       <!-- TODO: why cannot use v-model! -->
-      <component :is="slice(datum.type)" :datum="datum" :servers="servers" :rValidator="rValidateSlice" />
+      <component
+        :is="slice(datum.type)"
+        :datum="datum"
+        :servers="servers"
+        :rValidator="rValidateSlice"
+      />
       <button @click="addItem(i + 1)">+</button>
       <!-- TODO: buttons to change type -->
     </div>

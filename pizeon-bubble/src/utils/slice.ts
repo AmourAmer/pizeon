@@ -20,7 +20,8 @@ function done(
   const res = rValidator(keyword, datum);
   if (res) return res;
   datum.value.type = keyword;
-  input.value = input.value.slice(pattern.length + 2);
+  // FIXME: watch misses this last update, this pushed me to do init check on each slice
+  // input.value = input.value.slice(pattern.length + 2);
   return true;
 }
 
@@ -54,5 +55,16 @@ export function useUpdateDatum(datum: Ref<stringMap>, map: stringMap) {
     watch(value, (newValue) => {
       datum.value[key] = newValue;
     });
+  }
+}
+
+export function useInitCheck(datum: Ref<stringMap>, map: stringMap) {
+  for (let key in map) {
+    for (let keyword of dict[datum.value.type as keyof typeof dict]) {
+      if (map[key].value.startsWith(keyword + ": ")) {
+        map[key].value = map[key].value.slice(keyword.length + 2);
+        break;
+      }
+    }
   }
 }
