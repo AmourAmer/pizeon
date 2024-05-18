@@ -9,7 +9,7 @@ const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
   servers: string[];
-  validator: (type: string) => boolean;
+  rValidator: (type: string, datum: stringMap) => false | string;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 if (datum.value.body) {
@@ -17,7 +17,7 @@ if (datum.value.body) {
 }
 datum.value.body = input;
 
-const warning = useUpdateType(input, props.validator);
+const warning = useUpdateType(input, datum, props.rValidator);
 
 const placeholder = computed(() => {
   const msg = (dest: string) =>
@@ -32,8 +32,8 @@ const placeholder = computed(() => {
     default:
       return msg(
         props.servers.slice(0, -1).join(", ") +
-        ", and " +
-        props.servers.slice(-1),
+          ", and " +
+          props.servers.slice(-1),
       );
   }
 });
@@ -42,7 +42,13 @@ const placeholder = computed(() => {
 <template>
   <div v-show="!datum.deleted">
     <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
-    <textarea ref="textarea" class="resize-none" v-model="input" :placeholder="placeholder" :rows="3" />
+    <textarea
+      ref="textarea"
+      class="resize-none"
+      v-model="input"
+      :placeholder="placeholder"
+      :rows="3"
+    />
     {{ warning }}
   </div>
 </template>

@@ -1,37 +1,46 @@
+// TODO: maybe need refactor, maybe not
 import { watch, Ref, ref } from "vue";
+import { stringMap } from "@utils/type";
 
+// TODO: define an enum
 const dict = {
-  time: ["time"],
+  time: ["time", "date"],
+  text: ["text"],
 };
 
 function done(
   input: Ref<string>,
   newInput: string,
   keyword: string,
+  datum: Ref<stringMap>,
   pattern: string,
-  validator: (type: string) => true,
+  rValidator: (type: string, datum: stringMap) => false | string,
 ) {
   if (!newInput.startsWith(pattern + ": ")) return false;
-  validator(keyword);
-  // datum.value.type = keyword;
+  const res = rValidator(keyword, datum);
+  if (res) return res;
+  datum.value.type = keyword;
   input.value = input.value.slice(pattern.length + 1);
   return true;
 }
 
 export function useUpdateType(
   input: Ref<string>,
-  validator: (type: string) => true,
+  datum: Ref<stringMap>,
+  rValidator: (type: string, datum: stringMap) => false | string,
 ) {
   const msg = ref("");
+  // Intended to watch input only, instead of with rValidator.
+  // To avoid multiple potential competing type change at a time
   watch(input, (newInput) => {
     let keyword: keyof typeof dict;
     for (keyword in dict) {
-      for (let i of dict[keyword])
-        try {
-          if (done(input, newInput, keyword, i, validator)) return;
-        } catch (e) {
-          msg.value = JSON.stringify(e);
-        }
+      for (let i of dict[keyword]) {
+        const res = done(input, newInput, keyword, datum, i, rValidator);
+        if (!res) continue;
+        if (res != true) msg.value = res;
+        return;
+      }
     }
   });
   return msg;
