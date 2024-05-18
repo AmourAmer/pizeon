@@ -9,7 +9,7 @@ const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
   servers: string[];
-  rValidator: (type: string, datum: stringMap) => false | string;
+  rValidator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 if (datum.value.body) {

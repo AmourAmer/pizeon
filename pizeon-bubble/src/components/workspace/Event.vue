@@ -51,15 +51,18 @@ const slice = (type: string) => {
 };
 
 // FIXME: Yes, this is silly type. But I really don't want to make a tuple or write something like `v-if="vali == true`
-const rValidateSlice: (type: string, datum: stringMap) => false | string = (
+const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: stringMap,
 ) => {
   if (type == "heading")
     if (data.value[0] == datum) return false;
     // maybe use id?
-    else
-      return "Heading can only be added at the first position, click the first add button and change new item to heading";
+    else {
+      datum.value["warning"] =
+        "Heading can only be added at the first position, click the first add button and change new item to heading";
+      return true;
+    }
   return false;
 };
 </script>
@@ -87,8 +90,10 @@ const rValidateSlice: (type: string, datum: stringMap) => false | string = (
         :servers="servers"
         :rValidator="rValidateSlice"
       />
+      <i @click="delete datum.warning">{{ datum.warning }}</i>
       <button @click="addItem(i + 1)">+</button>
       <!-- TODO: buttons to change type -->
+      <!-- TODO: drag handle -->
     </div>
   </div>
 </template>

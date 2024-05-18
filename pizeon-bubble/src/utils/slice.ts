@@ -1,5 +1,5 @@
 // TODO: maybe need refactor, maybe not
-import { watch, Ref, ref } from "vue";
+import { watch, Ref } from "vue";
 import { stringMap } from "@utils/type";
 
 // TODO: define an enum
@@ -14,11 +14,10 @@ function done(
   keyword: string,
   datum: Ref<stringMap>,
   pattern: string,
-  rValidator: (type: string, datum: stringMap) => false | string,
+  rValidator: (type: string, datum: stringMap) => boolean,
 ) {
   if (!newInput.startsWith(pattern + ": ")) return false;
-  const res = rValidator(keyword, datum.value);
-  if (res) return res;
+  if (rValidator(keyword, datum)) return false;
   datum.value.type = keyword;
   // FIXME: watch misses this last update, this pushed me to do init check on each slice
   // input.value = input.value.slice(pattern.length + 2);
@@ -28,23 +27,19 @@ function done(
 export function useUpdateType(
   input: Ref<string>,
   datum: Ref<stringMap>,
-  rValidator: (type: string, datum: stringMap) => false | string,
+  rValidator: (type: string, datum: stringMap) => boolean,
 ) {
-  const msg = ref("");
   // Intended to watch input only, instead of with rValidator.
   // To avoid multiple potential competing type change at a time
   watch(input, (newInput) => {
     let keyword: keyof typeof dict;
     for (keyword in dict) {
       for (let i of dict[keyword]) {
-        const res = done(newInput, keyword, datum, i, rValidator);
-        if (!res) continue;
-        if (res != true) msg.value = res;
+        if (!done(newInput, keyword, datum, i, rValidator)) continue;
         return;
       }
     }
   });
-  return msg;
 }
 
 // TODO: polish this according to demands, add hooks or something
