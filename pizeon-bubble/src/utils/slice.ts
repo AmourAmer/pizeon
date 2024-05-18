@@ -3,7 +3,7 @@ import { watch, Ref, ref } from "vue";
 import { stringMap } from "@utils/type";
 
 // TODO: define an enum
-const dict = {
+export const dict = {
   time: ["time", "date"],
   text: ["text"],
 };
@@ -20,7 +20,7 @@ function done(
   const res = rValidator(keyword, datum);
   if (res) return res;
   datum.value.type = keyword;
-  input.value = input.value.slice(pattern.length + 1);
+  input.value = input.value.slice(pattern.length + 2);
   return true;
 }
 

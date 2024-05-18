@@ -61,7 +61,7 @@ const rValidateSlice: (type: string, datum: stringMap) => false | string = (type
         display: flex;
         justify-content: center;
       ">
-      <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. -->
+      <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. Maybe it's because display: none?! -->
       <button @click="datum.deleted = !datum.deleted">x</button>
       <!-- TODO: why cannot use v-model! -->
       <component :is="slice(datum.type)" :datum="datum" :servers="servers" :rValidator="rValidateSlice" />
