@@ -1,49 +1,26 @@
 <script setup lang="ts">
-import { Ref, computed, watch } from "vue";
+import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
+import { useUpdateType, useUpdateDatum } from "src/utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
   servers: string[];
+  rValidator: (type: string, datum: stringMap) => false | string;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 if (datum.value.body) {
   input.value = datum.value.body;
 }
-datum.value.body = input;
+// datum.value.body = input; // with this line, the update dependency bug triggers for only sliceTime. Before this commit, it triggers for both this and sliceTextarea. Unfortunately, I didn't commit all files in the buggy state. Never expect such painful to lose track of a bug
+useUpdateDatum(datum, { body: input });
 
-watch(input, (newInput) => {
-  const l = ["time"];
-  for (let i = 0; i < l.length; i++) {
-    const keyword = l[i];
-    if (newInput.startsWith(keyword + ": ")) {
-      datum.value.type = keyword;
-      input.value = "";
-    }
-  }
-});
+const warning = useUpdateType(input, datum, props.rValidator);
 
-const placeholder = computed(() => {
-  const msg = (dest: string) =>
-    "What notice do you want to send on " + dest + "?";
-  switch (props.servers.length) {
-    case 0:
-      return "Please choose a server to send notice to";
-    case 1:
-      return msg(props.servers[0]);
-    case 2:
-      return msg(props.servers[0] + " and " + props.servers[1]);
-    default:
-      return msg(
-        props.servers.slice(0, -1).join(", ") +
-          ", and " +
-          props.servers.slice(-1),
-      );
-  }
-});
+const placeholder = computed(() => "When does it take place?");
 </script>
 
 <template>
@@ -56,6 +33,7 @@ const placeholder = computed(() => {
       :placeholder="placeholder"
       :rows="3"
     />
+    {{ warning }}
   </div>
 </template>
 
