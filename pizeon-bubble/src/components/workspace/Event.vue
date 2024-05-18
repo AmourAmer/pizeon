@@ -64,7 +64,6 @@ const rValidateSlice: (type: string, datum: stringMap) => false | string = (type
       <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. -->
       <button @click="datum.deleted = !datum.deleted">x</button>
       <!-- TODO: why cannot use v-model! -->
-      <!-- TODO: Unhandled Promise Rejection: Maximum recursive updates exceeded in component <Event>. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include co... When I commit this line, only textarea triggers so, time doesn't -->
       <component :is="slice(datum.type)" :datum="datum" :servers="servers" :rValidator="rValidateSlice" />
       <button @click="addItem(i + 1)">+</button>
       <!-- TODO: buttons to change type -->

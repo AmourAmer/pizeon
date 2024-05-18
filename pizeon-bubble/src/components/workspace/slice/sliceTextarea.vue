@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, computed } from "vue";
+import { Ref, computed, watch } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
@@ -15,7 +15,10 @@ const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 if (datum.value.body) {
   input.value = datum.value.body;
 }
-datum.value.body = input;
+// Should be more elegant, failed. solved: a reactive effect is mutating its own dependencies
+watch(input, (newInput) => {
+  datum.value.body = newInput;
+});
 
 const warning = useUpdateType(input, datum, props.rValidator);
 
