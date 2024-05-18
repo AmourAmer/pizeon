@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Ref, computed, watch } from "vue";
+import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
-import { useUpdateType } from "src/utils/slice";
+import { useUpdateType, useUpdateDatum } from "src/utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
@@ -15,10 +15,7 @@ const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 if (datum.value.body) {
   input.value = datum.value.body;
 }
-// Should be more elegant, failed. solved: a reactive effect is mutating its own dependencies
-watch(input, (newInput) => {
-  datum.value.body = newInput;
-});
+useUpdateDatum(datum, { body: input });
 
 const warning = useUpdateType(input, datum, props.rValidator);
 

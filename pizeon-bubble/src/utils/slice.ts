@@ -45,3 +45,14 @@ export function useUpdateType(
   });
   return msg;
 }
+
+// TODO: polish this according to demands, add hooks or something
+export function useUpdateDatum(datum: Ref<stringMap>, map: stringMap) {
+  for (let key in map) {
+    let value = map[key];
+    // Should be more elegant, failed. solved: a reactive effect is mutating its own dependencies
+    watch(value, (newValue) => {
+      datum.value[key] = newValue;
+    });
+  }
+}
