@@ -53,6 +53,7 @@ const slice = (type: string) => {
 };
 
 // FIXME: deprecate all other rVali's
+// should let existing slices use this
 const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: Ref<stringMap>,
@@ -60,12 +61,13 @@ const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   return !ValidateSlice(type, datum);
 };
 
+// TODO: enum warnings, don't show warning in some time after canceling
 const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: Ref<stringMap>,
 ) => {
   if (type == "heading")
-    if (nonDeletedIter(data.value).next() == datum.value) return true;
+    if (nonDeletedIter(data.value).next().value == datum.value) return true;
     // maybe use id?
     else {
       datum.value["type_change_warning"] =
@@ -73,6 +75,16 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       // BUG: yes, you can add multiple headings by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
       return false;
     }
+  if (type == "time") {
+    for (let nonDeletedDatum of nonDeletedIter(data.value))
+      if (nonDeletedDatum.type == "time" && nonDeletedDatum != datum.value) {
+        datum.value["type_change_warning"] =
+          "One event should have only one time, right? If things go beyond my expectation, please email me(Amour<pizeon@tuta.io>)";
+        // BUG: yes, you can add multiple headings by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
+        return false;
+      }
+    return true;
+  }
   return true;
 };
 </script>

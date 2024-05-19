@@ -20,6 +20,7 @@ function done(
   if (!newInput.startsWith(pattern + ": ")) return false;
   if (rValidator(type, datum)) return false;
   datum.value.type = type;
+  // BUG: if type keeps, map[filed] changes but doesn't update patch
   datum.value[filed] = datum.value[filed].slice(pattern.length + 2);
 
   return true;
