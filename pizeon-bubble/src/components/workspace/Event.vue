@@ -66,26 +66,34 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: Ref<stringMap>,
 ) => {
-  if (type == "title")
-    if (nonDeletedIter(data.value).next().value == datum.value) return true;
-    // maybe use id?
-    else {
-      datum.value["type_change_warning"] =
-        "Title can only be added at the first position, click the first add button and change new item to title";
-      // BUG: yes, you can add multiple titles by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
-      return false;
-    }
-  if (type == "time") {
-    for (let nonDeletedDatum of nonDeletedIter(data.value))
-      if (nonDeletedDatum.type == "time" && nonDeletedDatum != datum.value) {
+  switch (type) {
+    case "title":
+      if (nonDeletedIter(data.value).next().value == datum.value) return true;
+      // maybe use id?
+      else {
         datum.value["type_change_warning"] =
-          "One event should have only one time, right? If things go beyond my expectation, please email me(Amour<pizeon@tuta.io>)";
-        // BUG: yes, you can add multiple titles by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
+          "Title can only be added at the first position, click the first add button and change new item to title";
+        // BUG: yes, you can add multiple titles by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
+        return false;
+      }
+    case "time":
+      return uniqueType(type);
+    default:
+      return true;
+  }
+
+  function uniqueType(type: string) {
+    for (let nonDeletedDatum of nonDeletedIter(data.value))
+      if (nonDeletedDatum.type == type && nonDeletedDatum != datum.value) {
+        datum.value["type_change_warning"] =
+          "One event should have only one " +
+          type +
+          ", right? If things go beyond my expectation, please email me(Amour<pizeon@tuta.io>)";
+        // BUG: yes, you can add multiple "type"s by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
         return false;
       }
     return true;
   }
-  return true;
 };
 </script>
 
