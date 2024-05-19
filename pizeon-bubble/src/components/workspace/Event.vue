@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ref } from "vue";
-import { useStorage } from "@vueuse/core";
 import { stringMap } from "@utils/type";
+import { useData } from "src/utils/draft";
 import { v4 as uuidv4 } from "uuid";
 import sliceTextarea from "./slice/sliceTextarea.vue";
 import sliceTime from "./slice/sliceTime.vue";
@@ -9,21 +9,22 @@ import sliceHeading from "./slice/sliceHeading.vue";
 
 // TODO: draggable, not so urgent
 // TODO: another storage name
-const data: Ref<stringMap[]> = useStorage("event", []);
+const { data, nonDeletedIter } = useData("event");
 defineProps<{
   servers: string[];
 }>();
 
 defineExpose({
   finalize() {
+    let nonDeletedData = [...nonDeletedIter(data.value)];
     const result: { heading?: any; raw: stringMap[] } = {
-      raw: data.value.filter(
+      raw: nonDeletedData.filter(
         (item) => !item.deleted && delete item.deleted && delete item.id,
         // TODO: clean unneeded properties, maybe call fn of child components
       ),
     };
-    if (data.value[0].type == "heading") {
-      result.heading = data.value[0].body;
+    if (nonDeletedData[0].type == "heading") {
+      result.heading = nonDeletedData[0].body;
     }
     // TODO: option to keep
     data.value = [];
@@ -64,7 +65,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   datum: Ref<stringMap>,
 ) => {
   if (type == "heading")
-    if (data.value[0] == datum.value) return true;
+    if (nonDeletedIter(data.value).next() == datum.value) return true;
     // maybe use id?
     else {
       datum.value["type_change_warning"] =

@@ -5,7 +5,10 @@ import { stringMap } from "./type";
 export function useData(id: string) {
   const data: Ref<stringMap[]> = useStorage(id, []);
 
-  let iter = (data: stringMap[]) => {
+  // FUCK U IDIOT STUPID BLIND DAMN WEAK ASSHOLE ABSURD RIDICULOUS MISERABLE SHAMEFUL ts
+  let nonDeletedIter: (data: stringMap[]) => IterableIterator<stringMap> = ((
+    data: stringMap[],
+  ) => {
     return {
       current: 0,
       [Symbol.iterator]() {
@@ -20,9 +23,12 @@ export function useData(id: string) {
               done: false,
             };
         }
-        return { done: true };
+        return { done: true } as { done: boolean; value?: stringMap }; // FUCK stupid ts!!!
       },
-    }[Symbol.iterator];
+    }[Symbol.iterator]();
+  }) as (data: stringMap[]) => IterableIterator<stringMap> & {
+    current: number;
   };
-  return { data, iter };
+
+  return { data, nonDeletedIter };
 }
