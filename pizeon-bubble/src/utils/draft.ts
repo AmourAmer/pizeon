@@ -28,5 +28,20 @@ export function useData(id: string) {
     }[Symbol.iterator]() as IterableIterator<stringMap>;
   };
 
-  return { data, nonDeletedIter };
+  function uniqueDataType(datum: Ref<stringMap>) {
+    return (type: string) => {
+      for (let nonDeletedDatum of nonDeletedIter(data.value))
+        if (nonDeletedDatum.type == type && nonDeletedDatum != datum.value) {
+          datum.value["type_change_warning"] =
+            "One event should have only one " +
+            type +
+            ", right? If things go beyond my expectation, please email me(Amour<pizeon@tuta.io>)";
+          // BUG: yes, you can add multiple "type"s by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
+          return false;
+        }
+      return true;
+    };
+  }
+
+  return { data, nonDeletedIter, uniqueDataType };
 }

@@ -9,7 +9,7 @@ import sliceTitle from "./slice/sliceTitle.vue";
 
 // TODO: draggable, not so urgent
 // TODO: another storage name
-const { data, nonDeletedIter } = useData("event");
+const { data, nonDeletedIter, uniqueDataType } = useData("event");
 defineProps<{
   servers: string[];
 }>();
@@ -66,6 +66,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: Ref<stringMap>,
 ) => {
+  let uniqueType = uniqueDataType(datum);
   switch (type) {
     case "title":
       if (nonDeletedIter(data.value).next().value == datum.value) return true;
@@ -80,19 +81,6 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       return uniqueType(type);
     default:
       return true;
-  }
-
-  function uniqueType(type: string) {
-    for (let nonDeletedDatum of nonDeletedIter(data.value))
-      if (nonDeletedDatum.type == type && nonDeletedDatum != datum.value) {
-        datum.value["type_change_warning"] =
-          "One event should have only one " +
-          type +
-          ", right? If things go beyond my expectation, please email me(Amour<pizeon@tuta.io>)";
-        // BUG: yes, you can add multiple "type"s by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
-        return false;
-      }
-    return true;
   }
 };
 </script>
