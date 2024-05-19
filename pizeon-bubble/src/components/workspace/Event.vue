@@ -4,6 +4,7 @@ import { stringMap } from "@utils/type";
 import { useData } from "src/utils/draft";
 import { v4 as uuidv4 } from "uuid";
 import sliceTitle from "./slice/sliceTitle.vue";
+import sliceHost from "./slice/sliceHost.vue";
 import sliceTime from "./slice/sliceTime.vue";
 import slicePlace from "./slice/slicePlace.vue";
 import sliceTextarea from "./slice/sliceTextarea.vue";
@@ -44,6 +45,8 @@ const slice = (type: string) => {
   switch (type) {
     case "title":
       return sliceTitle;
+    case "host":
+      return sliceHost;
     case "time":
       return sliceTime;
     case "place":

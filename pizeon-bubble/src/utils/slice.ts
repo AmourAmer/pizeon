@@ -5,6 +5,7 @@ import { stringMap } from "@utils/type";
 // TODO: define an enum
 export const dict = {
   title: ["title"],
+  host: ["host", "hostress"],
   time: ["time", "date"],
   place: ["place", "where"],
   text: ["text"],
@@ -18,6 +19,7 @@ function done(
   filed: string,
   rValidator: (type: string, datum: stringMap) => boolean,
 ) {
+  // TODO: case insensitive
   if (!newInput.startsWith(pattern + ": ")) return false;
   if (rValidator(type, datum)) return false;
   // FIXME: re-focus
