@@ -3,7 +3,7 @@ import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 // FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
-import { useUpdateType, useUpdateDatum, useInitCheck } from "src/utils/slice";
+import { useUpdateType } from "src/utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
@@ -12,13 +12,9 @@ const props = defineProps<{
   rValidator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
-if (datum.value.body) {
-  input.value = datum.value.body;
-}
-useUpdateDatum(datum, { body: input });
-useInitCheck(datum, { body: input });
+if (datum.value.body) input.value = datum.value.body;
 
-const warning = useUpdateType(input, datum, props.rValidator);
+useUpdateType(datum, { body: input }, props.rValidator);
 
 const placeholder = computed(() => {
   const msg = (dest: string) =>
@@ -50,7 +46,6 @@ const placeholder = computed(() => {
       :placeholder="placeholder"
       :rows="3"
     />
-    {{ warning }}
   </div>
 </template>
 

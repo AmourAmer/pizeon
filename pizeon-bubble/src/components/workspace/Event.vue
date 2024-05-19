@@ -18,7 +18,7 @@ defineExpose({
     const result: { heading?: any; raw: stringMap[] } = {
       raw: data.value.filter(
         (item) => !item.deleted && delete item.deleted && delete item.id,
-        // TODO: clean unneeded properties
+        // TODO: clean unneeded properties, maybe call fn of child components
       ),
     };
     if (data.value[0].type == "heading") {
@@ -56,10 +56,10 @@ const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   datum: stringMap,
 ) => {
   if (type == "heading")
-    if (data.value[0] == datum) return false;
+    if (data.value[0] == datum.value) return false;
     // maybe use id?
     else {
-      datum.value["type_change_type_change_warning"] =
+      datum.value["type_change_warning"] =
         "Heading can only be added at the first position, click the first add button and change new item to heading";
       return true;
     }
@@ -90,7 +90,7 @@ const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
         :servers="servers"
         :rValidator="rValidateSlice"
       />
-      <i @click="delete datum.type_change_type_change_warning">{{
+      <i @click="delete datum.type_change_warning">{{
         datum.type_change_warning
       }}</i>
       <button @click="addItem(i + 1)">+</button>

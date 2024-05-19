@@ -11,56 +11,37 @@ export const dict = {
 
 function done(
   newInput: string,
-  keyword: string,
-  datum: Ref<stringMap>,
   pattern: string,
+  type: string,
+  datum: Ref<stringMap>,
+  filed: string,
   rValidator: (type: string, datum: stringMap) => boolean,
 ) {
   if (!newInput.startsWith(pattern + ": ")) return false;
-  if (rValidator(keyword, datum)) return false;
-  datum.value.type = keyword;
-  // FIXME: watch misses this last update, this pushed me to do init check on each slice
-  // input.value = input.value.slice(pattern.length + 2);
+  if (rValidator(type, datum)) return false;
+  datum.value.type = type;
+  datum.value[filed] = datum.value[filed].slice(pattern.length + 2);
+
   return true;
 }
 
 export function useUpdateType(
-  input: Ref<string>,
   datum: Ref<stringMap>,
+  map: stringMap,
   rValidator: (type: string, datum: stringMap) => boolean,
 ) {
-  // Intended to watch input only, instead of with rValidator.
+  // Intended to watch input(map[key]) only, instead of with rValidator.
   // To avoid multiple potential competing type change at a time
-  watch(input, (newInput) => {
-    let keyword: keyof typeof dict;
-    for (keyword in dict) {
-      for (let i of dict[keyword]) {
-        if (!done(newInput, keyword, datum, i, rValidator)) continue;
-        return;
+  for (let filed in map) {
+    watch(map[filed] as Ref<string>, (newInput) => {
+      datum.value[filed] = newInput; // FIXME: maybe should split? or polish rValidator? should remove "r" also
+      let type: keyof typeof dict;
+      for (type in dict) {
+        for (let i of dict[type]) {
+          if (!done(newInput, i, type, datum, filed, rValidator)) continue;
+          return;
+        }
       }
-    }
-  });
-}
-
-// TODO: polish this according to demands, add hooks or something
-export function useUpdateDatum(datum: Ref<stringMap>, map: stringMap) {
-  for (let key in map) {
-    let value = map[key];
-    // Should be more elegant, failed. solved: a reactive effect is mutating its own dependencies
-    watch(value, (newValue) => {
-      datum.value[key] = newValue;
     });
-  }
-}
-
-// FIXME: this fn is created because input misses last update
-export function useInitCheck(datum: Ref<stringMap>, map: stringMap) {
-  for (let key in map) {
-    for (let keyword of dict[datum.value.type as keyof typeof dict]) {
-      if (map[key].value?.startsWith(keyword + ": ")) {
-        map[key].value = map[key].value.slice(keyword.length + 2);
-        break;
-      }
-    }
   }
 }
