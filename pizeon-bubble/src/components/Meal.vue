@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, Ref } from "vue";
-import time from "../utils/time";
+import time from "src/utils/time";
 import { Repo, Notice } from "../utils/type";
 import ClassicNotice from "./meal/Classic.vue";
+import EventNotice from "./meal/Event.vue";
 
 type Signature = string;
 
@@ -20,13 +21,19 @@ const noticeTemplate = computed(() => {
   try {
     return JSON.parse(props.notice.bare_body)?.template.toLowerCase();
   } catch {
+    // WARNING: should deprecate
     return "classic";
   }
 });
 const noticeComponent = computed(() => {
   switch (noticeTemplate.value) {
-    default:
+    // WARNING: should deprecate
+    case "classic":
       return ClassicNotice;
+    case "event":
+      return EventNotice;
+    default:
+      return EventNotice;
   }
 });
 const signs: Ref<Signature[]> = computed(() => {
