@@ -7,6 +7,7 @@ import sliceTextarea from "./slice/sliceTextarea.vue";
 import sliceTime from "./slice/sliceTime.vue";
 import sliceHeading from "./slice/sliceHeading.vue";
 
+// TODO: draggable, not so urgent
 // TODO: another storage name
 const data: Ref<stringMap[]> = useStorage("event", []);
 defineProps<{
@@ -50,21 +51,28 @@ const slice = (type: string) => {
   }
 };
 
-// FIXME: Yes, this is silly type. But I really don't want to make a tuple or write something like `v-if="vali == true`
+// FIXME: deprecate all other rVali's
 const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
-  datum: stringMap,
+  datum: Ref<stringMap>,
+) => {
+  return !ValidateSlice(type, datum);
+};
+
+const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
+  type: string,
+  datum: Ref<stringMap>,
 ) => {
   if (type == "heading")
-    if (data.value[0] == datum.value) return false;
+    if (data.value[0] == datum.value) return true;
     // maybe use id?
     else {
       datum.value["type_change_warning"] =
         "Heading can only be added at the first position, click the first add button and change new item to heading";
       // BUG: yes, you can add multiple headings by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
-      return true;
+      return false;
     }
-  return false;
+  return true;
 };
 </script>
 
