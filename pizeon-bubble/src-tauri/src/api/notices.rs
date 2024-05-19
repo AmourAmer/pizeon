@@ -8,13 +8,13 @@ use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize)]
 pub struct Notice {
-    heading: String,
+    title: String,
     bare_body: String,
     date: i64,
 }
 #[derive(Serialize)]
 pub struct Abstract {
-    heading: String,
+    title: String,
     date: i64,
 }
 #[derive(Serialize, Deserialize)]
@@ -32,9 +32,9 @@ pub async fn get_notice(id: &str) -> Result<Meal, ()> {
     Ok(Meal {
         repo: which_repo(&h).unwrap_or(Repo::Junk),
         notice: Notice {
-            heading: body["heading"]
+            title: body["title"]
                 .as_str()
-                .unwrap_or("Missing heading!")
+                .unwrap_or("Missing title!")
                 .into(),
             bare_body: h.body,
             date: (h.timestamp).unix_timestamp(),
@@ -50,7 +50,7 @@ pub async fn get_abstract(id: &str) -> Result<Abstract, ()> {
     let h = db.load(id).await.unwrap().unwrap();
     let body = json::parse(h.body.as_str()).unwrap();
     Ok(Abstract {
-        heading: body["heading"].as_str().unwrap_or("Missing heading").into(),
+        title: body["title"].as_str().unwrap_or("Missing title").into(),
         date: (h.timestamp).unix_timestamp(),
     })
 }

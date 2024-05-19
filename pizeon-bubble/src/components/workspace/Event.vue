@@ -5,7 +5,7 @@ import { useData } from "src/utils/draft";
 import { v4 as uuidv4 } from "uuid";
 import sliceTextarea from "./slice/sliceTextarea.vue";
 import sliceTime from "./slice/sliceTime.vue";
-import sliceHeading from "./slice/sliceHeading.vue";
+import sliceTitle from "./slice/sliceTitle.vue";
 
 // TODO: draggable, not so urgent
 // TODO: another storage name
@@ -17,14 +17,14 @@ defineProps<{
 defineExpose({
   finalize() {
     let nonDeletedData = [...nonDeletedIter(data.value)];
-    const result: { heading?: any; raw: stringMap[] } = {
+    const result: { title?: any; raw: stringMap[] } = {
       raw: nonDeletedData.filter(
         (item) => !item.deleted && delete item.deleted && delete item.id,
         // TODO: clean unneeded properties, maybe call fn of child components
       ),
     };
-    if (nonDeletedData[0].type == "heading") {
-      result.heading = nonDeletedData[0].body;
+    if (nonDeletedData[0].type == "title") {
+      result.title = nonDeletedData[0].body;
     }
     // TODO: option to keep
     data.value = [];
@@ -45,8 +45,8 @@ const slice = (type: string) => {
       return sliceTextarea;
     case "time":
       return sliceTime;
-    case "heading":
-      return sliceHeading;
+    case "title":
+      return sliceTitle;
     default:
       return sliceTextarea;
   }
@@ -66,13 +66,13 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: Ref<stringMap>,
 ) => {
-  if (type == "heading")
+  if (type == "title")
     if (nonDeletedIter(data.value).next().value == datum.value) return true;
     // maybe use id?
     else {
       datum.value["type_change_warning"] =
-        "Heading can only be added at the first position, click the first add button and change new item to heading";
-      // BUG: yes, you can add multiple headings by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
+        "Title can only be added at the first position, click the first add button and change new item to title";
+      // BUG: yes, you can add multiple titles by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
       return false;
     }
   if (type == "time") {
@@ -80,7 +80,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       if (nonDeletedDatum.type == "time" && nonDeletedDatum != datum.value) {
         datum.value["type_change_warning"] =
           "One event should have only one time, right? If things go beyond my expectation, please email me(Amour<pizeon@tuta.io>)";
-        // BUG: yes, you can add multiple headings by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
+        // BUG: yes, you can add multiple titles by delete then recover. 2 reasons not to prevent this, 1st is respect the choice of user
         return false;
       }
     return true;

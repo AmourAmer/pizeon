@@ -6,7 +6,7 @@ import { stringMap } from "@utils/type";
 export const dict = {
   time: ["time", "date"],
   text: ["text"],
-  heading: ["heading", "h"],
+  title: ["title"],
 };
 
 function done(

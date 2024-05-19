@@ -18,12 +18,12 @@ if (datum.value.body) {
 
 useUpdateType(datum, { body: input }, props.rValidator);
 
-const placeholder = computed(() => "What's the heading?");
+const placeholder = computed(() => "What's the title?");
 </script>
 
 <template>
   <div v-show="!datum.deleted">
-    Heading:
+    Title:
     <textarea
       ref="textarea"
       class="resize-none"

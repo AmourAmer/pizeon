@@ -1,6 +1,6 @@
 export interface Notice {
   date: number;
-  heading: string;
+  title: string;
   bare_body: string;
 }
 

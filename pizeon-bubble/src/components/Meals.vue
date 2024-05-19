@@ -17,7 +17,7 @@ interface Meal {
 const mealTemplate: Meal = {
   notice: {
     date: 0,
-    heading: "Please wait",
+    title: "Please wait",
     bare_body: "Fetching data",
   },
   signs: [],

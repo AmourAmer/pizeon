@@ -3,7 +3,7 @@ import { Ref, computed } from "vue";
 import { Repo } from "../../utils/type";
 // FIXME: for sure
 interface ClassicNotice {
-  heading: string;
+  title: string;
   raw: string;
 }
 const props = defineProps<{
@@ -16,18 +16,18 @@ const cooked: Ref<ClassicNotice> = computed(() => {
   } catch {}
 
   return {
-    heading: "missing heading still",
+    title: "missing title still",
     raw: props.data,
   };
 });
 // TODO: deduplicate
-const heading = computed(() => cooked.value.heading);
+const title = computed(() => cooked.value.title);
 const raw = computed(() => cooked.value.raw);
 </script>
 
 <template>
   <div>
-    <h1>{{ heading }}</h1>
+    <h1>{{ title }}</h1>
     <!-- FIXME: don't nav at numbers -->
     <p
       contenteditable

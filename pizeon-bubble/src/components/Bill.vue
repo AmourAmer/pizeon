@@ -6,7 +6,7 @@ import Abstract from "./Abstract.vue";
 import { Repo } from "../utils/type";
 
 interface Abstract {
-  heading: string;
+  title: string;
   body?: string;
   date: number;
 }
@@ -34,7 +34,7 @@ function addId(newId: string) {
 const abstracts: Ref<Ref<Abstract>[]> = computedAsync(async () =>
   getS(props.bill).map((ab) =>
     computedAsync(async () => await ab, {
-      heading: "fetch or parse failed, consider deleting it?",
+      title: "fetch or parse failed, consider deleting it?",
       date: 1,
     }),
   ),

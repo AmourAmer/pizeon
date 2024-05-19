@@ -3,7 +3,7 @@
 import { Ref, computed } from "vue";
 import { Repo } from "../../utils/type";
 interface ClassicNotice {
-  heading: string;
+  title: string;
   raw: string;
 }
 const props = defineProps<{
@@ -16,12 +16,12 @@ const cooked: Ref<ClassicNotice> = computed(() => {
   } catch {}
 
   return {
-    heading: "missing heading still",
+    title: "missing title still",
     raw: props.data,
   };
 });
 // TODO: deduplicate
-const heading = computed(() => cooked.value.heading);
+const title = computed(() => cooked.value.title);
 const raw = computed(() => cooked.value.raw);
 </script>
 
@@ -32,7 +32,7 @@ const raw = computed(() => cooked.value.raw);
       with a type being deprecated. If you know the sender, please tell him be
       cautious about this and pay attention to changelog, which might exist</b
     >
-    <h1>{{ heading }}</h1>
+    <h1>{{ title }}</h1>
     <!-- FIXME: don't nav at numbers -->
     <i
       contenteditable

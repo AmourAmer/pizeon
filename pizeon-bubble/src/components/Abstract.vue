@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import time from "../utils/time";
 interface Abstract {
-  heading: string;
+  title: string;
   body?: string; // FIXME: seems notice.rs doesn't want Abstract to know body? Should send back the very first few letters.
   date: number;
 }
@@ -17,7 +17,7 @@ const { month, day } = time(computed(() => props.date));
 <template>
   <div>
     <button @click="$emit('check')">
-      {{ heading }} {{ body ? ": " + body : "" }} ~ {{ month }} / {{ day }}
+      {{ title }} {{ body ? ": " + body : "" }} ~ {{ month }} / {{ day }}
     </button>
   </div>
 </template>
