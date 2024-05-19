@@ -59,7 +59,7 @@ const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
     if (data.value[0] == datum) return false;
     // maybe use id?
     else {
-      datum.value["warning"] =
+      datum.value["type_change_type_change_warning"] =
         "Heading can only be added at the first position, click the first add button and change new item to heading";
       return true;
     }
@@ -90,7 +90,9 @@ const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
         :servers="servers"
         :rValidator="rValidateSlice"
       />
-      <i @click="delete datum.warning">{{ datum.warning }}</i>
+      <i @click="delete datum.type_change_type_change_warning">{{
+        datum.type_change_warning
+      }}</i>
       <button @click="addItem(i + 1)">+</button>
       <!-- TODO: buttons to change type -->
       <!-- TODO: drag handle -->
