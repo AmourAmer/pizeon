@@ -61,6 +61,7 @@ const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
     else {
       datum.value["type_change_warning"] =
         "Heading can only be added at the first position, click the first add button and change new item to heading";
+      // BUG: yes, you can add multiple headings by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
       return true;
     }
   return false;
