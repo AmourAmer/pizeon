@@ -40,3 +40,18 @@ signature verify
 avatar?
 learn more vueuse
 dark mode as plugin
+
+## Design
+
+Built-in calendar?
+Come, this is just a notice-recieving app. Should be just it.
+Shall be very glad to see anyone implements one, as this is indeed in need.
+
+TODO-list?
+Maybe you can self-send notice?
+
+## APPs
+
+### mobile
+
+- termux: TODO should be able to use with a software, so one can view items in his favorite nvim
