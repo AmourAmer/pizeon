@@ -4,9 +4,10 @@ import { stringMap } from "@utils/type";
 
 // TODO: define an enum
 export const dict = {
-  time: ["time", "date"],
-  text: ["text"],
   title: ["title"],
+  time: ["time", "date"],
+  place: ["place", "where"],
+  text: ["text"],
 };
 
 function done(
@@ -19,6 +20,7 @@ function done(
 ) {
   if (!newInput.startsWith(pattern + ": ")) return false;
   if (rValidator(type, datum)) return false;
+  // FIXME: re-focus
   datum.value.type = type;
   // BUG: if type keeps, map[filed] changes but doesn't update patch
   datum.value[filed] = datum.value[filed].slice(pattern.length + 2);

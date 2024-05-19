@@ -3,9 +3,10 @@ import { Ref } from "vue";
 import { stringMap } from "@utils/type";
 import { useData } from "src/utils/draft";
 import { v4 as uuidv4 } from "uuid";
-import sliceTextarea from "./slice/sliceTextarea.vue";
-import sliceTime from "./slice/sliceTime.vue";
 import sliceTitle from "./slice/sliceTitle.vue";
+import sliceTime from "./slice/sliceTime.vue";
+import slicePlace from "./slice/slicePlace.vue";
+import sliceTextarea from "./slice/sliceTextarea.vue";
 
 // TODO: draggable, not so urgent
 // TODO: another storage name
@@ -41,12 +42,14 @@ const addItem = (idx: number) => {
 
 const slice = (type: string) => {
   switch (type) {
-    case "text":
-      return sliceTextarea;
-    case "time":
-      return sliceTime;
     case "title":
       return sliceTitle;
+    case "time":
+      return sliceTime;
+    case "place":
+      return slicePlace;
+    case "text":
+      return sliceTextarea;
     default:
       return sliceTextarea;
   }
@@ -77,7 +80,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
         // BUG: yes, you can add multiple titles by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
         return false;
       }
-    case "time":
+    case "time" || "place":
       return uniqueType(type);
     default:
       return true;
