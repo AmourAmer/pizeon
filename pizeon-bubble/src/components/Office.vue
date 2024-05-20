@@ -11,6 +11,12 @@ const template = ref("event");
 const draftPage = ref<InstanceType<typeof Event> | null>(null);
 // TODO: template, cache, sendForm
 const submitForm = () => {
+  if (!submitable.value) {
+    // TODO: should have a name
+    foo.value =
+      "Please Preview before Publishing, this also helps to prevent publishing by mistake. This behavior will be configurable in the future";
+    return;
+  }
   // TODO: don't forget signature
   let bundle: stringMap = draftPage.value?.finalize() || {};
   bundle.servers = servers.value;
@@ -23,6 +29,8 @@ const submitForm = () => {
   });
   // TODO: ~~send back a notice containing server respone~~
 };
+const foo = ref("");
+const submitable = ref(false);
 const servers: Ref<string[]> = ref(["self"]);
 const signature: Ref<string> = ref("self");
 
@@ -49,6 +57,7 @@ const previewData = computed(() => draftPage.value?.preview());
 
 const previewShow = ref(false);
 const togglePreview = () => {
+  submitable.value = true;
   previewShow.value = !previewShow.value;
 };
 </script>
@@ -82,6 +91,7 @@ const togglePreview = () => {
     <!-- FIXME: export and copy on submitting -->
     <button @click="togglePreview">Toggle Preview</button>
     <button @click="submitForm">Publish</button>
+    {{ foo }}
     <component v-if="previewShow" :is="previewComponent" :data="previewData" />
     <footer>
       If parsing isn't satisfying or anything, plz
