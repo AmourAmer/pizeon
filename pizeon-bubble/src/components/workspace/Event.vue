@@ -12,6 +12,7 @@ import sliceTextarea from "./slice/sliceTextarea.vue";
 // TODO: draggable, not so urgent
 // TODO: another storage name
 const { data, nonDeletedIter, uniqueDataType } = useData("event");
+if (!data.value.length) pushInitTemplate();
 defineProps<{
   servers: string[];
 }>();
@@ -29,7 +30,10 @@ defineExpose({
       result.title = nonDeletedData[0].body;
     }
     // TODO: option to keep
-    data.value = [];
+    {
+      data.value = [];
+      pushInitTemplate();
+    }
     return result;
   },
   // TODO: maybe need a more appropriate name, and make finalize use this
@@ -45,10 +49,19 @@ defineExpose({
   },
 });
 
-const addItem = (idx: number) => {
+function pushInitTemplate() {
+  addItem("title");
+  addItem("host");
+  addItem("time");
+  addItem("place");
+  addItem();
+}
+
+const addItem = (type = "text", idx = data.value.length) => {
+  // TODO: validate type, use exported dict
   data.value.splice(idx, 0, {
     id: uuidv4(),
-    type: "text",
+    type,
   });
 };
 
