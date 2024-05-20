@@ -2,12 +2,8 @@
 import { Ref } from "vue";
 import { stringMap } from "@utils/type";
 import { useData } from "src/utils/draft";
+import { useSliceType } from "src/utils/slice";
 import { v4 as uuidv4 } from "uuid";
-import sliceTitle from "./slice/sliceTitle.vue";
-import sliceHost from "./slice/sliceHost.vue";
-import sliceTime from "./slice/sliceTime.vue";
-import slicePlace from "./slice/slicePlace.vue";
-import sliceTextarea from "./slice/sliceTextarea.vue";
 
 // TODO: draggable, not so urgent
 // TODO: another storage name
@@ -65,22 +61,7 @@ const addItem = (type = "text", idx = data.value.length) => {
   });
 };
 
-const slice = (type: string) => {
-  switch (type) {
-    case "title":
-      return sliceTitle;
-    case "host":
-      return sliceHost;
-    case "time":
-      return sliceTime;
-    case "place":
-      return slicePlace;
-    case "text":
-      return sliceTextarea;
-    default:
-      return sliceTextarea;
-  }
-};
+const slice = useSliceType();
 
 // FIXME: deprecate all other rVali's
 // should let existing slices use this

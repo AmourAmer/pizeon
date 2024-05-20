@@ -1,6 +1,11 @@
 // TODO: maybe need refactor, maybe not
 import { watch, Ref } from "vue";
 import { stringMap } from "@utils/type";
+import sliceTitle from "slice/sliceTitle.vue";
+import sliceHost from "slice/sliceHost.vue";
+import sliceTime from "slice/sliceTime.vue";
+import slicePlace from "slice/slicePlace.vue";
+import sliceTextarea from "slice/sliceTextarea.vue";
 
 // TODO: define an enum
 export const dict = {
@@ -10,6 +15,28 @@ export const dict = {
   place: ["place", "where"],
   text: ["text"],
 };
+
+const sliceType = {
+  title: sliceTitle,
+  host: sliceHost,
+  time: sliceTime,
+  place: slicePlace,
+  text: sliceTextarea,
+};
+
+export function useSliceType(
+  types = ["title", "host", "time", "place", "text"],
+) {
+  return (type: string) => {
+    {
+      let idx = types.indexOf(type);
+      if (idx == -1) idx = types.length - 1;
+      if (types[idx] in sliceType)
+        return sliceType[types[idx] as keyof typeof sliceType];
+      return sliceTextarea;
+    }
+  };
+}
 
 function done(
   newInput: string,

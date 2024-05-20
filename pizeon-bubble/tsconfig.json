@@ -15,9 +15,6 @@
       ],
       "src/*": [
         "src/*"
-      ],
-      "ingredient/*": [
-        "src/components/meal/ingredient/*"
       ]
     },
     /* Bundler mode */

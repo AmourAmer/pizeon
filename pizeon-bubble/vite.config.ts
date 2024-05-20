@@ -8,6 +8,7 @@ export default defineConfig(async () => ({
     alias: {
       src: "/src",
       ingredient: "/src/components/meal/ingredient",
+      slice: "/src/components/workspace/slice",
     },
   },
 
