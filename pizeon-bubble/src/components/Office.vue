@@ -11,10 +11,10 @@ const template = ref("event");
 const draftPage = ref<InstanceType<typeof Event> | null>(null);
 // TODO: template, cache, sendForm
 const submitForm = () => {
-  if (!submitable.value) {
+  if (!previewShow.value) {
     // TODO: should have a name
     foo.value =
-      "Please Preview before Publishing, this also helps to prevent publishing by mistake. This behavior will be configurable in the future";
+      "Must open Preview when Publishing, this also helps to prevent publishing by mistake. This behavior will be configurable in the future";
     return;
   }
   // TODO: don't forget signature
@@ -30,7 +30,6 @@ const submitForm = () => {
   // TODO: ~~send back a notice containing server respone~~
 };
 const foo = ref("");
-const submitable = ref(false);
 const servers: Ref<string[]> = ref(["self"]);
 const signature: Ref<string> = ref("self");
 
@@ -57,8 +56,8 @@ const previewData = computed(() => draftPage.value?.preview());
 
 const previewShow = ref(false);
 const togglePreview = () => {
-  submitable.value = true;
   previewShow.value = !previewShow.value;
+  foo.value = "";
 };
 </script>
 
