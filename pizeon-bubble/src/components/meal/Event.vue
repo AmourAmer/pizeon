@@ -23,7 +23,6 @@ const cooked: Ref<EventNotice> = computed(() => {
 const title = computed(() => cooked.value.title);
 // const avatar = computed(() => (cooked.value.avatar ? "O.o" : "o.O"));
 const raw = computed(() => cooked.value.raw);
-console.log(cooked.value, raw.value);
 </script>
 
 <template>
@@ -33,6 +32,7 @@ console.log(cooked.value, raw.value);
     <component
       v-for="datum in raw"
       :is="useIngredientType(datum.type)"
+      :datum="datum"
     ></component>
   </div>
 </template>
