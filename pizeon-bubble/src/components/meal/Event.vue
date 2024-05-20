@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Ref, computed } from "vue";
-import { Repo } from "../../utils/type";
-// FIXME: for sure
+import { Repo, stringMap } from "src/utils/type";
 interface EventNotice {
   title: string;
-  raw: string;
-  avatar?: string;
+  raw: stringMap[];
 }
 const props = defineProps<{
   data: string;
@@ -21,22 +19,16 @@ const cooked: Ref<EventNotice> = computed(() => {
     raw: props.data,
   };
 });
-// TODO: deduplicate
 const title = computed(() => cooked.value.title);
-const avatar = computed(() => (cooked.value.avatar ? "O.o" : "o.O"));
+// const avatar = computed(() => (cooked.value.avatar ? "O.o" : "o.O"));
 const raw = computed(() => cooked.value.raw);
+console.log(cooked.value, raw.value);
 </script>
 
 <template>
-  <div>
+  <div style="background: #ddd">
     <h1>{{ title }}</h1>
-    <!-- FIXME: sorry, should be avatar of host instead of notice -->
-    <p>{{ avatar }}</p>
     <!-- FIXME: don't nav at numbers -->
-    <p
-      contenteditable
-      v-text="raw"
-      style="text-align: left; white-space: pre-wrap"
-    />
+    <p v-for="datum in raw">{{ datum.type }}</p>
   </div>
 </template>

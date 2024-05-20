@@ -45,7 +45,7 @@ defineExpose({
     if (nonDeletedData[0].type == "title") {
       result.title = nonDeletedData[0].body;
     }
-    return result;
+    return JSON.stringify(result);
   },
 });
 
