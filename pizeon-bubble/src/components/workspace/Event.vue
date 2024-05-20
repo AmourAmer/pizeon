@@ -32,6 +32,17 @@ defineExpose({
     data.value = [];
     return result;
   },
+  // TODO: maybe need a more appropriate name, and make finalize use this
+  preview() {
+    let nonDeletedData = [...nonDeletedIter(data.value)];
+    const result: { title?: any; raw: stringMap[] } = {
+      raw: nonDeletedData.filter((item) => !item.deleted),
+    };
+    if (nonDeletedData[0].type == "title") {
+      result.title = nonDeletedData[0].body;
+    }
+    return result;
+  },
 });
 
 const addItem = (idx: number) => {

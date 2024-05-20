@@ -45,6 +45,8 @@ const previewComponent = computed(() => {
   }
 });
 
+const previewData = computed(() => draftPage.value?.preview());
+
 const previewShow = ref(false);
 const togglePreview = () => {
   previewShow.value = !previewShow.value;
@@ -78,9 +80,9 @@ const togglePreview = () => {
     </div>
     <component :is="templateComponent" ref="draftPage" :servers="servers" />
     <!-- FIXME: export and copy on submitting -->
-    <button @click="togglePreview">Toggle Preview(Not implemented yet)</button>
+    <button @click="togglePreview">Toggle Preview</button>
     <button @click="submitForm">Publish</button>
-    <component v-if="previewShow" :is="previewComponent" :data="''" />
+    <component v-if="previewShow" :is="previewComponent" :data="previewData" />
     <footer>
       If parsing isn't satisfying or anything, plz
       mailto:Amour&lt;pizeon@tuta.io&gt;
