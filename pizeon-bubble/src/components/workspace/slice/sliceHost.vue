@@ -10,22 +10,26 @@ const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 const { textarea: textarea_name, input: input_name } = useTextareaAutosize({
   styleProp: "minHeight",
 });
+const { textarea: textarea_title, input: input_title } = useTextareaAutosize({
+  styleProp: "minHeight",
+});
 
 const props = defineProps<{
   servers: string[];
   rValidator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
-useReadDatum(datum, { name: input_name, description: input });
+useReadDatum(datum, {
+  name: input_name,
+  title: input_title,
+  description: input,
+});
 
-useUpdateType(
-  datum,
-  { name: input_name, description: input },
-  props.rValidator,
-);
+useUpdateType(datum, { description: input }, props.rValidator);
 
 const placeholder = computed(() => "Description of this guy");
 const placeholder_name = computed(() => "Who's it?");
+const placeholder_title = computed(() => "Title?");
 </script>
 
 <template>
@@ -44,6 +48,15 @@ const placeholder_name = computed(() => "Who's it?");
       class="resize-none"
       v-model="input_name"
       :placeholder="placeholder_name"
+      :rows="1"
+    />
+    <!-- TODO: extract these logic to a helper vue SFC, according to the commit containing this line. Should have done it now, sorry about this. The only potential problem I see is passing datum to grandson, which is, not-that-bad actually. Also remember to add a prop about rows. -->
+    TITLE:
+    <textarea
+      ref="textarea_title"
+      class="resize-none"
+      v-model="input_title"
+      :placeholder="placeholder_title"
       :rows="1"
     />
     DESCRIPTION:

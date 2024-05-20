@@ -30,6 +30,7 @@ const raw = computed(() => cooked.value.raw);
 <template>
   <div>
     <h1>{{ title }}</h1>
+    <!-- FIXME: sorry, should be avatar of host instead of notice -->
     <p>{{ avatar }}</p>
     <!-- FIXME: don't nav at numbers -->
     <p
