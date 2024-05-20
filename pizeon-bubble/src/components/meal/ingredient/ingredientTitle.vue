@@ -6,8 +6,6 @@ defineProps<{
 </script>
 <template>
   <div>
-    Host: <b>{{ datum?.name }}</b>
-    <i>{{ datum?.title }}</i>
-    <s>{{ datum?.description }}</s>
+    TITLE: <i>{{ datum?.body }}</i>
   </div>
 </template>
