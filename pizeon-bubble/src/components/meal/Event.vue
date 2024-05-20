@@ -9,7 +9,7 @@ interface EventNotice {
 }
 const props = defineProps<{
   data: string;
-  repo: Repo;
+  repo?: Repo;
 }>();
 const cooked: Ref<EventNotice> = computed(() => {
   try {

@@ -2,6 +2,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed } from "vue";
 import Event from "./workspace/Event.vue";
+import PreviewEvent from "./meal/Event.vue";
 import { stringMap } from "../utils/type";
 
 // FIXME: refactor
@@ -33,6 +34,21 @@ const templateComponent = computed(() => {
       return Event;
   }
 });
+
+// TODO: duplicated, seems silly
+const previewComponent = computed(() => {
+  switch (template.value) {
+    case "event":
+      return PreviewEvent;
+    default:
+      return PreviewEvent;
+  }
+});
+
+const previewShow = ref(false);
+const togglePreview = () => {
+  previewShow.value = !previewShow.value;
+};
 </script>
 
 <template>
@@ -62,8 +78,9 @@ const templateComponent = computed(() => {
     </div>
     <component :is="templateComponent" ref="draftPage" :servers="servers" />
     <!-- FIXME: export and copy on submitting -->
-    <button>Preview(Not implemented yet)</button>
+    <button @click="togglePreview">Toggle Preview(Not implemented yet)</button>
     <button @click="submitForm">Publish</button>
+    <component v-if="previewShow" :is="previewComponent" :data="''" />
     <footer>
       If parsing isn't satisfying or anything, plz
       mailto:Amour&lt;pizeon@tuta.io&gt;
