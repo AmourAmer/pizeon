@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Ref, computed } from "vue";
 import { Repo, stringMap } from "src/utils/type";
+import { useIngredientType } from "src/utils/ingredient";
 interface EventNotice {
   title: string;
   raw: stringMap[];
@@ -29,6 +30,9 @@ console.log(cooked.value, raw.value);
   <div style="background: #ddd">
     <h1>{{ title }}</h1>
     <!-- FIXME: don't nav at numbers -->
-    <p v-for="datum in raw">{{ datum.type }}</p>
+    <component
+      v-for="datum in raw"
+      :is="useIngredientType(datum.type)"
+    ></component>
   </div>
 </template>

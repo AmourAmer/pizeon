@@ -7,6 +7,7 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       src: "/src",
+      ingredient: "/src/components/meal/ingredient",
     },
   },
 
