@@ -35,7 +35,8 @@ const placeholder_name = computed(() => "Who's it?");
     <!-- TODO: avatar -->
     <p>
       Avatar will be supported later, if anybody has any idea how to impl this,
-      plz contact me, thx!
+      plz contact me, thx! <br />
+      For now, let's just use O.o
     </p>
     NAME:
     <textarea

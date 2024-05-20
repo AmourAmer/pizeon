@@ -2,15 +2,16 @@
 import { Ref, computed } from "vue";
 import { Repo } from "../../utils/type";
 // FIXME: for sure
-interface ClassicNotice {
+interface EventNotice {
   title: string;
   raw: string;
+  avatar?: string;
 }
 const props = defineProps<{
   data: string;
   repo: Repo;
 }>();
-const cooked: Ref<ClassicNotice> = computed(() => {
+const cooked: Ref<EventNotice> = computed(() => {
   try {
     return JSON.parse(props.data);
   } catch {}
@@ -22,12 +23,14 @@ const cooked: Ref<ClassicNotice> = computed(() => {
 });
 // TODO: deduplicate
 const title = computed(() => cooked.value.title);
+const avatar = computed(() => (cooked.value.avatar ? "O.o" : "o.O"));
 const raw = computed(() => cooked.value.raw);
 </script>
 
 <template>
   <div>
     <h1>{{ title }}</h1>
+    <p>{{ avatar }}</p>
     <!-- FIXME: don't nav at numbers -->
     <p
       contenteditable
