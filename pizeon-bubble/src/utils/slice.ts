@@ -16,7 +16,7 @@ function done(
   pattern: string,
   type: string,
   datum: Ref<stringMap>,
-  filed: string,
+  field: string,
   rValidator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
   // TODO: case insensitive
@@ -24,8 +24,8 @@ function done(
   if (rValidator(type, datum)) return false;
   // FIXME: re-focus
   datum.value.type = type;
-  // BUG: if type keeps, map[filed] changes but doesn't update patch
-  datum.value[filed] = datum.value[filed].slice(pattern.length + 2);
+  // BUG: if type keeps, map[field] changes but doesn't update patch
+  datum.value[field] = newInput.slice(pattern.length + 2);
 
   return true;
 }
@@ -37,13 +37,12 @@ export function useUpdateType(
 ) {
   // Intended to watch input(map[key]) only, instead of with rValidator.
   // To avoid multiple potential competing type change at a time
-  for (let filed in map) {
-    watch(map[filed] as Ref<string>, (newInput) => {
-      datum.value[filed] = newInput; // FIXME: maybe should split? or polish rValidator? should remove "r" also
+  for (let field in map) {
+    watch(map[field] as Ref<string>, (newInput) => {
       let type: keyof typeof dict;
       for (type in dict) {
         for (let i of dict[type]) {
-          if (!done(newInput, i, type, datum, filed, rValidator)) continue;
+          if (!done(newInput, i, type, datum, field, rValidator)) continue;
           return;
         }
       }
@@ -52,10 +51,14 @@ export function useUpdateType(
 }
 
 // TODO: replace parts in old slices
-export function useReadDatum(datum: Ref<stringMap>, map: stringMap) {
+export function useBindDatum(datum: Ref<stringMap>, map: stringMap) {
   for (let field in map) {
     if (datum.value[field]) {
       map[field].value = datum.value[field];
     }
+
+    watch(map[field] as Ref<string>, (newInput) => {
+      datum.value[field] = newInput;
+    });
   }
 }
