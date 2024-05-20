@@ -5,6 +5,7 @@ import sliceTitle from "slice/sliceTitle.vue";
 import sliceHost from "slice/sliceHost.vue";
 import sliceTime from "slice/sliceTime.vue";
 import slicePlace from "slice/slicePlace.vue";
+import sliceTickbox from "slice/sliceTickbox.vue";
 import sliceTextarea from "slice/sliceTextarea.vue";
 
 // TODO: define an enum
@@ -13,6 +14,7 @@ export const dict = {
   host: ["host", "hostress"],
   time: ["time", "date"],
   place: ["place", "where"],
+  tickbox: ["text"],
   text: ["text"],
 };
 
@@ -21,11 +23,12 @@ const sliceType = {
   host: sliceHost,
   time: sliceTime,
   place: slicePlace,
+  tickbox: sliceTickbox,
   text: sliceTextarea,
 };
 
 export function useSliceType(
-  types = ["title", "host", "time", "place", "text"],
+  types = ["title", "host", "time", "place", "tickbox", "text"],
 ) {
   return (type: string) => {
     {
@@ -34,6 +37,18 @@ export function useSliceType(
       if (types[idx] in sliceType)
         return sliceType[types[idx] as keyof typeof sliceType];
       return sliceTextarea;
+    }
+  };
+}
+
+// TODO: config file
+export function useNextSliceType() {
+  return (type: string) => {
+    switch (type) {
+      case "tickbox":
+        return "tickbox";
+      default:
+        return "text";
     }
   };
 }

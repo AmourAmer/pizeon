@@ -2,7 +2,7 @@
 import { Ref } from "vue";
 import { stringMap } from "@utils/type";
 import { useData } from "src/utils/draft";
-import { useSliceType } from "src/utils/slice";
+import { useSliceType, useNextSliceType } from "src/utils/slice";
 import { v4 as uuidv4 } from "uuid";
 
 // TODO: draggable, not so urgent
@@ -62,6 +62,7 @@ const addItem = (type = "text", idx = data.value.length) => {
 };
 
 const slice = useSliceType();
+const nextSliceType = useNextSliceType();
 
 // FIXME: deprecate all other rVali's
 // should let existing slices use this
@@ -99,6 +100,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
 <template>
   <div>
     <button @click="addItem('text', 0)">+</button>
+    {{ data }}
     <div
       v-for="(datum, i) in data"
       :key="datum.id"
@@ -121,7 +123,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       <i @click="delete datum.type_change_warning">{{
         datum.type_change_warning
       }}</i>
-      <button @click="addItem('text', i + 1)">+</button>
+      <button @click="addItem(nextSliceType(datum.type), i + 1)">+</button>
       <!-- TODO: buttons to change type -->
       <!-- TODO: drag handle -->
     </div>
