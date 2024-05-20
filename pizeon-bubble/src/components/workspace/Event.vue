@@ -117,7 +117,6 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
 
 <template>
   <div>
-    <div>{{ servers }}, {{ data }}</div>
     <button @click="addItem(0)">+</button>
     <div
       v-for="(datum, i) in data"

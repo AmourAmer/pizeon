@@ -84,7 +84,6 @@ const togglePreview = () => {
         <!-- <option value="classic">classic</option> -->
         <option :value="'event'">event</option>
       </select>
-      {{ template }}
     </div>
     <component :is="templateComponent" ref="draftPage" :servers="servers" />
     <!-- FIXME: export and copy on submitting -->

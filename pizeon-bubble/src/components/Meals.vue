@@ -27,7 +27,7 @@ const mealTemplate: Meal = {
 const ids: Ref<string[]> = useStorage("mealIds", []);
 async function getNotice(id: string): Promise<Meal> {
   return await invoke("get_notice", {
-    id: id,
+    id,
   });
 }
 
