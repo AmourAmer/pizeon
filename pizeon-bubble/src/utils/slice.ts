@@ -50,7 +50,6 @@ export function useUpdateType(
   }
 }
 
-// TODO: replace parts in old slices
 export function useBindDatum(datum: Ref<stringMap>, map: stringMap) {
   for (let field in map) {
     if (datum.value[field]) {
