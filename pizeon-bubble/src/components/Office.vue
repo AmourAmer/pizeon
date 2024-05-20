@@ -52,7 +52,7 @@ const previewComponent = computed(() => {
   }
 });
 
-const previewData = computed(() => draftPage.value?.preview());
+const previewData = computed(() => draftPage.value?.preview() || "");
 
 const previewShow = ref(false);
 const togglePreview = () => {
