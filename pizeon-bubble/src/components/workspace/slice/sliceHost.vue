@@ -6,7 +6,8 @@ import { stringMap } from "@utils/type";
 import { useUpdateType, useReadDatum } from "src/utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
-const { textarea_name, input_name } = useTextareaAutosize({
+// TODO: maybe fix-height is just ok
+const { textarea: textarea_name, input: input_name } = useTextareaAutosize({
   styleProp: "minHeight",
 });
 

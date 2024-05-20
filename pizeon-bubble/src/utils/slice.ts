@@ -53,9 +53,7 @@ export function useUpdateType(
 
 // TODO: replace parts in old slices
 export function useReadDatum(datum: Ref<stringMap>, map: stringMap) {
-  console.log("Ih", map);
   for (let field in map) {
-    console.log("ih");
     if (datum.value[field]) {
       map[field].value = datum.value[field];
     }
