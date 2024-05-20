@@ -17,7 +17,7 @@ function done(
   type: string,
   datum: Ref<stringMap>,
   filed: string,
-  rValidator: (type: string, datum: stringMap) => boolean,
+  rValidator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
   // TODO: case insensitive
   if (!newInput.startsWith(pattern + ": ")) return false;
@@ -33,7 +33,7 @@ function done(
 export function useUpdateType(
   datum: Ref<stringMap>,
   map: stringMap,
-  rValidator: (type: string, datum: stringMap) => boolean,
+  rValidator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
   // Intended to watch input(map[key]) only, instead of with rValidator.
   // To avoid multiple potential competing type change at a time
@@ -48,5 +48,16 @@ export function useUpdateType(
         }
       }
     });
+  }
+}
+
+// TODO: replace parts in old slices
+export function useReadDatum(datum: Ref<stringMap>, map: stringMap) {
+  console.log("Ih", map);
+  for (let field in map) {
+    console.log("ih");
+    if (datum.value[field]) {
+      map[field].value = datum.value[field];
+    }
   }
 }

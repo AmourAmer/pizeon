@@ -18,7 +18,7 @@ if (datum.value.body) {
 
 useUpdateType(datum, { body: input }, props.rValidator);
 
-const placeholder = computed(() => "When does it take place?");
+const placeholder = computed(() => "Where does it take place?");
 </script>
 
 <template>
