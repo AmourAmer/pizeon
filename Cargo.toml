@@ -5,13 +5,13 @@ resolver = "2"
 exclude = ["pizeon-bubble/src-tauri"]
 
 [workspace.package]
-version = "0.0.0"
-authors = ["TODO TODO@TODO"]
+version = "0.1.0"
+authors = ["Amour<tuta.io>"]
 rust-version = "1.77"
 license = "AGPL"
 homepage = "Pas encore"
-repository = "Pas encore"
-# readme = "README.md"
+repository = "https://github.com/AmourAmer/pizeon"
+readme = "README.md"
 
 [workspace.dependencies]
 async-trait = "0.1.58"

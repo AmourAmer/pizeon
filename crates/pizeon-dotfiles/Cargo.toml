@@ -2,7 +2,7 @@
 name = "pizeon-dotfiles"
 description = "The dotfiles crate for Pizeon"
 edition = "2021"
-version = "0.0.0"                             # intentionally not the same as the rest
+version = "0.0.0"                             # atuin intentionally not the same as the rest
 
 authors.workspace = true
 rust-version.workspace = true
@@ -14,8 +14,8 @@ readme.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-pizeon-common = { path = "../pizeon-common", version = "0.0.0" }
-pizeon-client = { path = "../pizeon-client", version = "0.0.0" }
+pizeon-common = { path = "../pizeon-common" }
+pizeon-client = { path = "../pizeon-client" }
 
 eyre = { workspace = true }
 tokio = { workspace = true }

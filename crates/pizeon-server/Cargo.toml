@@ -11,8 +11,8 @@ homepage = { workspace = true }
 repository = { workspace = true }
 
 [dependencies]
-pizeon-common = { path = "../pizeon-common", version = "0.0.0" }
-pizeon-server-database = { path = "../pizeon-server-database", version = "0.0.0" }
+pizeon-common = { path = "../pizeon-common" }
+pizeon-server-database = { path = "../pizeon-server-database" }
 
 tracing = "0.1"
 time = { workspace = true }
