@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onKeyStroke } from "@vueuse/core";
 import router from "./router";
+import { useI18n } from "vue-i18n";
+
+const { t, locale } = useI18n({ useScope: "global" });
 
 const destinations = [
   [{ name: "bill", params: { type: "Fresh" } }, "Fresh Ingredients"],
@@ -54,6 +57,7 @@ onKeyStroke("Escape", () => {
 
 <template>
   <div class="container">
+    {{ t("message.hello") }}
     <nav>
       <RouterLink v-for="(dest, i) in destinations" :to="dest[0]">
         {{ dest[1] }}({{ i + 1 }})
