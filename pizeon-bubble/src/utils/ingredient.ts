@@ -10,6 +10,8 @@ export function useIngredientType(type: string) {
   switch (type) {
     case "title":
       return ingredientTitle;
+    case "db":
+      return null;
     case "host":
       return ingredientHost;
     case "time":
@@ -23,6 +25,6 @@ export function useIngredientType(type: string) {
     case "text":
       return ingredientText;
     default:
-      return null;
+      return ingredientText;
   }
 }

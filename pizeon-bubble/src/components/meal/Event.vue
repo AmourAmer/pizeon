@@ -22,7 +22,9 @@ const cooked: Ref<EventNotice> = computed(() => {
 });
 const title = computed(() => cooked.value.title);
 // const avatar = computed(() => (cooked.value.avatar ? "O.o" : "o.O"));
-const raw = computed(() => cooked.value.raw);
+const raw = computed(() =>
+  cooked.value.raw.filter((datum) => datum.type != "title"),
+);
 </script>
 
 <template>

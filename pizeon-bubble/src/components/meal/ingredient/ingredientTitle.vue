@@ -5,8 +5,7 @@ defineProps<{
 }>();
 </script>
 <template>
-  <!-- Of course, it's silly to show title again -->
-  <!-- div>
+  <div>
     TITLE: <i>{{ datum?.body }}</i>
-  </div -->
+  </div>
 </template>
