@@ -16,7 +16,7 @@ export const dict = {
   time: ["time", "date"],
   place: ["place", "where"],
   link: ["link", "url"],
-  tickbox: ["text"],
+  tickbox: ["tickbox", "checkbox", "tick", "check"],
   text: ["text"],
 };
 
