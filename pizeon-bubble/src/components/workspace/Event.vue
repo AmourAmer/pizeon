@@ -2,7 +2,7 @@
 import { Ref } from "vue";
 import { stringMap } from "@utils/type";
 import { useData } from "src/utils/draft";
-import { useSliceType, useNextSliceType } from "src/utils/slice";
+import { useSliceType, useNextSliceType, useFinalize } from "src/utils/slice";
 import { v4 as uuidv4 } from "uuid";
 
 // TODO: draggable, not so urgent
@@ -13,35 +13,29 @@ defineProps<{
   servers: string[];
 }>();
 
+function finalize() {
+  let nonDeletedData = [...nonDeletedIter(data.value)];
+  const id = (e: any) => e;
+  const result: { title?: string; raw: stringMap[] } = {
+    raw: nonDeletedData.map((datum) => useFinalize(datum)).filter(id),
+  };
+  if (nonDeletedData[0]?.type == "title") {
+    result.title = nonDeletedData[0].body;
+  }
+  return result;
+}
 defineExpose({
   finalize() {
-    let nonDeletedData = [...nonDeletedIter(data.value)];
-    const result: { title?: any; raw: stringMap[] } = {
-      raw: nonDeletedData.filter(
-        (item) => !item.deleted && delete item.deleted && delete item.id,
-        // TODO: clean unneeded properties, maybe call fn of child components
-      ),
-    };
-    if (nonDeletedData[0].type == "title") {
-      result.title = nonDeletedData[0].body;
-    }
     // TODO: option to keep
+    const result = finalize();
     {
       data.value = [];
       pushInitTemplate();
     }
     return result;
   },
-  // TODO: maybe need a more appropriate name, and make finalize use this
   preview() {
-    let nonDeletedData = [...nonDeletedIter(data.value)];
-    const result: { title?: any; raw: stringMap[] } = {
-      raw: nonDeletedData.filter((item) => !item.deleted),
-    };
-    if (nonDeletedData[0].type == "title") {
-      result.title = nonDeletedData[0].body;
-    }
-    return JSON.stringify(result);
+    return JSON.stringify(finalize());
   },
 });
 

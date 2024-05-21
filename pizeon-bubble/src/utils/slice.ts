@@ -107,3 +107,23 @@ export function useBindDatum(datum: Ref<stringMap>, map: stringMap) {
     });
   }
 }
+
+export function useFinalize(datum: stringMap) {
+  const final: stringMap = { type: datum.type };
+  switch (datum.type) {
+    case "title" || "time" || "place" || "link" || "text":
+      final.body = datum.body;
+      break;
+    case "db":
+      return null;
+    case "host":
+      final.name = datum.name;
+      final.title = datum.title;
+      final.description = datum.description;
+      break;
+    case "tickbox": // TODO: id
+      final.body = datum.body;
+      break;
+  }
+  return final;
+}
