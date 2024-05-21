@@ -20,7 +20,9 @@ export function useIngredientType(type: string) {
       return ingredientLink;
     case "tickbox":
       return ingredientTickbox;
-    default:
+    case "text":
       return ingredientText;
+    default:
+      return null;
   }
 }

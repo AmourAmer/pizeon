@@ -2,6 +2,7 @@
 import { watch, Ref } from "vue";
 import { stringMap } from "@utils/type";
 import sliceTitle from "slice/sliceTitle.vue";
+import sliceDatabase from "slice/sliceDatabase.vue";
 import sliceHost from "slice/sliceHost.vue";
 import sliceTime from "slice/sliceTime.vue";
 import slicePlace from "slice/slicePlace.vue";
@@ -12,6 +13,7 @@ import sliceTextarea from "slice/sliceTextarea.vue";
 // TODO: define an enum
 export const dict = {
   title: ["title"],
+  db: ["db", "database"],
   host: ["host", "hostress"],
   time: ["time", "date"],
   place: ["place", "where"],
@@ -22,6 +24,7 @@ export const dict = {
 
 const sliceType = {
   title: sliceTitle,
+  db: sliceDatabase,
   host: sliceHost,
   time: sliceTime,
   place: slicePlace,
@@ -30,9 +33,7 @@ const sliceType = {
   text: sliceTextarea,
 };
 
-export function useSliceType(
-  types = ["title", "host", "time", "place", "link", "tickbox", "text"],
-) {
+export function useSliceType(types = Object.keys(sliceType)) {
   return (type: string) => {
     {
       let idx = types.indexOf(type);
