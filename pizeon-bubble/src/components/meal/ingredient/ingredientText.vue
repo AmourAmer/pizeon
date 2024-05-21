@@ -5,7 +5,7 @@ defineProps<{
 }>();
 </script>
 <template>
-  <div>
-    BODY: <i>{{ datum?.body }}</i>
-  </div>
+  <span>
+    {{ datum?.body }}
+  </span>
 </template>
