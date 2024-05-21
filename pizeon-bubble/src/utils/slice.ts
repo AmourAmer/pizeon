@@ -5,6 +5,7 @@ import sliceTitle from "slice/sliceTitle.vue";
 import sliceHost from "slice/sliceHost.vue";
 import sliceTime from "slice/sliceTime.vue";
 import slicePlace from "slice/slicePlace.vue";
+import sliceLink from "slice/sliceLink.vue";
 import sliceTickbox from "slice/sliceTickbox.vue";
 import sliceTextarea from "slice/sliceTextarea.vue";
 
@@ -14,6 +15,7 @@ export const dict = {
   host: ["host", "hostress"],
   time: ["time", "date"],
   place: ["place", "where"],
+  link: ["link", "url"],
   tickbox: ["text"],
   text: ["text"],
 };
@@ -23,12 +25,13 @@ const sliceType = {
   host: sliceHost,
   time: sliceTime,
   place: slicePlace,
+  link: sliceLink,
   tickbox: sliceTickbox,
   text: sliceTextarea,
 };
 
 export function useSliceType(
-  types = ["title", "host", "time", "place", "tickbox", "text"],
+  types = ["title", "host", "time", "place", "link", "tickbox", "text"],
 ) {
   return (type: string) => {
     {
