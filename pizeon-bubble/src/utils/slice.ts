@@ -1,14 +1,14 @@
 // TODO: maybe need refactor, maybe not
 import { watch, Ref } from "vue";
 import { stringMap } from "@utils/type";
-import sliceTitle from "slice/sliceTitle.vue";
-import sliceDatabase from "slice/sliceDatabase.vue";
-import sliceHost from "slice/sliceHost.vue";
-import sliceTime from "slice/sliceTime.vue";
-import slicePlace from "slice/slicePlace.vue";
-import sliceLink from "slice/sliceLink.vue";
-import sliceTickbox from "slice/sliceTickbox.vue";
-import sliceTextarea from "slice/sliceTextarea.vue";
+import SliceTitle from "slice/SliceTitle.vue";
+import SliceDatabase from "slice/SliceDatabase.vue";
+import SliceHost from "slice/SliceHost.vue";
+import SliceTime from "slice/SliceTime.vue";
+import SlicePlace from "slice/SlicePlace.vue";
+import SliceLink from "slice/SliceLink.vue";
+import SliceTickbox from "slice/SliceTickbox.vue";
+import SliceTextarea from "slice/SliceTextarea.vue";
 
 // TODO: define an enum
 export const dict = {
@@ -23,14 +23,14 @@ export const dict = {
 };
 
 const sliceType = {
-  title: sliceTitle,
-  db: sliceDatabase,
-  host: sliceHost,
-  time: sliceTime,
-  place: slicePlace,
-  link: sliceLink,
-  tickbox: sliceTickbox,
-  text: sliceTextarea,
+  title: SliceTitle,
+  db: SliceDatabase,
+  host: SliceHost,
+  time: SliceTime,
+  place: SlicePlace,
+  link: SliceLink,
+  tickbox: SliceTickbox,
+  text: SliceTextarea,
 };
 
 export function useSliceType(types = Object.keys(sliceType)) {
@@ -40,7 +40,7 @@ export function useSliceType(types = Object.keys(sliceType)) {
       if (idx == -1) idx = types.length - 1;
       if (types[idx] in sliceType)
         return sliceType[types[idx] as keyof typeof sliceType];
-      return sliceTextarea;
+      return SliceTextarea;
     }
   };
 }

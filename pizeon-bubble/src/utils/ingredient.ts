@@ -1,30 +1,30 @@
-import ingredientTitle from "ingredient/ingredientTitle.vue";
-import ingredientTime from "ingredient/ingredientTime.vue";
-import ingredientHost from "ingredient/ingredientHost.vue";
-import ingredientPlace from "ingredient/ingredientPlace.vue";
-import ingredientLink from "ingredient/ingredientLink.vue";
-import ingredientTickbox from "ingredient/ingredientTickbox.vue";
-import ingredientText from "ingredient/ingredientText.vue";
+import IngredientTitle from "ingredient/IngredientTitle.vue";
+import IngredientTime from "ingredient/IngredientTime.vue";
+import IngredientHost from "ingredient/IngredientHost.vue";
+import IngredientPlace from "ingredient/IngredientPlace.vue";
+import IngredientLink from "ingredient/IngredientLink.vue";
+import IngredientTickbox from "ingredient/IngredientTickbox.vue";
+import IngredientText from "ingredient/IngredientText.vue";
 
 export function useIngredientType(type: string) {
   switch (type) {
     case "title":
-      return ingredientTitle;
+      return IngredientTitle;
     case "db":
       return null;
     case "host":
-      return ingredientHost;
+      return IngredientHost;
     case "time":
-      return ingredientTime;
+      return IngredientTime;
     case "place":
-      return ingredientPlace;
+      return IngredientPlace;
     case "link":
-      return ingredientLink;
+      return IngredientLink;
     case "tickbox":
-      return ingredientTickbox;
+      return IngredientTickbox;
     case "text":
-      return ingredientText;
+      return IngredientText;
     default:
-      return ingredientText;
+      return IngredientText;
   }
 }
