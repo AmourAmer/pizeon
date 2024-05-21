@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
-// FIXME: there must be some way to use absolute path!
 import { stringMap } from "@utils/type";
 import { useUpdateType, useBindDatum } from "src/utils/slice";
 
