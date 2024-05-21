@@ -12,17 +12,20 @@ const props = defineProps<{
 }>();
 const cooked: Ref<EventNotice> = computed(() => {
   try {
-    return JSON.parse(props.data);
+    let parsed = JSON.parse(props.data);
+    if (!Array.isArray(parsed.raw))
+      parsed.raw = [{ type: "text", body: props.data }];
+    return parsed;
   } catch {}
 
   return {
     title: "missing title still",
-    raw: props.data,
+    raw: [{ type: "text", body: props.data }],
   };
 });
 const title = computed(() => cooked.value.title);
-// const avatar = computed(() => (cooked.value.avatar ? "O.o" : "o.O"));
 const raw = computed(() =>
+  // Vue doesn't support (?.filter || (() => [])())
   cooked.value.raw.filter((datum) => datum.type != "title"),
 );
 </script>
@@ -35,6 +38,7 @@ const raw = computed(() =>
       v-for="datum in raw"
       :is="useIngredientType(datum.type)"
       :datum="datum"
-    ></component>
+    >
+    </component>
   </div>
 </template>
