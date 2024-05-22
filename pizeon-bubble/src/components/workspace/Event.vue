@@ -114,6 +114,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
         :datum="datum"
         :destinations="destinations"
         :rValidator="rValidateSlice"
+        v-show="!datum.deleted"
       />
       <i @click="delete datum.type_change_warning">{{
         datum.type_change_warning

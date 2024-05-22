@@ -18,7 +18,7 @@ const placeholder = computed(() => "Where does it take place?");
 </script>
 
 <template>
-  <div v-show="!datum.deleted">
+  <div>
     Place:
     <textarea
       ref="textarea"
@@ -29,18 +29,3 @@ const placeholder = computed(() => "Where does it take place?");
     />
   </div>
 </template>
-
-<style scoped>
-textarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-textarea::-webkit-scrollbar {
-  display: none;
-}
-
-.resize-none {
-  resize: none;
-}
-</style>

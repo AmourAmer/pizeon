@@ -19,7 +19,7 @@ const placeholder = computed(() => "What should receiver know?");
 </script>
 
 <template>
-  <div v-show="!datum.deleted">
+  <div>
     <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
     <textarea
       ref="textarea"
@@ -30,18 +30,3 @@ const placeholder = computed(() => "What should receiver know?");
     />
   </div>
 </template>
-
-<style scoped>
-textarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-textarea::-webkit-scrollbar {
-  display: none;
-}
-
-.resize-none {
-  resize: none;
-}
-</style>

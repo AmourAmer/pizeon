@@ -25,7 +25,7 @@ const placeholder = computed(() => "paste table containing needed info here");
 </script>
 
 <template>
-  <div v-show="!datum.deleted">
+  <div>
     <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
     <textarea
       ref="textarea"

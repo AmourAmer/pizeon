@@ -31,7 +31,7 @@ const placeholder_title = computed(() => "Title?");
 </script>
 
 <template>
-  <div v-show="!datum.deleted">
+  <div>
     <!-- FIXME: name, cv, avatar etc. -->
     Host:
     <!-- TODO: avatar -->
@@ -67,18 +67,3 @@ const placeholder_title = computed(() => "Title?");
     />
   </div>
 </template>
-
-<style scoped>
-textarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-textarea::-webkit-scrollbar {
-  display: none;
-}
-
-.resize-none {
-  resize: none;
-}
-</style>
