@@ -20,10 +20,9 @@ const placeholder = computed(() => {
     "What notice do you want to send to " + dest + "?";
   switch (props.destinations.length) {
     case 0:
-      return "Please choose a server or email address to send notice to";
+      return "Please choose a server or email address to send notice to.";
     case 1:
-      if (props.destinations[0].length > 0) return msg(props.destinations[0]);
-      else return "Please specify an email address to send notice to";
+      return msg(props.destinations[0]);
     case 2:
       return msg(props.destinations[0] + " and " + props.destinations[1]);
     default:

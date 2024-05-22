@@ -39,7 +39,7 @@ const destinations = computed(() => {
     case "server":
       return servers.value;
     case "address":
-      return [splitEmailAddress(receivers.value || "").join(";")];
+      return splitEmailAddress(receivers.value || "");
     default:
       return servers.value;
   }
@@ -56,6 +56,7 @@ const templateComponent = computed(() => {
 });
 
 // TODO: duplicated, seems silly
+// TODO: preview for each receiver
 const previewComponent = computed(() => {
   switch (template.value) {
     case "event":
