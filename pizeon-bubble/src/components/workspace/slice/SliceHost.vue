@@ -14,7 +14,6 @@ const { textarea: textarea_title, input: input_title } = useTextareaAutosize({
 });
 
 const props = defineProps<{
-  servers: string[];
   rValidator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });

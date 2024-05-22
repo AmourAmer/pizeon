@@ -39,11 +39,11 @@ const destinations = computed(() => {
     case "server":
       return servers.value;
     case "address":
-      return [splitEmailAddress(receivers.value).join(";")];
+      return [splitEmailAddress(receivers.value || "").join(";")];
     default:
       return servers.value;
   }
-}); // FIXME: server-on/to
+});
 const signature: Ref<string> = ref("self");
 
 const templateComponent = computed(() => {
@@ -126,7 +126,11 @@ const nReceiver = computed(() => {
         <option :value="'event'">event</option>
       </select>
     </div>
-    <component :is="templateComponent" ref="draftPage" :servers="servers" />
+    <component
+      :is="templateComponent"
+      ref="draftPage"
+      :destinations="destinations"
+    />
     <!-- FIXME: export and copy on submitting -->
     <button @click="togglePreview">Toggle Preview</button>
     <button @click="submitForm">Publish</button>

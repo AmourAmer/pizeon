@@ -7,7 +7,6 @@ import { useUpdateType, useBindDatum } from "@utils/slice";
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
-  servers: string[];
   rValidator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });

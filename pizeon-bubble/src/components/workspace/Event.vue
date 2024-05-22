@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 const { data, nonDeletedIter, uniqueDataType } = useData("event");
 if (!data.value.length) pushInitTemplate();
 defineProps<{
-  servers: string[];
+  destinations: string[];
 }>();
 
 function finalize() {
@@ -112,7 +112,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       <component
         :is="slice(datum.type)"
         :datum="datum"
-        :servers="servers"
+        :destinations="destinations"
         :rValidator="rValidateSlice"
       />
       <i @click="delete datum.type_change_warning">{{
