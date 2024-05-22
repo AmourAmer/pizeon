@@ -116,16 +116,21 @@ export function useFinalize(datum: stringMap) {
     case "place":
     case "link":
     case "text":
+      if (!datum.body) return null;
       final.body = datum.body;
       break;
     case "db":
-      return null;
+      if (!datum.body) return null;
+      final.db = new Map(); // FIXME:
+      break;
     case "host":
+      if (!datum.name) return null;
       final.name = datum.name;
       final.title = datum.title;
       final.description = datum.description;
       break;
     case "tickbox":
+      if (!datum.body) return null;
       final.body = datum.body;
       final.id = datum.id;
       break;
