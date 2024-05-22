@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed } from "vue";
-import { useTextareaAutosize } from "@vueuse/core";
+import { useLocalStorage, useTextareaAutosize } from "@vueuse/core";
 import Event from "./workspace/Event.vue";
 import PreviewEvent from "./meal/Event.vue";
 import { stringMap } from "@utils/type";
 import { splitEmailAddress } from "@utils/email";
+import { watch } from "vue";
 
 // FIXME: refactor
 const template = ref("event");
@@ -33,13 +34,14 @@ const submitForm = () => {
   // TODO: ~~send back a notice containing server respone~~
 };
 const foo = ref("");
-const servers: Ref<string[]> = ref(["self"]);
+// TODO: use a workspace related id
+const servers = useLocalStorage("servers", ["self"]);
 const destinations = computed(() => {
   switch (receiver.value) {
     case "server":
       return servers.value;
     case "address":
-      return splitEmailAddress(receivers.value || "");
+      return splitEmailAddress(emailAddresses.value || "");
     default:
       return servers.value;
   }
@@ -74,10 +76,16 @@ const togglePreview = () => {
   foo.value = "";
 };
 
-const { textarea, input: receivers } = useTextareaAutosize({
+const localStorageEmailAddresses = useLocalStorage("emailAddresses", "");
+const { textarea, input: emailAddresses } = useTextareaAutosize({
   styleProp: "minHeight",
 });
-const receiver = ref("server");
+emailAddresses.value = localStorageEmailAddresses.value;
+watch(
+  emailAddresses,
+  (newEmailAddresses) => (localStorageEmailAddresses.value = newEmailAddresses),
+);
+const receiver = useLocalStorage("receiver", "server");
 const nextReceiver = () => {
   switch (receiver.value) {
     case "address":
@@ -107,7 +115,7 @@ const nReceiver = computed(() => {
       <textarea
         ref="textarea"
         class="resize-none"
-        v-model="receivers"
+        v-model="emailAddresses"
         :rows="1"
         v-else-if="receiver == 'address'"
       />
