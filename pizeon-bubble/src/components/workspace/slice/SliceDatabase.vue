@@ -2,7 +2,7 @@
 import { Ref, computed } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 import { stringMap } from "@utils/type";
-import { useUpdateType, useBindDatum } from "src/utils/slice";
+import { useUpdateType, useBindDatum } from "@utils/slice";
 
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
@@ -13,7 +13,11 @@ const props = defineProps<{
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 useBindDatum(datum, { body: input });
 const db = computed(() => {
-  return input.value.split("\n").map((it) => it.split("\t"));
+  try {
+    return input.value.split("\n").map((it) => it.split("\t"));
+  } catch {
+    return [];
+  }
 });
 
 useUpdateType(datum, { body: input }, props.rValidator);
