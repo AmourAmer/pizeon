@@ -83,7 +83,8 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
         // BUG: yes, you can add multiple titles by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
         return false;
       }
-    case "time" || "place":
+    case "time":
+    case "place":
       return uniqueType(type);
     default:
       return true;

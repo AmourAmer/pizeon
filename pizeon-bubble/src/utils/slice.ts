@@ -111,7 +111,11 @@ export function useBindDatum(datum: Ref<stringMap>, map: stringMap) {
 export function useFinalize(datum: stringMap) {
   const final: stringMap = { type: datum.type };
   switch (datum.type) {
-    case "title" || "time" || "place" || "link" || "text":
+    case "title":
+    case "time":
+    case "place":
+    case "link":
+    case "text":
       final.body = datum.body;
       break;
     case "db":
@@ -121,8 +125,9 @@ export function useFinalize(datum: stringMap) {
       final.title = datum.title;
       final.description = datum.description;
       break;
-    case "tickbox": // TODO: id
+    case "tickbox":
       final.body = datum.body;
+      final.id = datum.id;
       break;
   }
   return final;
