@@ -32,10 +32,7 @@ pub async fn get_notice(id: &str) -> Result<Meal, ()> {
     Ok(Meal {
         repo: which_repo(&h).unwrap_or(Repo::Junk),
         notice: Notice {
-            title: body["title"]
-                .as_str()
-                .unwrap_or("Missing title!")
-                .into(),
+            title: body["title"].as_str().unwrap_or("Missing title!").into(),
             bare_body: h.body,
             date: (h.timestamp).unix_timestamp(),
         },
@@ -57,12 +54,12 @@ pub async fn get_abstract(id: &str) -> Result<Abstract, ()> {
 
 #[tauri::command]
 pub async fn send_notice(
-    servers: Vec<String>,
+    destinations: Vec<String>,
     body: String,
     signatures: Vec<String>,
 ) -> Result<(), ()> {
-    for server in servers {
-        match server.as_str() {
+    for destination in destinations {
+        match destination.as_str() {
             "self" | "localhost" => {
                 let h: RawNotice = RawNotice::create()
                     .timestamp(OffsetDateTime::now_utc())

@@ -19,11 +19,12 @@ const submitForm = () => {
   }
   // TODO: don't forget signature
   let bundle: stringMap = draftPage.value?.finalize() || {};
-  bundle.servers = servers.value;
+  bundle.destinations = destinations.value;
   bundle.signature = [signature.value];
   bundle.template = template.value;
+  console.log(bundle);
   invoke("send_notice", {
-    servers: servers.value,
+    destinations: destinations.value,
     body: JSON.stringify(bundle),
     signatures: [signature.value].map((s) => s),
   });
@@ -31,6 +32,7 @@ const submitForm = () => {
 };
 const foo = ref("");
 const servers: Ref<string[]> = ref(["self"]);
+const destinations = computed(() => servers.value); // TODO: server-on/to
 const signature: Ref<string> = ref("self");
 
 const templateComponent = computed(() => {
@@ -72,7 +74,7 @@ const nextReceiver = () => {
   }
 };
 const toggleReceiver = () => (receiver.value = nextReceiver());
-const rReceiver = computed(() => {
+const nReceiver = computed(() => {
   return "use " + nextReceiver();
 });
 </script>
@@ -88,7 +90,7 @@ const rReceiver = computed(() => {
       </select>
       <!-- TODO: this is really ugly textarea -->
       <textarea v-else-if="receiver == 'address'" />
-      <button @click="toggleReceiver">{{ rReceiver }}</button>
+      <button @click="toggleReceiver">{{ nReceiver }}</button>
     </div>
     <div>
       Sent by:
