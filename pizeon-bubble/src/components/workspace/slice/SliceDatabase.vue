@@ -38,18 +38,3 @@ const placeholder = computed(() => "paste table containing needed info here");
     {{ db }}
   </div>
 </template>
-
-<style scoped>
-textarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-textarea::-webkit-scrollbar {
-  display: none;
-}
-
-.resize-none {
-  resize: none;
-}
-</style>

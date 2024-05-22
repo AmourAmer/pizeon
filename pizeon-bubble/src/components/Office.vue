@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref, Ref, computed } from "vue";
+import { useTextareaAutosize } from "@vueuse/core";
 import Event from "./workspace/Event.vue";
 import PreviewEvent from "./meal/Event.vue";
-import { stringMap } from "../utils/type";
+import { stringMap } from "@utils/type";
+import { splitEmailAddress } from "@utils/email";
 
 // FIXME: refactor
 const template = ref("event");
@@ -32,7 +34,16 @@ const submitForm = () => {
 };
 const foo = ref("");
 const servers: Ref<string[]> = ref(["self"]);
-const destinations = computed(() => servers.value); // TODO: server-on/to
+const destinations = computed(() => {
+  switch (receiver.value) {
+    case "server":
+      return servers.value;
+    case "address":
+      return [splitEmailAddress(receivers.value).join(";")];
+    default:
+      return servers.value;
+  }
+}); // FIXME: server-on/to
 const signature: Ref<string> = ref("self");
 
 const templateComponent = computed(() => {
@@ -62,6 +73,9 @@ const togglePreview = () => {
   foo.value = "";
 };
 
+const { textarea, input: receivers } = useTextareaAutosize({
+  styleProp: "minHeight",
+});
 const receiver = ref("server");
 const nextReceiver = () => {
   switch (receiver.value) {
@@ -89,7 +103,13 @@ const nReceiver = computed(() => {
         <option :value="'test 3'">test 3</option>
       </select>
       <!-- TODO: this is really ugly textarea -->
-      <textarea v-else-if="receiver == 'address'" />
+      <textarea
+        ref="textarea"
+        class="resize-none"
+        v-model="receivers"
+        :rows="1"
+        v-else-if="receiver == 'address'"
+      />
       <button @click="toggleReceiver">{{ nReceiver }}</button>
     </div>
     <div>
@@ -119,3 +139,18 @@ const nReceiver = computed(() => {
     <!-- TODO: click to open mailto: link and use ctx as body -->
   </div>
 </template>
+
+<style scoped>
+textarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.resize-none {
+  resize: none;
+}
+</style>
