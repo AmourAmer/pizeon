@@ -59,17 +59,36 @@ const togglePreview = () => {
   previewShow.value = !previewShow.value;
   foo.value = "";
 };
+
+const receiver = ref("server");
+const nextReceiver = () => {
+  switch (receiver.value) {
+    case "address":
+      return "server";
+    case "server":
+      return "address";
+    default:
+      return "server";
+  }
+};
+const toggleReceiver = () => (receiver.value = nextReceiver());
+const rReceiver = computed(() => {
+  return "use " + nextReceiver();
+});
 </script>
 
 <template>
   <div>
     <div>
       Send to:
-      <select multiple v-model="servers">
+      <select multiple v-model="servers" v-if="receiver == 'server'">
         <option :value="'self'">self</option>
         <option :value="'test 1'">test 1</option>
         <option :value="'test 3'">test 3</option>
       </select>
+      <!-- TODO: this is really ugly textarea -->
+      <textarea v-else-if="receiver == 'address'" />
+      <button @click="toggleReceiver">{{ rReceiver }}</button>
     </div>
     <div>
       Sent by:
