@@ -29,10 +29,11 @@ const {
 }> = toRefs(
   computedAsync(async () => await import(`./${datum.value["type"]}.ts`), {
     placeholderFn: () => "",
+    rowsFn: () => 9, // WARNING: can't drop this, ?
   }),
 ); // TODO: error handling
 const placeholder = computed(() => placeholderFn.value(props.destinations));
-const rows = computed(rowsFn?.value || (() => 3));
+const rows = computed(() => (rowsFn?.value || (() => 3))()); // FIXME: this is little bit strange, and it misses a tick shrinking
 </script>
 
 <template>

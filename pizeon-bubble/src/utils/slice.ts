@@ -8,14 +8,14 @@ import { toRefs } from "@vueuse/core";
 
 // TODO: define an enum
 export const dict = {
-  title: ["title"],
+  title: ["title", "T"],
   db: ["db", "database"],
   host: ["host", "hostress"],
   time: ["time", "date"],
   place: ["place", "where"],
   link: ["link", "url"],
   tickbox: ["tickbox", "checkbox", "tick", "check"],
-  text: ["text"],
+  text: ["text", "t"],
 };
 
 const sliceType = new Map([
