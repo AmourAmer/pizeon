@@ -93,18 +93,6 @@ export function useUpdateType(
   }
 }
 
-export function useBindDatum(datum: Ref<stringMap>, map: stringMap) {
-  for (let field in map) {
-    if (datum.value[field]) {
-      map[field].value = datum.value[field];
-    }
-
-    watch(map[field] as Ref<string>, (newInput) => {
-      datum.value[field] = newInput;
-    });
-  }
-}
-
 export function useFinalize(datum: stringMap) {
   const final: stringMap = { type: datum.type };
   switch (datum.type) {
