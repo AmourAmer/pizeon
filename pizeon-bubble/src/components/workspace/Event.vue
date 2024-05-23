@@ -109,13 +109,15 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. Maybe it's because display: none?! -->
       <button @click="datum.deleted = !datum.deleted">x</button>
       <!-- TODO: why cannot use v-model! -->
-      <component
-        :is="slice(datum.type)"
-        :datum="datum"
-        :destinations="destinations"
-        :rValidator="rValidateSlice"
-        v-show="!datum.deleted"
-      />
+      <Suspense>
+        <component
+          :is="slice(datum.type)"
+          :datum="datum"
+          :destinations="destinations"
+          :rValidator="rValidateSlice"
+          v-show="!datum.deleted"
+        />
+      </Suspense>
       <i @click="delete datum.type_change_warning">{{
         datum.type_change_warning
       }}</i>

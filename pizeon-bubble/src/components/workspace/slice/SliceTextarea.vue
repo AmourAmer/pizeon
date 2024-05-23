@@ -15,29 +15,15 @@ useBindDatum(datum, { body: input });
 
 useUpdateType(datum, { body: input }, props.rValidator);
 
-const placeholder = computed(() => {
-  const msg = (dest: string) =>
-    "What notice do you want to send to " + dest + "?";
-  switch (props.destinations.length) {
-    case 0:
-      return "Please choose a server or email address to send notice to.";
-    case 1:
-      return msg(props.destinations[0]);
-    case 2:
-      return msg(props.destinations[0] + " and " + props.destinations[1]);
-    default:
-      return msg(
-        props.destinations.slice(0, -1).join(", ") +
-          ", and " +
-          props.destinations.slice(-1),
-      );
-  }
-});
+const { placeholderFn } = await import(`./${datum.value["type"]}.ts`); // TODO: error handling
+const placeholder = computed(() => placeholderFn(props.destinations));
 </script>
 
 <template>
   <div>
+    {{ datum.type.toUpperCase() }}:
     <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
+    <!-- FIXME: Ctrl-Z -->
     <textarea
       ref="textarea"
       class="resize-none"
