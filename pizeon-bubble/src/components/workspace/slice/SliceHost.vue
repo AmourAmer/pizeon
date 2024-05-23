@@ -1,33 +1,38 @@
 <script setup lang="ts">
-import { Ref, computed } from "vue";
-import { useTextareaAutosize } from "@vueuse/core";
+import { Ref, ref, computed } from "vue";
+import { useTextareaAutosize, toRefs } from "@vueuse/core";
 import { stringMap } from "@utils/type";
-import { useUpdateType, useBindDatum } from "src/utils/slice";
-
-const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
-// TODO: maybe fix-height is just ok
-const { textarea: textarea_name, input: input_name } = useTextareaAutosize({
-  styleProp: "minHeight",
-});
-const { textarea: textarea_title, input: input_title } = useTextareaAutosize({
-  styleProp: "minHeight",
-});
+import { useUpdateType } from "@utils/slice";
 
 const props = defineProps<{
   validator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
-useBindDatum(datum, {
-  name: input_name,
-  title: input_title,
-  description: input,
+
+useUpdateType(datum, ["description"], props.validator);
+
+const textarea_name = ref();
+useTextareaAutosize({
+  element: textarea_name,
+  input: toRefs(datum)["name"],
+  styleProp: "minHeight",
+});
+const textarea_title = ref();
+useTextareaAutosize({
+  element: textarea_title,
+  input: toRefs(datum)["title"],
+  styleProp: "minHeight",
+});
+const textarea = ref();
+useTextareaAutosize({
+  element: textarea,
+  input: toRefs(datum)["description"],
+  styleProp: "minHeight",
 });
 
-useUpdateType(datum, { description: input }, props.validator);
-
-const placeholder = computed(() => "Description of this guy");
 const placeholder_name = computed(() => "Who's it?");
 const placeholder_title = computed(() => "Title?");
+const placeholder = computed(() => "Description of this guy");
 </script>
 
 <template>
@@ -44,7 +49,7 @@ const placeholder_title = computed(() => "Title?");
     <textarea
       ref="textarea_name"
       class="resize-none"
-      v-model="input_name"
+      v-model="datum.name"
       :placeholder="placeholder_name"
       :rows="1"
     />
@@ -53,7 +58,7 @@ const placeholder_title = computed(() => "Title?");
     <textarea
       ref="textarea_title"
       class="resize-none"
-      v-model="input_title"
+      v-model="datum.title"
       :placeholder="placeholder_title"
       :rows="1"
     />
@@ -61,7 +66,7 @@ const placeholder_title = computed(() => "Title?");
     <textarea
       ref="textarea"
       class="resize-none"
-      v-model="input"
+      v-model="datum.description"
       :placeholder="placeholder"
       :rows="3"
     />
