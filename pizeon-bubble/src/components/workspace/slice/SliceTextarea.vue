@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Ref, ref, computed } from "vue";
-import { toRefs, useTextareaAutosize } from "@vueuse/core";
+import { computedAsync, toRefs, useTextareaAutosize } from "@vueuse/core";
 import { stringMap } from "@utils/type";
 import { useUpdateType } from "@utils/slice";
+import { ToRefs } from "vue";
 
 const props = defineProps<{
   destinations: string[];
@@ -22,10 +23,16 @@ useUpdateType(datum, ["body"], props.validator);
 const {
   placeholderFn,
   rowsFn,
-}: { placeholderFn: (datum: stringMap) => string; rowsFn?: () => number } =
-  await import(`./${datum.value["type"]}.ts`); // TODO: error handling
-const placeholder = computed(() => placeholderFn(props.destinations));
-const rows = computed(rowsFn || (() => 3));
+}: ToRefs<{
+  placeholderFn: (datum: stringMap) => string;
+  rowsFn?: () => number;
+}> = toRefs(
+  computedAsync(async () => await import(`./${datum.value["type"]}.ts`), {
+    placeholderFn: () => "",
+  }),
+); // TODO: error handling
+const placeholder = computed(() => placeholderFn.value(props.destinations));
+const rows = computed(rowsFn?.value || (() => 3));
 </script>
 
 <template>
