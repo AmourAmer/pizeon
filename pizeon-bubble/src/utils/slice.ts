@@ -3,7 +3,6 @@ import { watch, Ref } from "vue";
 import { stringMap } from "@utils/type";
 import SliceDatabase from "slice/SliceDatabase.vue";
 import SliceHost from "slice/SliceHost.vue";
-import SliceTickbox from "slice/SliceTickbox.vue";
 import SliceTextarea from "slice/SliceTextarea.vue";
 
 // TODO: define an enum
@@ -25,7 +24,7 @@ const sliceType = {
   time: SliceTextarea,
   place: SliceTextarea,
   link: SliceTextarea,
-  tickbox: SliceTickbox,
+  tickbox: SliceTextarea,
   text: SliceTextarea,
 };
 
