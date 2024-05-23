@@ -7,7 +7,7 @@ import { useUpdateType, useBindDatum } from "@utils/slice";
 const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
-  rValidator: (type: string, datum: Ref<stringMap>) => boolean;
+  validator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 useBindDatum(datum, { body: input });
@@ -19,7 +19,7 @@ const db = computed(() => {
   }
 });
 
-useUpdateType(datum, { body: input }, (...args) => !props.rValidator(...args));
+useUpdateType(datum, { body: input }, props.validator);
 
 const placeholder = computed(() => "paste table containing needed info here");
 </script>

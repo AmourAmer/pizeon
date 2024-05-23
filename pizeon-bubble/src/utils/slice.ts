@@ -75,7 +75,7 @@ export function useUpdateType(
   map: stringMap,
   Validator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
-  // Intended to watch input(map[key]) only, instead of with rValidator.
+  // Intended to watch input(map[key]) only, instead of with Validator.
   // To avoid multiple potential competing type change at a time
   for (let field in map) {
     watch(map[field] as Ref<string>, (newInput) => {

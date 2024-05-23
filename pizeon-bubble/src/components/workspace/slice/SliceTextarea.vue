@@ -8,12 +8,12 @@ const { textarea, input } = useTextareaAutosize({ styleProp: "minHeight" });
 
 const props = defineProps<{
   destinations: string[];
-  rValidator: (type: string, datum: Ref<stringMap>) => boolean;
+  validator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 useBindDatum(datum, { body: input });
 
-useUpdateType(datum, { body: input }, props.rValidator);
+useUpdateType(datum, { body: input }, props.validator);
 
 const {
   placeholderFn,

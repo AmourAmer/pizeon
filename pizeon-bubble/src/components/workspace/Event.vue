@@ -17,7 +17,9 @@ function finalize() {
   let nonDeletedData = [...nonDeletedIter(data.value)];
   const id = (e: any) => e;
   const result: { title?: string; raw: stringMap[] } = {
-    raw: nonDeletedData.map((datum) => useFinalize(datum)).filter(id),
+    raw: nonDeletedData
+      .map((datum) => useFinalize(datum))
+      .filter(id) as stringMap[],
   };
   if (nonDeletedData[0]?.type == "title") {
     result.title = nonDeletedData[0].body;
@@ -58,17 +60,8 @@ const addItem = (type = "text", idx = data.value.length) => {
 const slice = useSliceType();
 const nextSliceType = useNextSliceType();
 
-// FIXME: deprecate all other rVali's
-// should let existing slices use this
-const rValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
-  type: string,
-  datum: Ref<stringMap>,
-) => {
-  return !ValidateSlice(type, datum);
-};
-
 // TODO: enum warnings, don't show warning in some time after canceling
-const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
+const validateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   type: string,
   datum: Ref<stringMap>,
 ) => {
@@ -114,7 +107,7 @@ const ValidateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
           :is="slice(datum.type)"
           :datum="datum"
           :destinations="destinations"
-          :rValidator="rValidateSlice"
+          :validator="validateSlice"
           v-show="!datum.deleted"
         />
       </Suspense>

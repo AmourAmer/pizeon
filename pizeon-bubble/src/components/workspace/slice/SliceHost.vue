@@ -14,7 +14,7 @@ const { textarea: textarea_title, input: input_title } = useTextareaAutosize({
 });
 
 const props = defineProps<{
-  rValidator: (type: string, datum: Ref<stringMap>) => boolean;
+  validator: (type: string, datum: Ref<stringMap>) => boolean;
 }>();
 const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 useBindDatum(datum, {
@@ -23,11 +23,7 @@ useBindDatum(datum, {
   description: input,
 });
 
-useUpdateType(
-  datum,
-  { description: input },
-  (...args) => !props.rValidator(...args),
-);
+useUpdateType(datum, { description: input }, props.validator);
 
 const placeholder = computed(() => "Description of this guy");
 const placeholder_name = computed(() => "Who's it?");
