@@ -17,24 +17,23 @@ export const dict = {
   text: ["text"],
 };
 
-const sliceType = {
-  title: SliceTextarea,
-  db: SliceDatabase,
-  host: SliceHost,
-  time: SliceTextarea,
-  place: SliceTextarea,
-  link: SliceTextarea,
-  tickbox: SliceTextarea,
-  text: SliceTextarea,
-};
+const sliceType = new Map([
+  ["title", SliceTextarea],
+  ["db", SliceDatabase],
+  ["host", SliceHost],
+  ["time", SliceTextarea],
+  ["place", SliceTextarea],
+  ["link", SliceTextarea],
+  ["tickbox", SliceTextarea],
+  ["text", SliceTextarea],
+]);
 
-export function useSliceType(types = Object.keys(sliceType)) {
+export function useSliceType(types = [...sliceType.keys()]) {
   return (type: string) => {
     {
       let idx = types.indexOf(type);
       if (idx == -1) idx = types.length - 1;
-      if (types[idx] in sliceType)
-        return sliceType[types[idx] as keyof typeof sliceType];
+      if (sliceType.has(types[idx])) return sliceType.get(types[idx]);
       return SliceTextarea;
     }
   };
