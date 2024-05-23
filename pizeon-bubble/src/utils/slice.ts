@@ -4,6 +4,7 @@ import { stringMap } from "@utils/type";
 import SliceDatabase from "slice/SliceDatabase.vue";
 import SliceHost from "slice/SliceHost.vue";
 import SliceTextarea from "slice/SliceTextarea.vue";
+import { toRefs } from "@vueuse/core";
 
 // TODO: define an enum
 export const dict = {
@@ -72,13 +73,17 @@ function done(
 
 export function useUpdateType(
   datum: Ref<stringMap>,
-  map: stringMap,
+  fileds: string[],
   Validator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
   // Intended to watch input(map[key]) only, instead of with Validator.
   // To avoid multiple potential competing type change at a time
-  for (let field in map) {
-    watch(map[field] as Ref<string>, (newInput) => {
+  if (!Array.isArray(fileds)) return;
+  for (let field of fileds) {
+    console.log("shit", typeof datum, datum.value, field, datum.value[field]);
+    watch(toRefs(datum)[field] as Ref<string>, (newInput) => {
+      // Hahaha, toRefs, this is what I've been seeking for the whole morning. And thx vueuse!
+      console.log(newInput);
       let type: keyof typeof dict;
       for (type in dict) {
         for (let i of dict[type]) {
