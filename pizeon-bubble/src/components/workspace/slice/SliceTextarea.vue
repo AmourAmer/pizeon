@@ -15,8 +15,13 @@ useBindDatum(datum, { body: input });
 
 useUpdateType(datum, { body: input }, props.rValidator);
 
-const { placeholderFn } = await import(`./${datum.value["type"]}.ts`); // TODO: error handling
+const {
+  placeholderFn,
+  rowsFn,
+}: { placeholderFn: (datum: stringMap) => string; rowsFn?: () => number } =
+  await import(`./${datum.value["type"]}.ts`); // TODO: error handling
 const placeholder = computed(() => placeholderFn(props.destinations));
+const rows = computed(rowsFn || (() => 3));
 </script>
 
 <template>
@@ -29,7 +34,7 @@ const placeholder = computed(() => placeholderFn(props.destinations));
       class="resize-none"
       v-model="input"
       :placeholder="placeholder"
-      :rows="3"
+      :rows="rows"
     />
   </div>
 </template>

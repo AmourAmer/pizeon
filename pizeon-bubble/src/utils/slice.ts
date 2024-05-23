@@ -1,12 +1,8 @@
 // TODO: maybe need refactor, maybe not
 import { watch, Ref } from "vue";
 import { stringMap } from "@utils/type";
-import SliceTitle from "slice/SliceTitle.vue";
 import SliceDatabase from "slice/SliceDatabase.vue";
 import SliceHost from "slice/SliceHost.vue";
-import SliceTime from "slice/SliceTime.vue";
-import SlicePlace from "slice/SlicePlace.vue";
-import SliceLink from "slice/SliceLink.vue";
 import SliceTickbox from "slice/SliceTickbox.vue";
 import SliceTextarea from "slice/SliceTextarea.vue";
 
@@ -23,12 +19,12 @@ export const dict = {
 };
 
 const sliceType = {
-  title: SliceTitle,
+  title: SliceTextarea,
   db: SliceDatabase,
   host: SliceHost,
-  time: SliceTime,
-  place: SlicePlace,
-  link: SliceLink,
+  time: SliceTextarea,
+  place: SliceTextarea,
+  link: SliceTextarea,
   tickbox: SliceTickbox,
   text: SliceTextarea,
 };
