@@ -34,6 +34,11 @@ const {
 ); // TODO: error handling
 const placeholder = computed(() => placeholderFn.value(props.destinations));
 const rows = computed(() => (rowsFn?.value || (() => 3))()); // FIXME: this is little bit strange, and it misses a tick shrinking
+
+// FIXME: this solution is not good enough
+const vFocus = {
+  mounted: (el: HTMLElement) => el.focus(),
+};
 </script>
 
 <template>
@@ -47,6 +52,7 @@ const rows = computed(() => (rowsFn?.value || (() => 3))()); // FIXME: this is l
       v-model="datum.body"
       :placeholder="placeholder"
       :rows="rows"
+      v-focus
     />
   </div>
 </template>
