@@ -19,7 +19,7 @@ const db = computed(() => {
   }
 });
 
-useUpdateType(datum, { body: input }, props.rValidator);
+useUpdateType(datum, { body: input }, (...args) => !props.rValidator(...args));
 
 const placeholder = computed(() => "paste table containing needed info here");
 </script>

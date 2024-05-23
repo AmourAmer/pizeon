@@ -57,11 +57,11 @@ function done(
   type: string,
   datum: Ref<stringMap>,
   field: string,
-  rValidator: (type: string, datum: Ref<stringMap>) => boolean,
+  Validator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
   // TODO: case insensitive
   if (!newInput.startsWith(pattern + ": ")) return false;
-  if (rValidator(type, datum)) return false;
+  if (!Validator(type, datum)) return false;
   // FIXME: re-focus
   datum.value.type = type;
   // BUG: if type keeps, map[field] changes but doesn't update patch
@@ -73,7 +73,7 @@ function done(
 export function useUpdateType(
   datum: Ref<stringMap>,
   map: stringMap,
-  rValidator: (type: string, datum: Ref<stringMap>) => boolean,
+  Validator: (type: string, datum: Ref<stringMap>) => boolean,
 ) {
   // Intended to watch input(map[key]) only, instead of with rValidator.
   // To avoid multiple potential competing type change at a time
@@ -82,7 +82,7 @@ export function useUpdateType(
       let type: keyof typeof dict;
       for (type in dict) {
         for (let i of dict[type]) {
-          if (!done(newInput, i, type, datum, field, rValidator)) continue;
+          if (!done(newInput, i, type, datum, field, Validator)) continue;
           return;
         }
       }

@@ -23,7 +23,11 @@ useBindDatum(datum, {
   description: input,
 });
 
-useUpdateType(datum, { description: input }, props.rValidator);
+useUpdateType(
+  datum,
+  { description: input },
+  (...args) => !props.rValidator(...args),
+);
 
 const placeholder = computed(() => "Description of this guy");
 const placeholder_name = computed(() => "Who's it?");
