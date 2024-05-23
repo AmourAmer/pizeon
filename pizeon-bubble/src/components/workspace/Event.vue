@@ -21,9 +21,7 @@ function finalize() {
       .map((datum) => useFinalize(datum))
       .filter(id) as stringMap[],
   };
-  if (nonDeletedData[0]?.type == "title") {
-    result.title = nonDeletedData[0].body;
-  }
+  if (nonDeletedData[0]?.type == "title") result.title = nonDeletedData[0].body;
   return result;
 }
 defineExpose({

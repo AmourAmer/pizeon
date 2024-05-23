@@ -18,16 +18,6 @@ useTextareaAutosize({
   styleProp: "minHeight",
 });
 
-const db = computed(() => {
-  try {
-    return (datum.value["body"] as string)
-      .split("\n")
-      .map((it) => it.split("\t"));
-  } catch (e) {
-    return [];
-  }
-});
-
 const placeholder = computed(() => "paste table containing needed info here");
 </script>
 
@@ -41,6 +31,5 @@ const placeholder = computed(() => "paste table containing needed info here");
       :placeholder="placeholder"
       :rows="5"
     />
-    {{ db }}
   </div>
 </template>

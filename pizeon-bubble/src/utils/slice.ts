@@ -5,6 +5,7 @@ import SliceDatabase from "slice/SliceDatabase.vue";
 import SliceHost from "slice/SliceHost.vue";
 import SliceTextarea from "slice/SliceTextarea.vue";
 import { toRefs } from "@vueuse/core";
+import { db } from "src/components/workspace/slice/database";
 
 // TODO: define an enum
 export const dict = {
@@ -107,7 +108,7 @@ export function useFinalize(datum: stringMap) {
       break;
     case "db":
       if (!datum.body) return null;
-      final.db = new Map(); // FIXME:
+      final.db = db(datum);
       break;
     case "host":
       if (!datum.name) return null;
