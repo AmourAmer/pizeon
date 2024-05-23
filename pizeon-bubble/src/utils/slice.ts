@@ -80,6 +80,7 @@ export function useUpdateType(
   // To avoid multiple potential competing type change at a time
   if (!Array.isArray(fileds)) return;
   for (let field of fileds) {
+    if (!datum.value[field]) datum.value[field] = "";
     watch(toRefs(datum)[field] as Ref<string>, (newInput) => {
       // Hahaha, toRefs, this is what I've been seeking for the whole morning. And thx vueuse!
       let type: keyof typeof dict;

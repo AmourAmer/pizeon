@@ -25,7 +25,6 @@ const submitForm = () => {
   bundle.destinations = destinations.value;
   bundle.signature = [signature.value];
   bundle.template = template.value;
-  console.log(bundle);
   invoke("send_notice", {
     destinations: destinations.value,
     body: JSON.stringify(bundle),
