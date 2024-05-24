@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { ref, Ref, computed } from "vue";
+import { ref, Ref, computed, watch } from "vue";
 import { useLocalStorage, useTextareaAutosize } from "@vueuse/core";
 import Event from "./workspace/Event.vue";
 import PreviewEvent from "./meal/Event.vue";
 import { stringMap } from "@utils/type";
 import { splitEmailAddress } from "@utils/email";
-import { watch } from "vue";
 
 // FIXME: refactor
 const template = ref("event");
@@ -160,9 +159,5 @@ textarea {
 
 textarea::-webkit-scrollbar {
   display: none;
-}
-
-.resize-none {
-  resize: none;
 }
 </style>

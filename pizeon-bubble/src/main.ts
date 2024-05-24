@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
 import router from "./router";
-import "./styles.css";
+import "./index.css";
 import App from "./App.vue";
 
 const i18n = createI18n({
