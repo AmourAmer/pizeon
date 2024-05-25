@@ -87,16 +87,7 @@ const validateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   <div>
     <button @click="addItem('text', 0)">+</button>
     {{ data }}
-    <div
-      v-for="(datum, i) in data"
-      :key="datum.id"
-      style="
-        border: 1px solid black;
-        margin: 3px;
-        display: flex;
-        justify-content: center;
-      "
-    >
+    <div v-for="(datum, i) in data" :key="datum.id">
       <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. Maybe it's because display: none?! -->
       <button @click="datum.deleted = !datum.deleted">x</button>
       <!-- TODO: why cannot use v-model! -->

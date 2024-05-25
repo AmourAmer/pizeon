@@ -31,7 +31,7 @@ const raw = computed(() =>
 </script>
 
 <template>
-  <div style="background: #ddd">
+  <div>
     <h1>{{ title }}</h1>
     <!-- FIXME: don't nav at numbers -->
     <component

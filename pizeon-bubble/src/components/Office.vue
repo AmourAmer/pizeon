@@ -150,14 +150,3 @@ const nReceiver = computed(() => {
     <!-- TODO: click to open mailto: link and use ctx as body -->
   </div>
 </template>
-
-<style scoped>
-textarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-textarea::-webkit-scrollbar {
-  display: none;
-}
-</style>

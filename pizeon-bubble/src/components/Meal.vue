@@ -47,7 +47,7 @@ const signs: Ref<Signature[]> = computed(() => {
 
 <template>
   <!-- TODO: 奏折/悬赏/皇榜/魔鬼契约/流云/羊皮 -->
-  <div style="box-shadow: 0 8px 8px rgba(0, 0, 0, 0.5); margin: 8px">
+  <div>
     <button @click="$emit('close')">Close me</button>
     <b>Repo: {{ repo }}</b>
     <component :is="noticeComponent" :data="notice.bare_body" :repo="repo" />

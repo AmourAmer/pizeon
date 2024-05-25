@@ -55,7 +55,7 @@ async function move(id: string, repo: Repo) {
   <div
     v-for="(abstract, i) in abstracts"
     :key="abstract.value.date"
-    style="box-shadow: 0 8px 8px rgba(128, 0, 128, 0.5); margin: 48px"
+    class="card glass"
   >
     {{ abstract }}
     <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
