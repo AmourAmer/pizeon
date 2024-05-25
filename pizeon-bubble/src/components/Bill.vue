@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
-import { Ref } from "vue";
+import { Ref, computed } from "vue";
 import { computedAsync, useStorage } from "@vueuse/core";
 import Abstract from "./Abstract.vue";
-import { Repo } from "../utils/type";
-
-interface Abstract {
-  title: string;
-  body?: string;
-  date: number;
-}
+import { Repo, AbstractType } from "@utils/type";
 
 const props = defineProps<{ bill: string[] }>();
 const emit = defineEmits<{
@@ -17,7 +11,7 @@ const emit = defineEmits<{
 }>();
 const ids: Ref<string[]> = useStorage("mealIds", []);
 
-function getS(bill: string[]): Promise<Abstract>[] {
+function getS(bill: string[]): Promise<AbstractType>[] {
   return bill.map((item) =>
     invoke("get_abstract", {
       id: item,
@@ -31,7 +25,8 @@ function addId(newId: string) {
 }
 
 // TODO: introduce id, :key="id"
-const abstracts: Ref<Ref<Abstract>[]> = computedAsync(async () =>
+// TODO: load a few at 1st and load more on scroll
+const abstracts: Ref<Ref<AbstractType>[]> = computed(() =>
   getS(props.bill).map((ab) =>
     computedAsync(async () => await ab, {
       title: "fetch or parse failed, consider deleting it?",
@@ -55,7 +50,8 @@ async function move(id: string, repo: Repo) {
   <div
     v-for="(abstract, i) in abstracts"
     :key="abstract.value.date"
-    class="card glass bg-neutral text-neutral-content"
+    class="card bg-neutral text-neutral-content"
+    :class="abstract.value.class || 'glass'"
   >
     <div class="card-body items-center text-center">
       {{ abstract }}
