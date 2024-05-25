@@ -66,7 +66,9 @@ onKeyStroke("Escape", () => {
     </nav>
     <router-view v-slot="{ Component }">
       <transition>
-        <component :is="Component" />
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
       </transition>
     </router-view>
   </div>
