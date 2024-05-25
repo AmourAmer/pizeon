@@ -15,9 +15,10 @@ const { month, day } = time(computed(() => props.date));
 </script>
 
 <template>
-  <div>
-    <button @click="$emit('check')">
-      {{ title }} {{ body ? ": " + body : "" }} ~ {{ month }} / {{ day }}
-    </button>
+  <div @click="$emit('check')">
+    <h2 class="card-title">
+      {{ title }}
+    </h2>
+    {{ body ? ": " + body : "" }} ~ {{ month }} / {{ day }}
   </div>
 </template>
