@@ -71,6 +71,11 @@ const validateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
       else {
         datum.value["type_change_warning"] =
           "Title can only be added at the first position, click the first add button and change new item to title";
+        clearTimeout(datum.value["type_change_warning_timeout"]);
+        datum.value["type_change_warning_timeout"] = setTimeout(
+          () => delete datum.value["type_change_warning"],
+          3000,
+        );
         // BUG: yes, you can add multiple titles by doing so. 2 reasons not to prevent this, 1st is respect the choice of user
         return false;
       }
@@ -87,24 +92,80 @@ const validateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
   <div>
     <button @click="addItem('text', 0)">+</button>
     {{ data }}
-    <div v-for="(datum, i) in data" :key="datum.id">
-      <!-- TODO: why it says ResizeObserver loop completed with undelivered notifications. Maybe it's because display: none?! -->
-      <button @click="datum.deleted = !datum.deleted">x</button>
-      <!-- TODO: why cannot use v-model! -->
-      <Suspense>
-        <component
-          :is="slice(datum.type)"
-          :datum="datum"
-          :destinations="destinations"
-          :validator="validateSlice"
-          v-show="!datum.deleted"
-        />
-      </Suspense>
-      <i @click="delete datum.type_change_warning">{{
-        datum.type_change_warning
-      }}</i>
-      <button @click="addItem(nextSliceType(datum.type), i + 1)">+</button>
-      <!-- TODO: buttons to change type -->
+    <!-- TODO: the radius should be smaller -->
+    <div v-for="(datum, i) in data" :key="datum.id" class="bg-base-200">
+      <div class="flex justify-end">
+        <!-- TODO: buttons to change type -->
+        <div
+          @click="addItem(nextSliceType(datum.type), i + 1)"
+          class="btn btn-circle btn-xs mx-2"
+        >
+          +
+        </div>
+        <!-- TODO: correct svg size -->
+        <label class="btn btn-circle btn-xs swap swap-rotate">
+          <!-- this hidden checkbox controls the state -->
+          <input type="checkbox" v-model="datum.deleted" class="peer" />
+
+          <!-- hamburger icon -->
+          <svg
+            class="swap-on fill-current"
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 512 512"
+          >
+            <path
+              d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z"
+            />
+          </svg>
+
+          <!-- close icon -->
+          <svg
+            class="swap-off fill-current"
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 512 512"
+          >
+            <polygon
+              points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49"
+            />
+          </svg>
+        </label>
+      </div>
+      <div v-show="!datum.deleted">
+        <Suspense>
+          <component
+            :is="slice(datum.type)"
+            :datum="datum"
+            :destinations="destinations"
+            :validator="validateSlice"
+          />
+        </Suspense>
+        <!-- TODO: transition -->
+        <div
+          role="alert"
+          class="alert alert-warning"
+          @click="delete datum.type_change_warning"
+          v-if="datum.type_change_warning"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <span>{{ datum.type_change_warning }}</span>
+        </div>
+      </div>
       <!-- TODO: drag handle -->
     </div>
   </div>
