@@ -29,7 +29,7 @@ function addId(newId: string) {
 const abstracts: Ref<Ref<AbstractType>[]> = computed(() =>
   getS(props.bill).map((ab) =>
     computedAsync(async () => await ab, {
-      title: "fetch or parse failed, consider deleting it?",
+      title: "",
       date: 1,
     }),
   ),
@@ -48,10 +48,11 @@ async function move(id: string, repo: Repo) {
 <template>
   <!-- TODO: change to id, fridge & trash still flashes, while fresh doesn't -->
   <div>
+    <!-- TODO: scale on hover? That's should be fun. Though hover is not that useful especially for mobile devices -->
     <div
       v-for="(abstract, i) in abstracts"
       :key="abstract.value.date"
-      class="card bg-neutral text-neutral-content"
+      class="card bg-neutral text-neutral-content hover:bg-violet-300"
       :class="abstract.value.class || 'glass'"
       :data-theme="'dracula'"
     >

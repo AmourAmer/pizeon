@@ -42,7 +42,7 @@ const meals: Ref<Ref<Meal>[]> = computed(() =>
 <template>
   <div>
     <button @click="ids = []">Clear All</button>
-    <div style="display: flex; flex-direction: column-reverse">
+    <div class="flex flex-col-reverse">
       <Meal
         v-for="(meal, i) in meals"
         :key="i"

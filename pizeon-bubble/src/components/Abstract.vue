@@ -12,10 +12,11 @@ const { month, day } = time(computed(() => props.date));
 </script>
 
 <template>
-  <div @click="$emit('check')">
+  <div @click="$emit('check')" v-if="date != 1">
     <h2 class="card-title">
       {{ title }}
     </h2>
     {{ body ? ": " + body : "" }} ~ {{ month }} / {{ day }}
   </div>
+  <span class="loading loading-spinner" v-else />
 </template>

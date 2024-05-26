@@ -35,7 +35,7 @@ const {
 const placeholder = computed(() => placeholderFn.value(props.destinations));
 const rows = computed(() => (rowsFn?.value || (() => 3))()); // FIXME: this is little bit strange, and it misses a tick shrinking
 
-// FIXME: this solution is not good enough
+// FIXME: this solution is not good enough, also there's issue with keep-alive
 const vFocus = {
   mounted: (el: HTMLElement) => el.focus(),
 };
