@@ -19,7 +19,5 @@ const update = () => {
 </script>
 
 <template>
-  <div>
-    <Bill :bill="bill" @changed="update" />
-  </div>
+  <Bill :bill="bill" @changed="update" />
 </template>

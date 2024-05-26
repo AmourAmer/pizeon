@@ -57,7 +57,7 @@ onKeyStroke("Escape", () => {
 
 <template>
   <!-- FIXME: don't know if it's appropriate to put theme here. Also, how to change? -->
-  <div class="container" data-theme="night">
+  <div class="container">
     {{ t("message.hello") }}
     <nav>
       <RouterLink v-for="(dest, i) in destinations" :to="dest[0]">

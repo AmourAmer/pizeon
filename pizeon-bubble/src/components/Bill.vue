@@ -47,24 +47,26 @@ async function move(id: string, repo: Repo) {
 
 <template>
   <!-- TODO: change to id, fridge & trash still flashes, while fresh doesn't -->
-  <div
-    v-for="(abstract, i) in abstracts"
-    :key="abstract.value.date"
-    class="card bg-neutral text-neutral-content"
-    :class="abstract.value.class || 'glass'"
-  >
-    <div class="card-body items-center text-center">
-      {{ abstract }}
-      <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
-      <div class="card-actions justify-end">
-        <button
-          v-for="repo in Repo"
-          v-show="repo != 'Blocked'"
-          @click="move(bill[i], repo)"
-          class="btn btn-primary"
-        >
-          TO {{ repo }}
-        </button>
+  <div>
+    <div
+      v-for="(abstract, i) in abstracts"
+      :key="abstract.value.date"
+      class="card bg-neutral text-neutral-content"
+      :class="abstract.value.class || 'glass'"
+      :data-theme="'dracula'"
+    >
+      <div class="card-body items-center text-center">
+        <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
+        <div class="card-actions justify-end">
+          <button
+            v-for="repo in Repo"
+            v-show="repo != 'Blocked'"
+            @click="move(bill[i], repo)"
+            class="btn btn-primary"
+          >
+            TO {{ repo }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
