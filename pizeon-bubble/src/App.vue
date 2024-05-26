@@ -53,6 +53,7 @@ onKeyStroke("Escape", () => {
   // This is so silly! The type definition of activeElement should be more precise
   (document.activeElement as HTMLElement)?.blur();
 });
+// document.body.style.setProperty("zoom", "120%"); // TODO: export as user configurable
 </script>
 
 <template>
