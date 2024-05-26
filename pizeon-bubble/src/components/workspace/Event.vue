@@ -96,6 +96,7 @@ const validateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
     <div v-for="(datum, i) in data" :key="datum.id" class="bg-base-200">
       <div class="flex justify-end">
         <!-- TODO: buttons to change type -->
+        <!-- FIXME: This icon doesn't grow on zoom -->
         <div
           @click="addItem(nextSliceType(datum.type), i + 1)"
           class="btn btn-circle btn-xs mx-2"

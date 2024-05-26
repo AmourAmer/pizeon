@@ -53,13 +53,17 @@ onKeyStroke("Escape", () => {
   // This is so silly! The type definition of activeElement should be more precise
   (document.activeElement as HTMLElement)?.blur();
 });
-// document.body.style.setProperty("zoom", "120%"); // TODO: export as user configurable
+// document.body.style.setProperty("zoom", "200%"); // TODO: export as user configurable, or maybe can't use this as tailwind is so powerful
 </script>
 
 <template>
   <!-- FIXME: don't know if it's appropriate to put theme here. Also, how to change? -->
   <div>
-    {{ t("message.hello") }}
+    <span
+      class="sm:bg-sky-100 md:bg-lime-200 lg:bg-orange-200 xl:text-red-700 2xl:text-indigo-800"
+    >
+      {{ t("message.hello") }}
+    </span>
     <nav>
       <RouterLink v-for="(dest, i) in destinations" :to="dest[0]">
         {{ dest[1] }}({{ i + 1 }})
