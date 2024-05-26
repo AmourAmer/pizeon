@@ -49,20 +49,22 @@ async function move(id: string, repo: Repo) {
   <!-- TODO: change to id, fridge & trash still flashes, while fresh doesn't -->
   <div>
     <!-- TODO: scale on hover? That's should be fun. Though hover is not that useful especially for mobile devices -->
+    <!-- TODO: maybe should use some other trigger to inspect -->
     <div
       v-for="(abstract, i) in abstracts"
       :key="abstract.value.date"
       class="card bg-neutral text-neutral-content hover:bg-violet-300"
       :class="abstract.value.class || 'glass'"
       :data-theme="'dracula'"
+      @click="addId(bill[i])"
     >
       <div class="card-body items-center text-center">
-        <Abstract v-bind="abstract.value" @check="addId(bill[i])" />
+        <Abstract v-bind="abstract.value" />
         <div class="card-actions justify-end">
           <button
             v-for="repo in Repo"
             v-show="repo != 'Blocked'"
-            @click="move(bill[i], repo)"
+            @click.stop="move(bill[i], repo)"
             class="btn btn-primary"
           >
             TO {{ repo }}
