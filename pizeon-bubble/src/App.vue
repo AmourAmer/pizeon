@@ -66,13 +66,15 @@ onKeyStroke("Escape", () => {
       </RouterLink>
     </nav>
     <div class="flex justify-center">
-      <router-view v-slot="{ Component }" class="container">
-        <transition>
-          <keep-alive>
-            <component :is="Component" />
-          </keep-alive>
-        </transition>
-      </router-view>
+      <div class="container">
+        <router-view v-slot="{ Component }">
+          <transition>
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </transition>
+        </router-view>
+      </div>
     </div>
   </div>
 </template>
