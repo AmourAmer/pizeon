@@ -50,6 +50,7 @@ async function move(id: string, repo: Repo) {
   <div>
     <!-- TODO: scale on hover? That's should be fun. Though hover is not that useful especially for mobile devices -->
     <!-- TODO: maybe should use some other trigger to inspect -->
+    <!-- TODO: pc: hover to preview -->
     <div
       v-for="(abstract, i) in abstracts"
       :key="abstract.value.date"
