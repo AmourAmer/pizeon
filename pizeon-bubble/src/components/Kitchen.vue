@@ -24,6 +24,7 @@ const servers = computedAsync(
       Expert Mode is currently unavailable, wait for months and update your app
       to see if I'll've implemented that
     </p>
+    <!-- TODO: should I use h1? Should learn about this. -->
     <h1>Who are you</h1>
     {{ whoami }}
     <h1>Who you trust</h1>

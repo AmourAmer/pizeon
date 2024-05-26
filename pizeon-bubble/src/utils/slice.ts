@@ -64,9 +64,8 @@ function done(
   // TODO: case insensitive
   if (!newInput.startsWith(pattern + ": ")) return false;
   if (!Validator(type, datum)) return false;
-  // FIXME: re-focus
+  // FIXME: re-focus, this problem is partially solved by vFocus, but not reliable itself. Also, should remember which to focus
   datum.value.type = type;
-  // BUG: if type keeps, map[field] changes but doesn't update patch
   datum.value[field] = newInput.slice(pattern.length + 2);
 
   return true;

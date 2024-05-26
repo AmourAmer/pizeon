@@ -31,5 +31,6 @@ const placeholder = computed(() => "paste table containing needed info here");
       :placeholder="placeholder"
       :rows="5"
     />
+    <!-- TODO: toggle empty or inherit -->
   </div>
 </template>

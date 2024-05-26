@@ -8,6 +8,7 @@ export const db = (datum: stringMap) => {
     const mapper = (datum["body"] as string)
       .split("\n")
       .map((it) => it.split("\t"));
+    // TODO: warn on seen empties
     if (datum.empty == "inherit") {
       for (let i = 1; i < mapper.length; i++) {
         for (let j = 1; j < mapper[i].length; j++) {
