@@ -58,19 +58,21 @@ onKeyStroke("Escape", () => {
 
 <template>
   <!-- FIXME: don't know if it's appropriate to put theme here. Also, how to change? -->
-  <div class="container">
+  <div>
     {{ t("message.hello") }}
     <nav>
       <RouterLink v-for="(dest, i) in destinations" :to="dest[0]">
         {{ dest[1] }}({{ i + 1 }})
       </RouterLink>
     </nav>
-    <router-view v-slot="{ Component }">
-      <transition>
-        <keep-alive>
-          <component :is="Component" />
-        </keep-alive>
-      </transition>
-    </router-view>
+    <div class="flex justify-center">
+      <router-view v-slot="{ Component }" class="container">
+        <transition>
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </transition>
+      </router-view>
+    </div>
   </div>
 </template>
