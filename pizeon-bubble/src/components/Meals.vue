@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { computed, Ref } from "vue";
-import { computedAsync, useStorage } from "@vueuse/core";
+import { computedAsync, useLocalStorage } from "@vueuse/core";
 import Meal from "./Meal.vue";
 import { Repo, Notice } from "../utils/type";
 
@@ -24,7 +24,7 @@ const mealTemplate: Meal = {
   repo: Repo.Blocked,
 };
 
-const ids: Ref<string[]> = useStorage("mealIds", []);
+const ids: Ref<string[]> = useLocalStorage("mealIds", []);
 async function getNotice(id: string): Promise<Meal> {
   return await invoke("get_notice", {
     id,

@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { Ref } from "vue";
-import { useStorage, computedAsync } from "@vueuse/core";
+import { useLocalStorage, computedAsync } from "@vueuse/core";
 
 const whoami: Ref<string> = computedAsync(() => invoke("whoami", {}), "sin");
 
-const expert_mode = useStorage("expert_mode", false);
+const expert_mode = useLocalStorage("expert_mode", false);
+const no_more_confirm = useLocalStorage("no_more_confirm", false);
+const toggleExpertMode = () => {
+  if (expert_mode.value) return (expert_mode.value = false);
+  if (no_more_confirm.value) return (expert_mode.value = true);
+  if (confirmExpertMode()) expert_mode.value = true;
+};
+const confirmExpertMode = () => true; // FIXME:
+
 const servers = computedAsync(
   () =>
     (
@@ -20,6 +28,9 @@ const servers = computedAsync(
 
 <template>
   <div>
+    <!-- I just wanted to declare a no_more_confirm, but ts drove me all the way here -->
+    <!-- TODO: use a modal to pop up confirm expert_mode -->
+    <button @click="toggleExpertMode">Toggle Expert Mode</button>
     <p v-if="expert_mode">
       Expert Mode is currently unavailable, wait for months and update your app
       to see if I'll've implemented that

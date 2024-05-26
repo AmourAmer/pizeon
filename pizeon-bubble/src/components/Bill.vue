@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/tauri";
 import { Ref, computed } from "vue";
-import { computedAsync, useStorage } from "@vueuse/core";
+import { computedAsync, useLocalStorage } from "@vueuse/core";
 import Abstract from "./Abstract.vue";
 import { Repo, AbstractType } from "@utils/type";
 
@@ -9,7 +9,7 @@ const props = defineProps<{ bill: string[] }>();
 const emit = defineEmits<{
   (e: "changed"): void;
 }>();
-const ids: Ref<string[]> = useStorage("mealIds", []);
+const ids: Ref<string[]> = useLocalStorage("mealIds", []);
 
 function getS(bill: string[]): Promise<AbstractType>[] {
   return bill.map((item) =>

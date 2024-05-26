@@ -1,9 +1,9 @@
 import { Ref } from "vue";
-import { useStorage } from "@vueuse/core";
+import { useLocalStorage } from "@vueuse/core";
 import { stringMap } from "./type";
 
 export function useData(id: string) {
-  const data: Ref<stringMap[]> = useStorage(id, []);
+  const data: Ref<stringMap[]> = useLocalStorage(id, []);
 
   // FUCK U IDIOT STUPID BLIND DAMN WEAK ASSHOLE ABSURD RIDICULOUS MISERABLE SHAMEFUL ts
   let nonDeletedIter: (data: stringMap[]) => IterableIterator<stringMap> = (
