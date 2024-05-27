@@ -19,11 +19,21 @@ useTextareaAutosize({
 });
 
 const placeholder = computed(() => "paste table containing needed info here");
+
+const input_disabled = ref(false); // It's hard to give a name if use localstrorage
+const disable_input_on_blur = ref(true);
 // FIXME:!!!!!!! add btns to toggle auto disable and enable again
 watch(textarea, (textarea) => {
   if (!textarea) return;
-  textarea.addEventListener("blur", () => (textarea.disabled = true));
+  textarea.addEventListener(
+    "blur",
+    () => (input_disabled.value = disable_input_on_blur.value),
+  );
 });
+const toggleDisableInputOnBlur = () => {
+  disable_input_on_blur.value = input_disabled.value =
+    !disable_input_on_blur.value;
+};
 </script>
 
 <template>
@@ -35,7 +45,11 @@ watch(textarea, (textarea) => {
       v-model="datum.body"
       :placeholder="placeholder"
       :rows="5"
+      :disabled="input_disabled"
     />
+    <!-- TODO: indicate current status? -->
+    <button @click="toggleDisableInputOnBlur">Toggle disable on blur</button>
+    <button @click="input_disabled = false">Temporarily Enable input</button>
     <!-- TODO: toggle empty or follow -->
   </div>
 </template>
