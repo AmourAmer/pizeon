@@ -2281,7 +2281,7 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pizeon"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "async-trait",
  "base64 0.22.0",
@@ -2329,7 +2329,7 @@ dependencies = [
 
 [[package]]
 name = "pizeon-client"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "async-trait",
  "base64 0.22.0",
@@ -2379,7 +2379,7 @@ dependencies = [
 
 [[package]]
 name = "pizeon-common"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "eyre",
  "lazy_static",
@@ -2411,7 +2411,7 @@ dependencies = [
 
 [[package]]
 name = "pizeon-server"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "argon2",
  "async-trait",
@@ -2442,7 +2442,7 @@ dependencies = [
 
 [[package]]
 name = "pizeon-server-database"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "async-trait",
  "eyre",
@@ -2455,7 +2455,7 @@ dependencies = [
 
 [[package]]
 name = "pizeon-server-postgres"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "async-trait",
  "eyre",
