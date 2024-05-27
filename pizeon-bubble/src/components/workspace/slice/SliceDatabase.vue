@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref, computed } from "vue";
+import { Ref, ref, computed, watch } from "vue";
 import { useTextareaAutosize, toRefs } from "@vueuse/core";
 import { stringMap } from "@utils/type";
 import { useUpdateType } from "@utils/slice";
@@ -11,7 +11,7 @@ const datum: Ref<stringMap> = defineModel("datum", { default: {} });
 
 useUpdateType(datum, ["body"], props.validator);
 
-const textarea = ref();
+const textarea: Ref<HTMLTextAreaElement | undefined> = ref();
 useTextareaAutosize({
   element: textarea,
   input: toRefs(datum)["body"],
@@ -19,6 +19,11 @@ useTextareaAutosize({
 });
 
 const placeholder = computed(() => "paste table containing needed info here");
+// FIXME:!!!!!!! add btns to toggle auto disable and enable again
+watch(textarea, (textarea) => {
+  if (!textarea) return;
+  textarea.addEventListener("blur", () => (textarea.disabled = true));
+});
 </script>
 
 <template>
