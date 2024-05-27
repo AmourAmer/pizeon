@@ -26,11 +26,11 @@ const placeholder = computed(() => "paste table containing needed info here");
     <!-- FIXME: how does https://vueuse.org/core/useTextareaAutosize/ impl this? -->
     <textarea
       ref="textarea"
-      class="resize-none"
+      class="resize-none textarea"
       v-model="datum.body"
       :placeholder="placeholder"
       :rows="5"
     />
-    <!-- TODO: toggle empty or inherit -->
+    <!-- TODO: toggle empty or follow -->
   </div>
 </template>

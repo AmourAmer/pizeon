@@ -48,7 +48,7 @@ const placeholder = computed(() => "Description of this guy");
     NAME:
     <textarea
       ref="textarea_name"
-      class="resize-none"
+      class="resize-none textarea"
       v-model="datum.name"
       :placeholder="placeholder_name"
       :rows="1"
@@ -57,7 +57,7 @@ const placeholder = computed(() => "Description of this guy");
     TITLE:
     <textarea
       ref="textarea_title"
-      class="resize-none"
+      class="resize-none textarea"
       v-model="datum.title"
       :placeholder="placeholder_title"
       :rows="1"
@@ -65,7 +65,7 @@ const placeholder = computed(() => "Description of this guy");
     DESCRIPTION:
     <textarea
       ref="textarea"
-      class="resize-none"
+      class="resize-none textarea"
       v-model="datum.description"
       :placeholder="placeholder"
       :rows="3"

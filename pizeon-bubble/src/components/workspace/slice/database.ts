@@ -1,4 +1,3 @@
-import { Ref } from "vue";
 import { stringMap } from "@utils/type";
 
 // I don't if it's reasonable to split such a file
@@ -9,13 +8,13 @@ export const db = (datum: stringMap) => {
       .split("\n")
       .map((it) => it.split("\t"));
     // TODO: warn on seen empties
-    if (datum.empty == "inherit") {
+    if (datum.empty == "follow") {
       for (let i = 1; i < mapper.length; i++) {
         for (let j = 1; j < mapper[i].length; j++) {
           if (!mapper[i][j]) mapper[i][j] = mapper[i - 1][j];
         }
       }
-    } else if (datum.empty == "emty") {
+    } else if (datum.empty == "empty") {
     }
     return new Map(mapper.filter((l) => l[0]).map((l) => [l.shift(), l]));
   } catch (e) {

@@ -48,7 +48,7 @@ const vFocus = {
     <!-- FIXME: Ctrl-Z -->
     <textarea
       ref="textarea"
-      class="resize-none"
+      class="resize-none textarea"
       v-model="datum.body"
       :placeholder="placeholder"
       :rows="rows"
