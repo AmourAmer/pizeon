@@ -107,7 +107,7 @@ export function useFinalize(datum: stringMap) {
       break;
     case "db":
       if (!datum.body) return null;
-      final.db = db(datum);
+      final.db = Object.fromEntries(db(datum));
       break;
     case "host":
       if (!datum.name) return null;

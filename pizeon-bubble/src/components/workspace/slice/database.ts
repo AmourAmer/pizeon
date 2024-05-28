@@ -56,7 +56,6 @@ export const db = (datum: stringMap) => {
         }),
     );
   } catch {
-    console.log("hi");
     return new Map();
   }
 };

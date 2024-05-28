@@ -44,6 +44,8 @@ watch(
 );
 </script>
 
+<!-- TODO: multi db support -->
+<!-- TODO: db name -->
 <template>
   <div class="flex">
     <div class="flex-1">
