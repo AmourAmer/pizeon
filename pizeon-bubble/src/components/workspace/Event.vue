@@ -93,7 +93,7 @@ const validateSlice: (type: string, datum: Ref<stringMap>) => boolean = (
     <button @click="addItem('text', 0)">+</button>
     {{ data }}
     <!-- TODO: the radius should be smaller -->
-    <div v-for="(datum, i) in data" :key="datum.id" class="bg-base-200 m-2">
+    <div v-for="(datum, i) in data" :key="datum.id" class="m-2">
       <div class="flex justify-end">
         <!-- TODO: buttons to change type -->
         <!-- FIXME: This icon doesn't grow on zoom -->
